@@ -1,2 +1,0 @@
-# BizEase
-Repo for Collaborations
