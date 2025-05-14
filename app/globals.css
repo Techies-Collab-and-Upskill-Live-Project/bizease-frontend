@@ -1,7 +1,27 @@
-@import "tailwindcss";
-@import "tw-animate-css";
+@import 'tailwindcss';
+@import 'tw-animate-css';
 
 @custom-variant dark (&:is(.dark *));
+
+@theme {
+  --color-darkblue: #000e33;
+  --color-lightblue: #0041a9;
+  --color-stateblue: #0060f1;
+  --color-blue-100: #d5dbff;
+  --color-blue-200: #a1b1ff;
+  --color-blue-300: #6588ff;
+  --color-blue-400: #0060f1;
+  --color-blue-500: #0041a9;
+  --color-blue-600: #002466;
+  --color-surface-100: #ffffff;
+  --color-surface-200: #d6d6d6;
+  --color-surface-300: #afafaf;
+  --color-surface-400: #898989;
+  --color-surface-500: #434343;
+  --color-surface-600: #242424;
+
+  --font-display: 'Roboto', 'sans-serif';
+}
 
 @theme inline {
   --color-background: var(--background);
