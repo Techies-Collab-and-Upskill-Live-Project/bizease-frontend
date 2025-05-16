@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
+import Link from "next/link";
 import React from "react";
 
 export default function Onboarding() {
@@ -85,9 +86,9 @@ export default function Onboarding() {
               </div>
             </div>
 
-            <Button className="rounded bg-blue-500 text-sm md:text-lg lg:text-2xl xl:text-4xl font-bold md:p-6 lg:p-8 xl:p-10 mt-4 md:mt-6 lg:mt-8 xl:mt-12">
+            <Link href={"/login"} className="rounded cursor-pointer text-white text-center bg-blue-500 text-sm md:text-lg lg:text-2xl xl:text-4xl font-bold md:p-6 lg:p-8 xl:p-10 mt-4 md:mt-6 lg:mt-8 xl:mt-12">
               Get Started
-            </Button>
+            </Link>
           </div>
         </div>
       </div>
