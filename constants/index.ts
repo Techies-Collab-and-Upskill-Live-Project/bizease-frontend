@@ -1,15 +1,24 @@
 export const navItems = [
-  { id: 1, name: 'Dashboard', iconPath: '/icon/home.svg', route: '/' },
-  { id: 2, name: 'Orders', iconPath: '/icon/cart.svg', route: '/orders' },
+  { id: 1, name: 'Dashboard', iconPath: '/icon/home.svg', route: '/dashboard' },
+  { id: 2, name: 'Orders', iconPath: '/icon/order.svg', route: '/orders' },
   {
-    id: 2,
+    id: 3,
     name: 'Inventory',
-    iconPath: '/icon/inventory.svg',
+    iconPath: '/icon/inventory.png',
     route: '/inventory',
   },
-  { id: 3, name: 'Tasks', iconPath: '/icon/task.svg', route: '/tasks' },
-  { id: 4, name: 'Report', iconPath: '/icon/report.svg', route: '/reports' },
-  { id: 5, name: 'Profile', iconPath: '/icon/profile.svg', route: '/profiles' },
+  {
+    id: 5,
+    name: 'Report',
+    iconPath: '/icon/report.svg',
+    route: '/report-statistics',
+  },
+  {
+    id: 6,
+    name: 'Settings',
+    iconPath: '/icon/settings.svg',
+    route: '/settings',
+  },
 ];
 
 export const recentOders = [
@@ -294,3 +303,10 @@ export const tasks = [
     priority: 'High',
   },
 ];
+
+export const user = {
+  id: '1',
+  name: `Jessie's Tees`,
+  email: 'jessie@gmail.com',
+  businessPlan: 'Premium Plan',
+};
