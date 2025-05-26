@@ -1,7 +1,15 @@
+"use client";
+
 import { Button } from "@/components/ui/button";
+import { useRouter } from "next/navigation";
+
 import React from "react";
 
 export default function Landing() {
+  const route = useRouter();
+  const handleGetStarted = () => {
+    route.push("/log-in");
+  };
   return (
     <div className="flex flex-col lg:flex-row-reverse min-h-screen">
       {/* Top Section */}
@@ -35,7 +43,10 @@ export default function Landing() {
           </div>
           <img src="favicon.ico" alt="logo" className="my-6 h-20 w-20" />
           <div className="px-5 py-2 md:px-20 md:py-4 lg:py-10 w-full lg:w-2/3">
-            <Button className="rounded-lg text-base font-semibold bg-[#06005B] hover:bg-blue-900 cursor-pointer w-full py-6 md:py-8 lg:py-6">
+            <Button
+              onClick={handleGetStarted}
+              className="rounded-lg text-base font-semibold bg-[#06005B] hover:bg-blue-900 cursor-pointer w-full py-6 md:py-8 lg:py-6"
+            >
               Get Started
             </Button>
           </div>
