@@ -6,9 +6,9 @@ import { useRouter } from "next/navigation";
 import React from "react";
 
 export default function Landing() {
-  const route = useRouter();
+  const router = useRouter();
   const handleGetStarted = () => {
-    route.push("/log-in");
+    router.push("/log-in");
   };
   return (
     <div className="flex flex-col lg:flex-row-reverse min-h-screen">
