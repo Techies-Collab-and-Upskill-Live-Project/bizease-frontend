@@ -1,0 +1,49 @@
+import { inventoryItems } from '@/constants';
+import { formatCurrency } from '@/lib/utils';
+
+const TotalInventory = () => {
+  const totalProducts = inventoryItems.length;
+
+  const totalValue = inventoryItems.reduce((sum, item) => {
+    const unitCount = parseInt(item.stockLevel);
+    const price = parseInt(item.price.replace(/,/g, ''));
+    return sum + unitCount * price;
+  }, 0);
+
+  const totalLowStock = inventoryItems.filter(
+    (item) => item.status === 'Low Stock',
+  ).length;
+
+  return (
+    <div className="flex bg-gradient items-center justify-between w-full pl-4 pr-30 py-4 mx-auto rounded-sm">
+      <div className="flex justify-items-start">
+        <div>
+          <p className="text-surface-200 text-[10px]">Total Stock Value</p>
+          <p className="font-semibold text-surface-200 ">
+            <span> {formatCurrency(totalValue)} </span>
+          </p>
+        </div>
+      </div>
+      <div className="flex justify-items-start gap-8">
+        <div className="w-[1px] h-8 my-auto bg-surface-300" />
+        <div>
+          <p className="text-surface-200 text-[10px]">Total Products</p>
+          <p className="font-semibold text-surface-200 ">
+            <span> {totalProducts} </span>
+          </p>
+        </div>
+      </div>
+      <div className="flex justify-center gap-8 ml-10">
+        <div className="w-[1px] h-8 my-auto bg-surface-300" />
+        <div>
+          <p className="text-surface-200 text-[10px]">Low Stock Counts</p>
+          <p className="font-semibold text-surface-200 ">
+            <span>{totalLowStock}</span>
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default TotalInventory;
