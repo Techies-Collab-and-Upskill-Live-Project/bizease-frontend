@@ -9,12 +9,6 @@ declare type User = {
 };
 
 declare interface CustomLogoProp {
-  // inventory: string;
-  // logo: string;
-  // settings: string;
-  // dashboard: string;
-  // order: string;
-  // report: string;
   type:
     | 'Inventory'
     | 'Settings'

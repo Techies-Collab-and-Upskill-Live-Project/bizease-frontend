@@ -8,7 +8,7 @@ import React from "react";
 export default function Landing() {
   const router = useRouter();
   const handleGetStarted = () => {
-    router.push("/log-in");
+    router.push("/sign-up");
   };
   return (
     <div className="flex flex-col lg:flex-row-reverse min-h-screen">
