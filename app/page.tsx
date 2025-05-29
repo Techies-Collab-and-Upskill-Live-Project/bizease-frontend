@@ -41,7 +41,7 @@ export default function Landing() {
               Bizease!
             </p>
           </div>
-          <img src="favicon.ico" alt="logo" className="my-6 h-20 w-20" />
+          <img src="/icon/logo-2.png" alt="logo" className="my-6 h-20 w-20" />
           <div className="px-5 py-2 md:px-20 md:py-4 lg:py-10 w-full lg:w-2/3">
             <Button
               onClick={handleGetStarted}
