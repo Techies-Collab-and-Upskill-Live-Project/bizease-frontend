@@ -40,10 +40,12 @@ const StockCard: React.FC<StockCardProps> = ({
           {stock.value}
         </span>
       </div>
-      <div className="mt-2 font-bold">{price}</div>
-      <button className="mt-2 bg-blue-100 text-blue-800 px-3 py-1 rounded text-xs">
-        Restock
-      </button>
+      <div className="mt-2 flex justify-between items-center">
+        <span className="text-[rgba(33, 33, 33, 1)">{price}</span>
+        <button className="bg-[#0A0A4A] text-white px-3 py-1 rounded text-xs">
+          Restock
+        </button>
+      </div>
     </div>
   );
 };

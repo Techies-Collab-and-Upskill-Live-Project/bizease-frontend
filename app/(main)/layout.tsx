@@ -1,6 +1,6 @@
 import Footer from "@/components/Footer";
 import MobileNav from "@/components/navigations/MobileNav";
-import Navbar from "@/components/navigations/SideNavBar";
+import SideNavBar from "@/components/navigations/SideNavBar";
 
 export default function RootLayout({
   children,
@@ -8,17 +8,17 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <main className="flex flex-col min-h-screen">
+    <main className="flex flex-col w-full min-h-screen">
       <div className="flex flex-1">
-        <div className="w-ful">
-          <Navbar />
+        <div className="w-64 hidden md:block border-r">
+          <SideNavBar />
         </div>
-        <div className="flex flex-col w-full">
-          <div className="flex-1">{children}</div>
+        <div className="flex flex-col flex-1 w-full overflow-y-auto">
+          {children}
         </div>
       </div>
       <MobileNav />
-      {/* <Footer /> */}
+      <Footer />
     </main>
   );
 }

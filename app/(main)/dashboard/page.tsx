@@ -8,27 +8,31 @@ const DashboardPage = () => (
   <div className="h-screen w-full">
     <TopAvatar type="Dashboard" />
     <section className="py-3 px-6">
-      <div className="flex justify-between items-center">
-        <div className="mb-6">
+      <div className="flex flex-col md:flex-row justify-between items-center gap-4">
+        <div className="mb-4 md:mb-0">
           <h1 className="text-2xl font-bold">Welcome</h1>
           <div className="text-lg font-semibold">Jessie's Tees</div>
         </div>
-        <div className="flex gap-2">
-          <button className="px-2 py-1 border-1 border-blue-300 rounded">
+        <div className="flex flex-col md:flex-row gap-2 w-full md:w-auto">
+          <button className="px-2 py-1 border border-blue-300 rounded w-full md:w-auto">
             Add New Order
           </button>
-          <button className="px-2 py-1 border-1 border-blue-300 rounded">
+          <button className="px-2 py-1 border border-blue-300 rounded w-full md:w-auto">
             Add New Product
           </button>
         </div>
       </div>
-      <div className="flex gap-4 mb-6">
-        <StatCard title="Revenue" value="#100,000" highlight="↑" />
+      <div className="flex flex-col md:flex-row gap-4 mb-6">
+        <StatCard
+          title="Revenue"
+          value="#100,000"
+          highlight="up"
+          />
         <StatCard title="Top Product" value="Nike Sneakers" />
       </div>
       <div className="mb-6">
         <h2 className="text-lg font-bold mb-2">Pending Orders</h2>
-        <div className="grid grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {[1, 2, 3, 4, 5, 6].map((_, i) => (
             <OrderCard
               key={i}
@@ -43,7 +47,7 @@ const DashboardPage = () => (
       </div>
       <div>
         <h2 className="text-lg font-bold mb-2">Low Stock Items</h2>
-        <div className="grid grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {[1, 2, 3, 4, 5, 6].map((_, i) => (
             <StockCard
               key={i}
