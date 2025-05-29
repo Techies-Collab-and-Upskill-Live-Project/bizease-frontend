@@ -5,7 +5,6 @@ import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -21,17 +20,17 @@ const LogIn = () => {
   const [showPassword, setShowPassword] = useState(false);
 
   return (
-    <div className="min-h-screen flex flex-col bg-gray-100 relative">
+    <div className="min-h-screenbg-gray-100 ">
       {/* Top Section */}
-      <div className="flex py-20 items-center justify-center gap-2 bg-gradient-to-b rounded-b-lg from-blue-800 to-blue-600 text-white">
+      <div className="flex py-15 md:py-30 items-center justify-center gap-2 bg-gradient-to-b rounded-b-lg from-blue-800 to-blue-600 text-white">
         <img src="/icon/logo-2.png" alt="logo" className="w-10 h-10" />
         <p className="text-2xl font-bold">Bizease</p>
       </div>
 
       {/* Floating Form */}
-      <div className="absolute top-38 left-1/2 transform -translate-x-1/2 w-10/12 max-w-md bg-white rounded-lg shadow-2xl z-10 p-6">
+      <div className="absolute top-30 md:top-55 left-1/2 transform -translate-x-1/2 w-10/12 max-w-md bg-white rounded-lg shadow-2xl z-10 p-6">
         {/* Welcome Header */}
-        <div className="text-center mb-6 flex flex-col gap-2">
+        <div className="text-center mb-6 flex flex-col gap-2 ">
           <h2 className="text-2xl font-semibold">Welcome back!</h2>
           <p className="text-xs font-semibold text-gray-500 tracking-wide">
             Log in to get back to managing your business.
@@ -41,7 +40,7 @@ const LogIn = () => {
         <Form {...loginSchema}>
           <form
             onSubmit={loginSchema.handleSubmit(onSubmit)}
-            className="space-y-4"
+            className="space-y-4 md:space-y-6"
           >
             {/* Email */}
             <FormField
@@ -49,19 +48,18 @@ const LogIn = () => {
               name="email"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-xs font-semibold tracking-wide">
+                  <FormLabel className="text-xs md:text-sm font-semibold tracking-wide">
                     Email
                   </FormLabel>
                   <FormControl>
                     <div className="relative">
-                      
                       <Input
                         type="email"
                         placeholder="username@gmail.com"
                         className="pr-10 text-xs "
                         {...field}
                       />
-                      <Mail className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 focus:outline-none w-4 h-4" />
+                      <Mail className="absolute right-3 top-1/2 transform -translate-y-1/2 focus:outline-none w-4 h-4" />
                     </div>
                   </FormControl>
                   <FormMessage className="text-xs tracking-wide" />
@@ -75,7 +73,7 @@ const LogIn = () => {
               name="password"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-xs font-semibold tracking-wide">
+                  <FormLabel className="text-xs md:text-sm font-semibold tracking-wide">
                     Password
                   </FormLabel>
                   <FormControl>
@@ -89,7 +87,7 @@ const LogIn = () => {
                       <button
                         type="button"
                         onClick={() => setShowPassword(!showPassword)}
-                        className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 focus:outline-none"
+                        className="absolute right-3 top-1/4 transform -translate-y-1/2focus:outline-none"
                       >
                         {showPassword ? (
                           <EyeOff size={18} />
@@ -105,7 +103,7 @@ const LogIn = () => {
             />
 
             {/* Remember Me*/}
-            <label className="flex items-center gap-2 text-xs">
+            <label className="flex items-center gap-2 text-xs md:text-sm">
               <div className="p-[1.5px] rounded-sm bg-gradient-to-b from-blue-800 to-blue-600">
                 <Checkbox
                   id="remember"
@@ -116,7 +114,10 @@ const LogIn = () => {
             </label>
 
             {/* Submit */}
-            <Button type="submit" className="w-full bg-[#06005B] text-xs font-semibold tracking-wide">
+            <Button
+              type="submit"
+              className="w-full bg-[#06005B] md:py-6 text-xs md:text-sm font-semibold tracking-wide"
+            >
               Sign In
             </Button>
 
@@ -128,6 +129,21 @@ const LogIn = () => {
             </div>
           </form>
         </Form>
+      </div>
+
+      {/* Login Alternatives */}
+      <div className="absolute top-134 md:top-164 left-1/2 transform -translate-x-1/2 w-10/12 max-w-md z-10 p-6">
+        <div className=" justify-center  flex flex-col gap-3 items-center ">
+          <p className="text-gray-500 text-sm tracking-wide">-or login with-</p>
+          <div className="flex gap-6 items-center justify-center">
+            <img src={"/google.png"} alt="" className="w-10 h-10" />
+            <img src={"/apple.png"} alt="" className="w-10 h-10" />
+            <img src={"/microsoft.png"} alt="" className="w-10 h-10" />
+          </div>
+          <a href="/sign-up" className=" text-[13px] underline ">
+            Don’t have an account? Sign up
+          </a>
+        </div>
       </div>
     </div>
   );
