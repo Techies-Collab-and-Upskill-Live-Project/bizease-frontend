@@ -277,7 +277,7 @@ const SignUp = () => {
             <img src={"/apple.png"} alt="" className="w-10 h-10" />
             <img src={"/microsoft.png"} alt="" className="w-10 h-10" />
           </div>
-          <a href="/sign-up" className=" text-[13px] underline ">
+          <a href="/log-in" className=" text-[13px] underline ">
             Have an account? Sign in
           </a>
         </div>
