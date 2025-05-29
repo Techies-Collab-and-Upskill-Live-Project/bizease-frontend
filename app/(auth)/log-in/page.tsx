@@ -90,9 +90,9 @@ const LogIn = () => {
                         className="absolute right-3 top-1/4 transform -translate-y-1/2focus:outline-none"
                       >
                         {showPassword ? (
-                          <EyeOff size={18} />
+                          <EyeOff size={18} className="cursor-pointer" />
                         ) : (
-                          <Eye size={18} />
+                          <Eye size={18} className="cursor-pointer" />
                         )}
                       </button>
                     </div>
@@ -116,7 +116,7 @@ const LogIn = () => {
             {/* Submit */}
             <Button
               type="submit"
-              className="w-full bg-[#06005B] md:py-6 text-xs md:text-sm font-semibold tracking-wide"
+              className="w-full bg-[#06005B] hover:bg-blue-900 cursor-pointer md:py-6 text-xs md:text-sm font-semibold tracking-wide"
             >
               Sign In
             </Button>
