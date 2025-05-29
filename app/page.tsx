@@ -1,14 +1,14 @@
-'use client';
+"use client";
 
-import { Button } from '@/components/ui/button';
-import { useRouter } from 'next/navigation';
+import { Button } from "@/components/ui/button";
+import { useRouter } from "next/navigation";
 
-import React from 'react';
+import React from "react";
 
 export default function Landing() {
   const router = useRouter();
   const handleGetStarted = () => {
-    router.push('/sign-up');
+    router.push("/sign-up");
   };
   return (
     <div className="flex flex-col lg:flex-row-reverse min-h-screen">
@@ -16,7 +16,7 @@ export default function Landing() {
       <div className="relative bg-gradient-to-b from-blue-800 to-blue-600 px-2 md:px-4 py-3 md:py-8 rounded-b-2xl lg:rounded-none lg:w-1/2 flex items-center justify-center">
         <div className="flex flex-col gap-2 md:gap-4 items-center justify-center">
           <p className="text-center text-white font-semibold">
-            Manage your Orders{' '}
+            Manage your Orders{" "}
             <span className="text-blue-600">Efficiently.</span>
           </p>
           <img
@@ -41,8 +41,8 @@ export default function Landing() {
               Bizease!
             </p>
           </div>
-          <img src="favicon.ico" alt="logo" className="my-6 h-20 w-20" />
-          <div className="px-5 py-2 md:px-20 md:py-4 max-sm:w-sm lg:py-10 w-xl lg:w-2/3">
+          <img src="/icon/logo-2.png" alt="logo" className="my-6 h-20 w-20" />
+          <div className="px-5 py-2 md:px-20 md:py-4 lg:py-10 w-full lg:w-2/3">
             <Button
               onClick={handleGetStarted}
               className="rounded-lg text-base font-semibold bg-[#06005B] hover:bg-blue-900 cursor-pointer w-full py-6 md:py-8 lg:py-6"
