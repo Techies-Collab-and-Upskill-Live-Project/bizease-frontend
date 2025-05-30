@@ -12,13 +12,8 @@
     "@hookform/resolvers": "^5.0.1",
     "@radix-ui/react-checkbox": "^1.3.2",
     "@radix-ui/react-dialog": "^1.1.14",
-<<<<<<< HEAD
     "@radix-ui/react-select": "^2.2.5",
     "@radix-ui/react-slot": "^1.2.2",
-=======
-    "@radix-ui/react-label": "^2.1.7",
-    "@radix-ui/react-slot": "^1.2.3",
->>>>>>> f1125db41658cfa1428b2ff817ebaa76f118a890
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "framer-motion": "^12.12.1",
