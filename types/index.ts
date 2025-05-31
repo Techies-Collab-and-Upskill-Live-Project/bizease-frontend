@@ -1,3 +1,6 @@
+import { addInventoryformSchema } from '@/lib/validations/addnewInventory';
+import { z } from 'zod';
+
 declare interface UserProps {
   user: User;
 }
@@ -37,3 +40,4 @@ declare interface SearchProductMobileProps {
   setCurrentPage: (page: number) => void;
   currentPage: number;
 }
+export type AddInventoryFormData = z.infer<typeof addInventoryformSchema>;
