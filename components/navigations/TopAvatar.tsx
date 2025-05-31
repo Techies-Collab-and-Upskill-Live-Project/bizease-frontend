@@ -4,24 +4,24 @@ import Link from 'next/link';
 
 const TopAvatar = ({ type }: CustomLogoProp) => {
   return (
-    <div className="mobile-top md:justify-end w-full">
-      <div className="hidden max-md:flex">
+    <div className="mobile-top justify-end max-md:justify-between w-full">
+      <div className="hidden max-md:flex gap-2">
         <CustomLogo type={type} />
       </div>
-      <div className="flex gap-2">
+      <div className="flex gap-1 ">
         <Link href={'/'}>
           <Image
             src={'/icon/notification.png'}
-            width={24}
-            height={24}
+            width={18}
+            height={18}
             alt="notification"
           />
         </Link>
         <Link href={'/'}>
           <Image
             src={'/icon/generic-avatar.svg'}
-            width={26}
-            height={26}
+            width={20}
+            height={20}
             alt="avatar"
           />
         </Link>

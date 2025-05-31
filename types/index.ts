@@ -17,3 +17,23 @@ declare interface CustomLogoProp {
     | 'Reports'
     | 'BizEase';
 }
+
+declare interface SearchProductProps {
+  setFilter: (filter: string) => void;
+  setSearchTerm: (term: string) => void;
+  filter: string;
+  handleAddProduct: () => void;
+  searchTerm: string;
+  currentPage: number;
+  setCurrentPage: (page: number | ((prev: number) => number)) => void;
+}
+
+declare interface SearchProductMobileProps {
+  setFilter: (filter: string) => void;
+  filter: string;
+  handleAddProduct: () => void;
+  setSearchTerm: (term: string) => void;
+  searchTerm: string;
+  setCurrentPage: (page: number) => void;
+  currentPage: number;
+}

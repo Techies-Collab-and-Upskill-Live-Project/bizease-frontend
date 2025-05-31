@@ -160,7 +160,7 @@
   @apply sticky left-0 top-0 hidden h-fit w-full  justify-between bg-darkblue text-surface-100 p-4 max-md:flex sm:p-4;
 }
 @utility mobile-top {
-  @apply sticky left-0 top-0 hidden md:flex h-fit w-full bg-darkblue text-surface-100 p-4 max-md:flex sm:p-4;
+  @apply sticky left-0 top-0 hidden md:flex h-fit w-full bg-darkblue text-surface-100 p-3 max-md:flex sm:p-4;
 }
 
 @utility flex-center {

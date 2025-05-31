@@ -1,32 +1,25 @@
 'use client';
 
-import { useState } from 'react';
-import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
-import { ChevronDown, ChevronLeft, ChevronRight, Search } from 'lucide-react';
+import { ChevronLeft, ChevronRight, X } from 'lucide-react';
 import { inventoryItems } from '@/constants';
-import { useRouter } from 'next/navigation';
 
-import {
-  Select,
-  SelectTrigger,
-  SelectValue,
-  SelectContent,
-  SelectItem,
-} from '@/components/ui/select';
+import SearchProduct from './SearchProductDesk';
 
-export default function InventoryComponent() {
-  const router = useRouter();
-
-  const [searchTerm, setSearchTerm] = useState('');
-  const [filter, setFilter] = useState('all');
-
-  const [currentPage, setCurrentPage] = useState(1);
+export default function InventoryComponent({
+  setCurrentPage,
+  handleAddProduct,
+  currentPage,
+  filter,
+  setFilter,
+  searchTerm,
+  setSearchTerm,
+}: SearchProductProps) {
   const itemsPerPage = 3;
 
-  const filteredItems = inventoryItems
+  const filteredProduct = inventoryItems
     .filter((item) =>
       item.itemsInStock.toLowerCase().includes(searchTerm.toLowerCase()),
     )
@@ -36,58 +29,28 @@ export default function InventoryComponent() {
       return true;
     });
 
-  const totalPages = Math.ceil(filteredItems.length / itemsPerPage);
+  const totalPages = Math.ceil(filteredProduct.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
-  const currentItems = filteredItems.slice(startIndex, endIndex);
+  const currentProducts = filteredProduct.slice(startIndex, endIndex);
 
-  const handleShowAll = () => {
-    setSearchTerm('');
-    setCurrentPage(1);
-  };
-
-  const handleAddProduct = () => {
-    router.push('/inventory/add-product');
-  };
+  // const lowStockItems = inventoryItems.filter(
+  //   (item) => item.status === 'Low Stock',
+  // );
 
   return (
-    <div className="space-y-4">
-      <div className="flex items-center text-center justify-between">
-        <div className="relative w-fit max-w-md mt-2">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground w-4 h-4" />
-          <Input
-            type="text"
-            placeholder="Search inventory..."
-            value={searchTerm}
-            onChange={(e) => {
-              setSearchTerm(e.target.value);
-              setCurrentPage(1);
-            }}
-            className="pl-10 border border-lightblue"
-          />
-        </div>
-
-        <div className="flex items-center gap-4">
-          <Select onValueChange={(val) => setFilter(val)} defaultValue="all">
-            <SelectTrigger className="w-[160px]">
-              <SelectValue placeholder="Filter Products" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Products</SelectItem>
-              <SelectItem value="low">Low Stock</SelectItem>
-              <SelectItem value="in">In Stock</SelectItem>
-            </SelectContent>
-          </Select>
-          <Button
-            onClick={handleAddProduct}
-            className="bg-darkblue hover:bg-lightblue font-normal text-surface-100"
-          >
-            Add New Product
-          </Button>
-        </div>
-      </div>
-
-      <div className="grid grid-cols-1 gap-4  bg-surface-100 py-4 px-5">
+    <div className="space-y-4 bg-surface-100 max-md:bg-gray-100 max-md:overflow-hidden py-4 px-5">
+      <SearchProduct
+        handleAddProduct={handleAddProduct}
+        filter={filter}
+        setSearchTerm={setSearchTerm}
+        setFilter={setFilter}
+        searchTerm={searchTerm}
+        setCurrentPage={setCurrentPage}
+        currentPage={currentPage}
+      />
+      {/* ✅ Desktop View */}
+      <div className="max-md:hidden grid grid-cols-1 gap-4">
         <div className="px-4 grid grid-cols-7 text-center bg-gray-100 p-4 text-surface-500 font-semibold rounded gap-4 text-sm">
           <span>Items in Stock</span>
           <span>Category</span>
@@ -97,7 +60,7 @@ export default function InventoryComponent() {
           <span>Last Updated</span>
           <span>Actions</span>
         </div>
-        {filteredItems.map(
+        {currentProducts.map(
           ({
             id,
             category,
@@ -109,25 +72,25 @@ export default function InventoryComponent() {
             itemsInStock,
           }) => (
             <Card key={id} className="p-5">
-              <CardContent className="place-items-center px-4  text-center grid grid-cols-7 gap-2 text-[11px]  text-surface-600">
-                <div className="flex justify-items-start text-left">
+              <CardContent className=" px-4 text-center grid grid-cols-7 gap-2 text-[11px] text-surface-600">
+                <div className="flex items-center text-left">
                   {itemsInStock}
                 </div>
-                <div>{category}</div>
-                <div>{stockLevel}</div>
-                <div>{price}</div>
+                <div className="flex-center">{category}</div>
+                <div className="flex-center">{stockLevel}</div>
+                <div className="flex-center">{price}</div>
                 <div
-                  className={`${cn(
+                  className={`flex flex-center text-center ${cn(
                     status === 'Low Stock'
                       ? 'bg-yellow-500 font-semibold'
                       : 'bg-green-400 font-semibold',
-                  )} px-4 py-2 text-center  rounded-2xl`}
+                    'px-2 py-2  rounded-2xl',
+                  )}`}
                 >
                   {status}
                 </div>
-                <div>{lastUpdated}</div>
-
-                <Button className="bg-darkblue text-surface-100 px-10 font-normal rounded-lg cursor-pointer hover:bg-lightblue">
+                <div className="px-2 mr-4">{lastUpdated}</div>
+                <Button className="bg-darkblue text-surface-100 font-normal rounded-lg cursor-pointer hover:bg-lightblue">
                   {actions}
                 </Button>
               </CardContent>
@@ -135,10 +98,43 @@ export default function InventoryComponent() {
           ),
         )}
       </div>
-      <div className="flex items-center justify-between pt-2 mb-2">
-        <div className="text-sm text-muted-foreground">
-          Showing {startIndex + 1} - {Math.min(endIndex, filteredItems.length)}{' '}
-          of {filteredItems.length} products
+
+      {/* ✅ Mobile View */}
+      <div className="md:hidden overflow-hidden bg-gray-100 max-md:bg-gray-100 flex flex-col gap-4">
+        {currentProducts.map(
+          ({ id, category, status, stockLevel, price, itemsInStock }) => (
+            <Card key={id} className="p-4 bg-gray-100">
+              <CardContent className="flex bg-gray-100 justify-between items-end p-0 gap-4">
+                <div className="flex flex-col gap-1 text-sm">
+                  <h3 className="text-[14px] text-gray-600 font-semibold">
+                    {itemsInStock}
+                  </h3>
+                  <div className="text-gray-400">{category}</div>
+                  <div className="bg-amber-400 text-[10px] text-gray-800 font-bold py-0.5 px-2 rounded-lg">
+                    <div className="flex items-center gap-1 ">
+                      <div className="bg-red-600 h-1.5 w-1.5 rounded-full" />
+                      {stockLevel} - {status}
+                    </div>
+                  </div>
+                  <div className="text-surface-600 text-[16px] font-semibold">
+                    ₦{price}
+                  </div>
+                </div>
+                <Button className="bg-darkblue font-normal text-surface-100 hover:bg-lightblue  whitespace-nowrap">
+                  Restock
+                </Button>
+              </CardContent>
+            </Card>
+          ),
+        )}
+      </div>
+
+      {/* ✅ Pagination Footer */}
+      <div className="flex items-center justify-between pt-2 mb-2 text-sm">
+        <div className="text-muted-foreground">
+          Showing {startIndex + 1} -{' '}
+          {Math.min(endIndex, filteredProduct.length)} of{' '}
+          {filteredProduct.length} products
         </div>
         <div className="flex gap-2">
           <Button
