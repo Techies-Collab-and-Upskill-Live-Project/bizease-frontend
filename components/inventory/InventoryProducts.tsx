@@ -7,6 +7,8 @@ import { ChevronLeft, ChevronRight, X } from 'lucide-react';
 import { inventoryItems } from '@/constants';
 
 import SearchProduct from './SearchProductDesk';
+import { useState } from 'react';
+import { Span } from 'next/dist/trace';
 
 export default function InventoryComponent({
   setCurrentPage,
@@ -17,6 +19,8 @@ export default function InventoryComponent({
   searchTerm,
   setSearchTerm,
 }: SearchProductProps) {
+  const [isOpen, setisOpen] = useState(false);
+
   const itemsPerPage = 3;
 
   const filteredProduct = inventoryItems
@@ -100,7 +104,7 @@ export default function InventoryComponent({
       </div>
 
       {/* ✅ Mobile View */}
-      <div className="md:hidden overflow-hidden bg-gray-100 max-md:bg-gray-100 flex flex-col gap-4">
+      <div className="md:hidden relative overflow-hidden bg-gray-100 max-md:bg-gray-100 flex flex-col gap-4">
         {currentProducts.map(
           ({ id, category, status, stockLevel, price, itemsInStock }) => (
             <Card key={id} className="p-4 bg-gray-100">
@@ -111,7 +115,7 @@ export default function InventoryComponent({
                   </h3>
                   <div className="text-gray-400">{category}</div>
                   <div className="bg-amber-400 text-[10px] text-gray-800 font-bold py-0.5 px-2 rounded-lg">
-                    <div className="flex items-center gap-1 ">
+                    <div className="flex items-center gap-1">
                       <div className="bg-red-600 h-1.5 w-1.5 rounded-full" />
                       {stockLevel} - {status}
                     </div>
@@ -120,13 +124,34 @@ export default function InventoryComponent({
                     ₦{price}
                   </div>
                 </div>
-                <Button className="bg-darkblue font-normal text-surface-100 hover:bg-lightblue  whitespace-nowrap">
+                <Button className="bg-darkblue font-normal text-surface-100 hover:bg-lightblue whitespace-nowrap">
                   Restock
                 </Button>
               </CardContent>
             </Card>
           ),
         )}
+
+        {/* Floating Action Buttons */}
+        <div className="fixed bottom-25 right-4 z-50 flex gap-2">
+          {isOpen && (
+            <Button
+              onClick={handleAddProduct}
+              className="bg-darkblue text-surface-200 hover:bg-lightblue font-normal text-[12px] shadow-lg"
+            >
+              {isOpen && <span>Add New Product</span>}
+            </Button>
+          )}
+          <Button
+            onClick={() => {
+              setisOpen((prev) => !prev);
+            }}
+            variant="outline"
+            className="bg-darkblue hover:text-surface-100 hover:bg-lightblue text-surface-100 shadow-lg"
+          >
+            x
+          </Button>
+        </div>
       </div>
 
       {/* ✅ Pagination Footer */}
