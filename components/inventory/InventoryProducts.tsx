@@ -1,14 +1,15 @@
 'use client';
 
+import { useState } from 'react';
+
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
+
 import { cn } from '@/lib/utils';
-import { ChevronLeft, ChevronRight, X } from 'lucide-react';
 import { inventoryItems } from '@/constants';
+import { ChevronLeft, ChevronRight, X } from 'lucide-react';
 
 import SearchProduct from './SearchProductDesk';
-import { useState } from 'react';
-import { Span } from 'next/dist/trace';
 
 export default function InventoryComponent({
   setCurrentPage,
@@ -53,7 +54,7 @@ export default function InventoryComponent({
         setCurrentPage={setCurrentPage}
         currentPage={currentPage}
       />
-      {/* ✅ Desktop View */}
+      {/*  Desktop View */}
       <div className="max-md:hidden grid grid-cols-1 gap-4">
         <div className="px-4 grid grid-cols-7 text-center bg-gray-100 p-4 text-surface-500 font-semibold rounded gap-4 text-sm">
           <span>Items in Stock</span>
@@ -154,7 +155,7 @@ export default function InventoryComponent({
         </div>
       </div>
 
-      {/* ✅ Pagination Footer */}
+      {/*  Pagination Footer */}
       <div className="flex items-center justify-between pt-2 mb-2 text-sm">
         <div className="text-muted-foreground">
           Showing {startIndex + 1} -{' '}
