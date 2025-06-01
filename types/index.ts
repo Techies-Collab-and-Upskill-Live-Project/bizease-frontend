@@ -1,7 +1,7 @@
 import { addInventoryformSchema } from '@/lib/validations/addnewInventory';
 import { z } from 'zod';
 
-declare interface UserProps {
+export interface UserProps {
   user: User;
 }
 declare type User = {
@@ -11,7 +11,7 @@ declare type User = {
   business: string;
 };
 
-declare interface CustomLogoProp {
+export interface CustomLogoProp {
   type:
     | 'Inventory'
     | 'Settings'
@@ -21,17 +21,7 @@ declare interface CustomLogoProp {
     | 'BizEase';
 }
 
-declare interface SearchProductProps {
-  setFilter: (filter: string) => void;
-  setSearchTerm: (term: string) => void;
-  filter: string;
-  handleAddProduct: () => void;
-  searchTerm: string;
-  currentPage: number;
-  setCurrentPage: (page: number | ((prev: number) => number)) => void;
-}
-
-declare interface SearchProductMobileProps {
+export interface SearchProductMobileProps {
   setFilter: (filter: string) => void;
   filter: string;
   handleAddProduct: () => void;
@@ -41,3 +31,13 @@ declare interface SearchProductMobileProps {
   currentPage: number;
 }
 export type AddInventoryFormData = z.infer<typeof addInventoryformSchema>;
+
+export interface SearchProductProps {
+  setCurrentPage: (page: number | ((prev: number) => number)) => void;
+  handleAddProduct: () => void;
+  currentPage: number;
+  filter: string;
+  setFilter: (filter: string) => void;
+  searchTerm: string;
+  setSearchTerm: (term: string) => void;
+}

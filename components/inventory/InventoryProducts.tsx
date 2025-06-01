@@ -10,6 +10,7 @@ import { inventoryItems } from '@/constants';
 import { ChevronLeft, ChevronRight, X } from 'lucide-react';
 
 import SearchProduct from './SearchProductDesk';
+import { SearchProductProps } from '@/types';
 
 export default function InventoryComponent({
   setCurrentPage,
