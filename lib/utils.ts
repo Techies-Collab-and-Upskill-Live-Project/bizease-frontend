@@ -13,3 +13,9 @@ export function formatCurrency(amount: number): string {
     maximumFractionDigits: 2,
   });
 }
+
+export const parseNumber = (value: string | undefined): number => {
+  if (!value) return 0;
+  const numeric = value.replace(/[^\d]/g, '');
+  return parseInt(numeric, 10) || 0;
+};

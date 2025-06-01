@@ -11,6 +11,7 @@ import { ChevronLeft, ChevronRight, X } from 'lucide-react';
 
 import SearchProduct from './SearchProductDesk';
 import { SearchProductProps } from '@/types';
+import Link from 'next/link';
 
 export default function InventoryComponent({
   setCurrentPage,
@@ -96,9 +97,11 @@ export default function InventoryComponent({
                   {status}
                 </div>
                 <div className="px-2 mr-4">{lastUpdated}</div>
-                <Button className="bg-darkblue text-surface-100 font-normal rounded-lg cursor-pointer hover:bg-lightblue">
-                  {actions}
-                </Button>
+                <Link href={`/inventory/edit-product/${id}`}>
+                  <Button className="bg-darkblue text-surface-100 font-normal rounded-lg cursor-pointer hover:bg-lightblue">
+                    {actions}
+                  </Button>
+                </Link>
               </CardContent>
             </Card>
           ),
@@ -126,9 +129,11 @@ export default function InventoryComponent({
                     ₦{price}
                   </div>
                 </div>
-                <Button className="bg-darkblue font-normal text-surface-100 hover:bg-lightblue whitespace-nowrap">
-                  Restock
-                </Button>
+                <Link href={`/inventory/edit-product/${id}`}>
+                  <Button className="bg-darkblue font-normal text-surface-100 hover:bg-lightblue whitespace-nowrap">
+                    Restock
+                  </Button>
+                </Link>
               </CardContent>
             </Card>
           ),
