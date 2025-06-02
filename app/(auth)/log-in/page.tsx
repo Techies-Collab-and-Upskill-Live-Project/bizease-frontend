@@ -20,7 +20,7 @@ const LogIn = () => {
   const [showPassword, setShowPassword] = useState(false);
 
   return (
-    <div className="min-h-screenbg-gray-100 ">
+    <div className="min-h-screen">
       {/* Top Section */}
       <div className="flex py-15 md:py-30 items-center justify-center gap-2 bg-gradient-to-b rounded-b-lg from-blue-800 to-blue-600 text-white">
         <img src="/icon/logo-2.png" alt="logo" className="w-10 h-10" />
@@ -123,7 +123,7 @@ const LogIn = () => {
 
             {/* Forgot Password */}
             <div className="w-full flex justify-center items-center">
-              <a href="#" className=" text-[13px] underline ">
+              <a href="/forgot-password" className=" text-[13px] underline ">
                 Forgot your password?
               </a>
             </div>
