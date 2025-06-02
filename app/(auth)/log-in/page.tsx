@@ -136,9 +136,9 @@ const LogIn = () => {
         <div className=" justify-center  flex flex-col gap-3 items-center ">
           <p className="text-gray-500 text-sm tracking-wide">-or login with-</p>
           <div className="flex gap-6 items-center justify-center">
-            <img src={"/google.png"} alt="" className="w-10 h-10" />
-            <img src={"/apple.png"} alt="" className="w-10 h-10" />
-            <img src={"/microsoft.png"} alt="" className="w-10 h-10" />
+            <img src={"/google.png"} alt="" className="w-10 h-10 cursor-pointer" />
+            <img src={"/apple.png"} alt="" className="w-10 h-10 cursor-pointer" />
+            <img src={"/microsoft.png"} alt="" className="w-10 h-10 cursor-pointer" />
           </div>
           <a href="/sign-up" className=" text-[13px] underline ">
             Don’t have an account? Sign up
