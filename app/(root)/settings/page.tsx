@@ -1,11 +1,12 @@
-import TopAvatar from '@/components/navigations/TopAvatar';
+import MobileNav from "@/components/navigations/MobileNav";
+import TopAvatar from "@/components/navigations/TopAvatar";
 
 const PersonalSettings = () => {
   return (
-    <section className="h-screen w-full">
-      <TopAvatar type="Settings" />
+    <div className="w-full bg-yellow-200">
+     
       <h1>This is Main page for Settings</h1>
-    </section>
+    </div>
   );
 };
 
