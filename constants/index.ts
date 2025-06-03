@@ -219,6 +219,36 @@ export const stockTurnoer = [
   },
 ];
 
+export const reportSummary = [
+  {
+    id: 1,
+    Product: 'Nike Sneakers',
+    revenue: 20000,
+    stockStatus: 'In Stock',
+    productSold: 120,
+  },
+  {
+    id: 2,
+    Product: 'Hand Bag',
+    revenue: 40000,
+    stockStatus: 'Low Stock',
+    productSold: 400,
+  },
+  {
+    id: 3,
+    Product: 'Balenciaga',
+    revenue: 50000,
+    stockStatus: 'In Stock',
+    productSold: 450,
+  },
+  {
+    id: 4,
+    Product: 'Addidas Sneakers',
+    revenue: 15000,
+    stockStatus: 'In Stock',
+    productSold: 100,
+  },
+];
 export const paymentStatus = [
   {
     id: 1,

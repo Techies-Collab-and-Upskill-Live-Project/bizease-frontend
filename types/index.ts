@@ -56,3 +56,11 @@ export type EditProductProps = {
     description?: string;
   };
 };
+
+export type ReportItem = {
+  id: number;
+  Product: string;
+  revenue: number;
+  stockStatus: 'In Stock' | 'Low Stock' | 'Out of Stock';
+  productSold: number;
+};
