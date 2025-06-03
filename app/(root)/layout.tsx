@@ -10,7 +10,7 @@ export default function RootLayout({
   return (
     <div className="min-h-screen flex flex-col lg:flex-row ">
       <SideNavBar />
-      <div className=" flex-1 bg-green-300">{children}</div>
+      <div className=" flex-1">{children}</div>
       <MobileNav />
     </div>
   );

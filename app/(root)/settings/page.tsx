@@ -1,11 +1,17 @@
-import MobileNav from "@/components/navigations/MobileNav";
 import TopAvatar from "@/components/navigations/TopAvatar";
+import { Options } from "@/components/settings/m-options";
+import Logout from "@/components/settings/logout";
 
 const PersonalSettings = () => {
   return (
-    <div className="w-full bg-yellow-200">
-     
-      <h1>This is Main page for Settings</h1>
+    <div className="w-full">
+      <TopAvatar type={"Settings"} />
+
+      {/* Settings controls */}
+      <div className="p-6 flex items-center justify-between md:p-10">
+        <Logout />
+        <Options />
+      </div>
     </div>
   );
 };
