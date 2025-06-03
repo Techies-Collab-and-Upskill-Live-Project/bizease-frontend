@@ -273,9 +273,9 @@ const SignUp = () => {
             -or Signup with-
           </p>
           <div className="flex gap-6 items-center justify-center">
-            <img src={"/google.png"} alt="" className="w-10 h-10" />
-            <img src={"/apple.png"} alt="" className="w-10 h-10" />
-            <img src={"/microsoft.png"} alt="" className="w-10 h-10" />
+            <img src={"/google.png"} alt="" className="w-10 h-10 cursor-pointer" />
+            <img src={"/apple.png"} alt="" className="w-10 h-10 cursor-pointer" />
+            <img src={"/microsoft.png"} alt="" className="w-10 h-10 cursor-pointer" />
           </div>
           <a href="/log-in" className=" text-[13px] underline ">
             Have an account? Sign in
