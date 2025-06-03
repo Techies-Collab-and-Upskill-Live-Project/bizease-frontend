@@ -12,7 +12,7 @@ declare type User = {
   business: string;
 };
 
-export interface CustomLogoProp {
+export type CustomLogoProp = {
   type:
     | 'Inventory'
     | 'Settings'
@@ -20,7 +20,7 @@ export interface CustomLogoProp {
     | 'Orders'
     | 'Reports'
     | 'BizEase';
-}
+};
 
 export interface SearchProductMobileProps {
   setFilter: (filter: string) => void;

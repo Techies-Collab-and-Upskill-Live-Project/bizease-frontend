@@ -11,7 +11,7 @@ export const navItems = [
     id: 5,
     name: 'Report',
     iconPath: '/icon/report.svg',
-    route: '/report-statistics',
+    route: '/report-analytics',
   },
   {
     id: 6,

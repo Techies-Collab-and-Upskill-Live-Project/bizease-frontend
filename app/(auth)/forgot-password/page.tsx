@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import React, { useState } from "react";
-import { Button } from "@/components/ui/button";
+import React, { useState } from 'react';
+import { Button } from '@/components/ui/button';
 import {
   Form,
   FormControl,
@@ -9,11 +9,11 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Mail } from "lucide-react";
-import useForgotPassoword from "@/hooks/useForgotPassword";
-import LoadingSpinner from "@/components/spinner";
+} from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import { Mail } from 'lucide-react';
+import useForgotPassoword from '@/hooks/useForgotPassword';
+import LoadingSpinner from '@/components/spinner';
 
 const SignUp = () => {
   const { resetSchema, onSubmit } = useForgotPassoword();
@@ -68,7 +68,7 @@ const SignUp = () => {
             {/* Submit */}
             <Button
               type="submit"
-              className="w-full bg-[#06005B] hover:bg-blue-900 cursor-pointer py-3 md:py-6 text-xs md:text-sm font-semibold tracking-wide"
+              className="w-full bg-darkblue hover:bg-lightblue cursor-pointer py-3 md:py-6 text-xs md:text-sm font-semibold tracking-wide"
             >
               Send Link
             </Button>
