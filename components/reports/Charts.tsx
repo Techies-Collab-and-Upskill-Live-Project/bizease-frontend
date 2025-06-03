@@ -93,9 +93,9 @@ const Charts = () => {
     <div>
       <div className=" w-full mx-auto px-7 mt-6">
         <h2 className="text-base font-semibold mb-4">Charts</h2>
-        <div className="flex bg-surface-100  max-w-6xl mx-auto justify-center items-center gap-4 px-8">
+        <div className="flex bg-surface-100  max-w-6xl mx-auto justify-center items-center gap-4 px-6">
           <CustomLegend label={'Order'} />
-          <div className="flex-1 w-[100%] max-md:max-w-lg   bg-surface-100">
+          <div className="flex-1 w-[100%] max-md:max-w-lg pr-8 py-6  bg-surface-100">
             <Line data={lineChartData} options={lineOptions} />
             <CustomLegend label={'Time'} />
           </div>
@@ -103,7 +103,7 @@ const Charts = () => {
       </div>
 
       <div className="w-full mx-auto px-8 mt-4">
-        <div className="flex flex-col w-[100%] max-md:max-w-lg mx-auto justify-center max-w-6xl px-5 bg-surface-100">
+        <div className="flex flex-col w-[100%] max-md:max-w-lg  py-6 mx-auto justify-center max-w-6xl px-5 bg-surface-100">
           <Bar data={barChartData} options={lineOptions} />
           <CustomLegend label={'Product'} />
         </div>

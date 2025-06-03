@@ -1,8 +1,8 @@
-import TopAvatar from "@/components/navigations/TopAvatar";
-import React from "react";
-import StatCard from "@/components/ui/dashboard-cards/stat-card";
-import OrderCard from "@/components/ui/dashboard-cards/order-card";
-import StockCard from "@/components/ui/dashboard-cards/stock-card";
+import TopAvatar from '@/components/navigations/TopAvatar';
+import React from 'react';
+import StatCard from '@/components/ui/dashboard-cards/stat-card';
+import OrderCard from '@/components/ui/dashboard-cards/order-card';
+import StockCard from '@/components/ui/dashboard-cards/stock-card';
 
 const DashboardPage = () => (
   <div className="h-screen w-full">
@@ -23,11 +23,7 @@ const DashboardPage = () => (
         </div>
       </div>
       <div className="flex flex-col md:flex-row gap-4 mb-6">
-        <StatCard
-          title="Revenue"
-          value="#100,000"
-          highlight="up"
-          />
+        <StatCard title="Revenue" value="#100,000" highlight="up" />
         <StatCard title="Top Product" value="Nike Sneakers" />
       </div>
       <div className="mb-6">
@@ -55,8 +51,8 @@ const DashboardPage = () => (
               category="Accessories"
               price="#3,500"
               stock={{
-                value: "5 units - Low Stock",
-                status: "low",
+                value: '5 units - Low Stock',
+                status: 'low',
               }}
             />
           ))}

@@ -8,7 +8,7 @@ const CustomLegend = ({ label }: LabelProps) => (
       className={`flex  items-center text-[12px] font-bold  ${
         label === 'Order'
           ? 'rotate-[-90deg] origin-ceter'
-          : 'my-3 text-[12px] font-bold '
+          : 'mt-4 text-[12px] font-bold '
       }`}
     >
       <span>{label}</span>
