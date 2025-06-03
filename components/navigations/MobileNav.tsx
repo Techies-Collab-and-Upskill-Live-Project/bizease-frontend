@@ -13,7 +13,7 @@ const MobileNav = () => {
     pathname === route || pathname.startsWith(route + "/");
 
   return (
-    <div className=" bg-darkblue rounded-t-sm  py-2 md:py-3 lg:hidden">
+    <div className=" bg-darkblue rounded-t-sm  py-2 md:py-3 lg:hidden sticky bottom-0">
       <nav className=" flex justify-around items-center w-full">
         {navItems.map(({ name, route, id, iconPath }) => (
           <Link
