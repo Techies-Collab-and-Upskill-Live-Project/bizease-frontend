@@ -1,3 +1,5 @@
+'use client';
+
 import { reportSummary } from '@/constants';
 import React from 'react';
 import { Bar, Line } from 'react-chartjs-2';

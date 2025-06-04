@@ -113,7 +113,7 @@ export const inventoryItems = [
   },
   {
     id: 4,
-    itemsInStock: 'Balencial Top',
+    itemsInStock: 'Vodi Top',
     category: 'Wears',
     stockLevel: '4 Units',
     price: '2,500',
@@ -236,7 +236,7 @@ export const reportSummary = [
   },
   {
     id: 3,
-    Product: 'Balenciaga',
+    Product: 'Vodi',
     revenue: 50000,
     stockStatus: 'In Stock',
     productSold: 450,
