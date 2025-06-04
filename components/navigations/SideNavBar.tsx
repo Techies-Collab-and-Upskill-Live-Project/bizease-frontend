@@ -17,7 +17,7 @@ const SideNavbar = () => {
     pathname === route || pathname.startsWith(route + '/');
 
   return (
-    <section className="sidebar">
+    <section className="sidebar hidden lg:block ">
       <nav className="flex flex-col gap-4">
         <CustomLogo type="BizEase" />
         <SidebarUser />

@@ -1,11 +1,18 @@
-import TopAvatar from '@/components/navigations/TopAvatar';
+import TopAvatar from "@/components/navigations/TopAvatar";
+import { Options } from "@/components/settings/m-options";
+import Logout from "@/components/settings/logout";
 
 const PersonalSettings = () => {
   return (
-    <section className="h-screen w-full">
-      <TopAvatar type="Settings" />
-      <h1>This is Main page for Settings</h1>
-    </section>
+    <div className="w-full">
+      <TopAvatar type={"Settings"} />
+
+      {/* Settings controls */}
+      <div className="p-6 flex items-center justify-between md:p-10">
+        <Logout />
+        <Options />
+      </div>
+    </div>
   );
 };
 
