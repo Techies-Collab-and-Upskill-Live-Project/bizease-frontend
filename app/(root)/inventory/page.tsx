@@ -4,6 +4,7 @@ import InventoryComponent from '@/components/inventory/InventoryProducts';
 import SearchProduct from '@/components/inventory/SearchProductMobile';
 import TotalInventory from '@/components/inventory/TotalInventory';
 import TopAvatar from '@/components/navigations/TopAvatar';
+
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 

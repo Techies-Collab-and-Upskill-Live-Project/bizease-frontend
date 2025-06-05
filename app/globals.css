@@ -7,6 +7,10 @@
   /* --color-darkblue: #002966; */
   --color-lightblue: #0052cc;
   --color-darkblue: #06005b;
+  --color-warning-bg: #fff9e5;
+  --color-warning: #ffab00;
+  --color-success: #36b37e;
+  --color-success-bg: #ebfff6;
   --color-stateblue: #0060f1;
   --color-blue-100: #d5dbff;
   --color-blue-200: #a1b1ff;

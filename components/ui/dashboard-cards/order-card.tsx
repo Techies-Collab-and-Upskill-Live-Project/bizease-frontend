@@ -1,4 +1,5 @@
-import React from "react";
+import React from 'react';
+import { Button } from '../button';
 
 interface OrderCardProps {
   orderId: string;
@@ -27,9 +28,9 @@ const OrderCard: React.FC<OrderCardProps> = ({
       <span className="text-xs text-yellow-600 bg-yellow-100 px-2 py-1 rounded">
         {status}
       </span>
-      <button className="ml-auto bg-[#0A0A4A] text-white px-3 py-1 rounded text-xs">
+      <Button className="ml-auto bg-darkblue text-white px-3 py-1 rounded text-xs">
         Fulfill
-      </button>
+      </Button>
     </div>
   </div>
 );

@@ -2,7 +2,7 @@ import { user } from '@/constants';
 import React from 'react';
 
 const SidebarUser = () => {
-  const { id, businessPlan, name } = user;
+  const { businessPlan, name } = user;
   return (
     <div className="flex items-center justify-start gap-4 bg-gradient p-4 rounded w-[180px] mt-8">
       <div className="bg-surface-100 rounded-full flex justify-center items-center w-10 h-10">
