@@ -1,6 +1,6 @@
-import Footer from "@/components/Footer";
-import MobileNav from "@/components/navigations/MobileNav";
-import SideNavBar from "@/components/navigations/SideNavBar";
+import Footer from '@/components/Footer';
+import MobileNav from '@/components/navigations/MobileNav';
+import SideNavBar from '@/components/navigations/SideNavBar';
 
 export default function RootLayout({
   children,
