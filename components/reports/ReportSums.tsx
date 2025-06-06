@@ -22,50 +22,70 @@ const ReportSums = () => {
 
   return (
     <div className="flex flex-col w-full mt-3 gap-2">
-      <div className="flex w-full gap-4 px-6 h-22">
+      <div className="flex w-full gap-4 px-6 h-20">
         <div className="flex flex-col px-3 w-full justify-start bg-gradient py-3 rounded-sm">
-          <p className="text-surface-200 text-[10px]">Total Orders</p>
-          <p className="font-semibold text-surface-200 ">
-            {totalOrder} {totalOrder > 1 ? 'Units' : 'Unit'}
-          </p>
-          <div className="flex gap-2 mt-3">
-            <span className="text-red-600 font-bold">
-              <Image src="/icon/red.svg" alt="" width={14} height={14} />
-            </span>
-            <span className="text-green-500 font-bold">
-              <Image src="/icon/green.svg" alt="" width={14} height={14} />
-            </span>
-          </div>
-        </div>
-        <div className="flex flex-col px-3 w-full justify-start bg-gradient py-3 rounded-sm">
-          <p className="text-surface-200 text-[10px]">Revenue</p>
+          <p className="text-surface-200 text-[10px]">Total Revenue</p>
           <p className="font-semibold text-surface-200 ">
             <span> {formatCurrency(totalRevenue)} </span>
           </p>
-          <div className="flex gap-2 mt-3">
-            <span className="text-red-600 font-bold">
-              <Image src="/icon/red.svg" alt="" width={14} height={14} />
-            </span>
-            <span className="text-green-500 font-bold">
-              <Image src="/icon/green.svg" alt="" width={14} height={14} />
-            </span>
+          <div className="flex gap-1.5 mt-2">
+            <Image
+              src={'./icon/green.svg'}
+              width={6}
+              height={6}
+              alt="highlight-up"
+            />
+            <p className="text-success text-[10px]">6.93%</p>
           </div>
         </div>
+
+        <div className="flex flex-col px-3 w-full justify-start bg-gradient py-3 rounded-sm">
+          <p className="text-surface-200 text-[10px]">Total Orders</p>
+          <p className="font-semibold text-surface-200 ">{totalOrder}</p>
+        </div>
       </div>
-      <div className="flex w-full gap-4 px-6 h-22">
-        <div className="flex flex-col px-3 w-full justify-start bg-gradient py-3 space-y-1 rounded-sm">
-          <p className="text-surface-200 text-[10px]">Low Stock Items</p>
+
+      <div className="flex w-full gap-4 px-6 h-20">
+        <div className="flex flex-col px-3 w-full justify-start bg-gradient py-1 space-y-1 rounded-sm">
+          <p className="text-surface-200 text-[10px]">Total Stock Value</p>
           <p className="font-semibold text-surface-200 ">
-            <span>
-              {lowStockCount} {lowStockCount > 1 ? 'Items' : 'Item'}
-            </span>
+            <span>{formatCurrency(8000000)}</span>
+          </p>
+          <div className="flex gap-1.5 mt-2">
+            <Image
+              src={'./icon/green.svg'}
+              width={6}
+              height={6}
+              alt="highlight-up"
+            />
+            <p className="text-success text-[10px]">30%</p>
+          </div>
+        </div>
+        <div className="flex flex-col px-3 w-full justify-start bg-gradient py-1 space-y-1 rounded-sm">
+          <p className="text-surface-200 text-[10px]">Total Products</p>
+          <p className="font-semibold text-surface-200 ">500</p>
+        </div>
+      </div>
+
+      <div className="flex w-full gap-4 px-6 h-20 ">
+        <div className="flex-1/2 flex-col bg-gradient px-4 py-2 rounded-sm">
+          <p className="text-surface-200 text-[10px]">Low Stock Items</p>
+          <p className="text-surface-200 text-sm font-semibold">
+            {lowStockCount}
           </p>
         </div>
-        <div className="flex flex-col px-3 w-full justify-start bg-gradient py-3 space-y-1 rounded-sm">
-          <p className="text-surface-200 text-[10px]">Top Product</p>
-          <p className="font-semibold text-surface-200 ">
-            <span>{topSold.productSold}</span>
+
+        <div className="flex-1/2 flex-col bg-gradient px-4 py-2 rounded-sm">
+          <p className="text-surface-200 text-[10px]">Top Selling Product</p>
+          <p className="text-surface-200 text-sm font-semibold">
+            <span>{topSold.Product}</span>
           </p>
+        </div>
+      </div>
+      <div className="flex w-1/2 gap-4 pl-6 pr-2 h-20">
+        <div className="flex-1/2 flex-col bg-gradient px-4 py-2 rounded-sm">
+          <p className="text-surface-200 text-[10px]">Pendind Orders</p>
+          <p className="text-surface-200 text-sm font-semibold">130</p>
         </div>
       </div>
     </div>

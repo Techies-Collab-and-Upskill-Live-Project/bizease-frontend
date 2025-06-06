@@ -32,7 +32,7 @@ const LowStockItems = () => {
               <div className="flex justify-between items-center text-sm">
                 <span>{price}</span>
                 <Link href={`./inventory/edit-product/${id}`}>
-                  <Button className="bg-darkblue font-normal text-surface-300 hover:bg-lightblue px-2">
+                  <Button className="bg-darkblue font-normal text-surface-300 hover:bg-lightblue px-2 cursor-pointer">
                     Restock
                   </Button>
                 </Link>
