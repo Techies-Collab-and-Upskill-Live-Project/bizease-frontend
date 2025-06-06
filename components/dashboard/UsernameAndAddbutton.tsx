@@ -1,13 +1,5 @@
 'use client';
 
-import {
-  Select,
-  SelectTrigger,
-  SelectValue,
-  SelectContent,
-  SelectItem,
-} from '@/components/ui/select';
-
 import React from 'react';
 import { Button } from '../ui/button';
 import { user } from '@/constants';
@@ -20,7 +12,7 @@ const UsernameAndButtons = () => {
         <div className="text-sm text-left font-semibold mb-2">{user.name}</div>
       </div>
 
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-2 max-md:hidden">
         <Button
           variant={'ghost'}
           onClick={() => {}}

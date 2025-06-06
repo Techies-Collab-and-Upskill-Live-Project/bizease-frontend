@@ -1,11 +1,13 @@
-import TopAvatar from '@/components/navigations/TopAvatar';
 import React from 'react';
 import Image from 'next/image';
-import { inventoryItems, user } from '@/constants';
+
+import TopAvatar from '@/components/navigations/TopAvatar';
+import { inventoryItems } from '@/constants';
 import PendingOrders from '@/components/dashboard/PendingOrder';
 import LowStockItems from '@/components/dashboard/LowStockItems';
 import { formatCurrency } from '@/lib/utils';
 import UsernameAndButtons from '@/components/dashboard/UsernameAndAddbutton';
+import MobileButtons from '@/components/dashboard/MobileButton';
 
 const DashboardPage = () => {
   const parseNumber = (str: string) =>
@@ -31,9 +33,13 @@ const DashboardPage = () => {
   );
 
   return (
-    <section className="min-h-screen h-fit w-full bg-gray-100 overflow-auto">
+    <section className="relative min-h-screen h-fit w-full bg-gray-100">
       <TopAvatar type="Dashboard" />
-      <div className="py-3 px-8">
+      <div className="fixed bottom-25 right-6 z-50 md:hidden">
+        <MobileButtons />
+      </div>
+
+      <div className=" py-3 px-8  overflow-auto">
         <UsernameAndButtons />
         <div className="flex gap-4 mb-6">
           <div className="flex-1/2 flex-col bg-gradient px-4 py-2 rounded-sm">
@@ -58,6 +64,7 @@ const DashboardPage = () => {
             </p>
           </div>
         </div>
+
         <div className="mb-6">
           <div className="space-y-5">
             <PendingOrders />
