@@ -32,9 +32,10 @@ const OrdersPage = () => {
   };
 
   return (
-    <div className="h-screen w-full">
+    <div className=" w-full ">
       <TopAvatar type="Orders" />
-      <section className="py-3 px-6">
+
+      <section className="py-3 px-6 ">
         <h1 className="text-2xl font-bold mb-6">Orders</h1>
 
         {/* Summary Cards */}
