@@ -1,13 +1,16 @@
-import React from "react";
-import Image from "next/image";
+import React from 'react';
+import Image from 'next/image';
+import { Button } from '../button';
+import Link from 'next/link';
 
 interface StockCardProps {
   name: string;
   category: string;
   price: string;
+  id: string;
   stock: {
     value: string;
-    status: "low" | "normal" | "high";
+    status: 'low' | 'normal' | 'high';
   };
 }
 
@@ -16,17 +19,18 @@ const StockCard: React.FC<StockCardProps> = ({
   category,
   price,
   stock,
+  id,
 }) => {
   const getStatusColor = (status: string) => {
     switch (status) {
-      case "low":
-        return "bg-orange-500";
-      case "normal":
-        return "bg-green-500";
-      case "high":
-        return "bg-blue-500";
+      case 'low':
+        return 'bg-orange-500';
+      case 'normal':
+        return 'bg-green-500';
+      case 'high':
+        return 'bg-blue-500';
       default:
-        return "bg-orange-500";
+        return 'bg-orange-500';
     }
   };
 
@@ -42,9 +46,11 @@ const StockCard: React.FC<StockCardProps> = ({
       </div>
       <div className="mt-2 flex justify-between items-center">
         <span className="text-[rgba(33, 33, 33, 1)">{price}</span>
-        <button className="bg-[#0A0A4A] text-white px-3 py-1 rounded text-xs">
-          Restock
-        </button>
+        <Link href={`/inventory/edit-product/${id}`}>
+          <Button className="bg-[#0A0A4A] text-white px-3 py-1 rounded text-xs">
+            Restock
+          </Button>
+        </Link>
       </div>
     </div>
   );

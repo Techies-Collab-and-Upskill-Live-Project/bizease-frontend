@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import React, { useState } from "react";
-import { Button } from "@/components/ui/button";
+import React, { useState } from 'react';
+import { Button } from '@/components/ui/button';
 import {
   Form,
   FormControl,
@@ -9,11 +9,11 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Checkbox } from "@/components/ui/checkbox";
-import useSignUp from "@/hooks/useSignUp";
-import { Eye, EyeOff, Mail, Lock } from "lucide-react";
+} from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import { Checkbox } from '@/components/ui/checkbox';
+import useSignUp from '@/hooks/useSignUp';
+import { Eye, EyeOff, Mail, Lock } from 'lucide-react';
 
 const SignUp = () => {
   const { signUpSchema, onSubmit } = useSignUp();
@@ -123,13 +123,12 @@ const SignUp = () => {
                   <FormControl>
                     <div className="relative">
                       <Input
-                        type={showPassword ? "text" : "password"}
+                        type={showPassword ? 'text' : 'password'}
                         placeholder="*********"
                         className=" pr-10 text-sm"
                         {...field}
                       />
-                      <button
-                        type="button"
+                      <Button
                         onClick={() => setShowPassword(!showPassword)}
                         className="absolute right-3 top-1/4 transform -translate-y-1/2focus:outline-none"
                       >
@@ -138,7 +137,7 @@ const SignUp = () => {
                         ) : (
                           <Eye size={18} className="cursor-pointer" />
                         )}
-                      </button>
+                      </Button>
                     </div>
                   </FormControl>
                   <FormMessage className="text-xs tracking-wide" />
@@ -273,9 +272,21 @@ const SignUp = () => {
             -or Signup with-
           </p>
           <div className="flex gap-6 items-center justify-center">
-            <img src={"/google.png"} alt="" className="w-10 h-10 cursor-pointer" />
-            <img src={"/apple.png"} alt="" className="w-10 h-10 cursor-pointer" />
-            <img src={"/microsoft.png"} alt="" className="w-10 h-10 cursor-pointer" />
+            <img
+              src={'/google.png'}
+              alt=""
+              className="w-10 h-10 cursor-pointer"
+            />
+            <img
+              src={'/apple.png'}
+              alt=""
+              className="w-10 h-10 cursor-pointer"
+            />
+            <img
+              src={'/microsoft.png'}
+              alt=""
+              className="w-10 h-10 cursor-pointer"
+            />
           </div>
           <a href="/log-in" className=" text-[13px] underline ">
             Have an account? Sign in

@@ -1,65 +1,79 @@
-import TopAvatar from '@/components/navigations/TopAvatar';
 import React from 'react';
-import StatCard from '@/components/ui/dashboard-cards/stat-card';
-import OrderCard from '@/components/ui/dashboard-cards/order-card';
-import StockCard from '@/components/ui/dashboard-cards/stock-card';
+import Image from 'next/image';
 
-const DashboardPage = () => (
-  <div className="h-screen w-full">
-    <TopAvatar type="Dashboard" />
-    <section className="py-3 px-6">
-      <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-        <div className="mb-4 md:mb-0">
-          <h1 className="text-2xl font-bold">Welcome</h1>
-          <div className="text-lg font-semibold">Jessie's Tees</div>
-        </div>
-        <div className="flex flex-col md:flex-row gap-2 w-full md:w-auto">
-          <button className="px-2 py-1 border border-blue-300 rounded w-full md:w-auto">
-            Add New Order
-          </button>
-          <button className="px-2 py-1 border border-blue-300 rounded w-full md:w-auto">
-            Add New Product
-          </button>
-        </div>
+import TopAvatar from '@/components/navigations/TopAvatar';
+import { inventoryItems } from '@/constants';
+import PendingOrders from '@/components/dashboard/PendingOrder';
+import LowStockItems from '@/components/dashboard/LowStockItems';
+import { formatCurrency } from '@/lib/utils';
+import UsernameAndButtons from '@/components/dashboard/UsernameAndAddbutton';
+import MobileButtons from '@/components/dashboard/MobileButton';
+
+const DashboardPage = () => {
+  const parseNumber = (str: string) =>
+    parseInt(str.replace(/,/g, '').replace(/\D/g, ''));
+
+  const revenueData = inventoryItems.map((item) => {
+    const units = parseNumber(item.stockLevel);
+    const price = parseNumber(item.price);
+    const revenue = units * price;
+
+    return {
+      ...item,
+      units,
+      price,
+      revenue,
+    };
+  });
+
+  const totalRevenue = revenueData.reduce((sum, item) => sum + item.revenue, 0);
+
+  const topSellingProduct = revenueData.reduce((top, item) =>
+    item.revenue > top.revenue ? item : top,
+  );
+
+  return (
+    <section className="relative min-h-screen h-fit w-full bg-gray-100">
+      <TopAvatar type="Dashboard" />
+      <div className="fixed bottom-25 right-6 z-50 md:hidden">
+        <MobileButtons />
       </div>
-      <div className="flex flex-col md:flex-row gap-4 mb-6">
-        <StatCard title="Revenue" value="#100,000" highlight="up" />
-        <StatCard title="Top Product" value="Nike Sneakers" />
-      </div>
-      <div className="mb-6">
-        <h2 className="text-lg font-bold mb-2">Pending Orders</h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {[1, 2, 3, 4, 5, 6].map((_, i) => (
-            <OrderCard
-              key={i}
-              orderId="123"
-              customer="Frank Edward"
-              amount="#5,000"
-              date="April 25, 2025"
-              status="Pending"
-            />
-          ))}
+
+      <div className=" py-3 px-8  overflow-auto">
+        <UsernameAndButtons />
+        <div className="flex gap-4 mb-6">
+          <div className="flex-1/2 flex-col bg-gradient px-4 py-2 rounded-sm">
+            <p className="text-surface-200 text-[10px]">Revenue</p>
+            <p className="text-surface-200 text-sm font-semibold">
+              {formatCurrency(totalRevenue)}
+            </p>
+            <div className="flex gap-1.5 mt-2">
+              <Image
+                src={'./icon/green.svg'}
+                width={6}
+                height={6}
+                alt="highlight-up"
+              />
+              <p className="text-success text-[10px]">6.93%</p>
+            </div>
+          </div>
+          <div className="flex-1/2 bg-gradient px-4 py-2 rounded-sm">
+            <p className="text-surface-200 text-[10px]">Top Product</p>
+            <p className="text-surface-200 text-sm">
+              {topSellingProduct.itemsInStock}
+            </p>
+          </div>
         </div>
-      </div>
-      <div>
-        <h2 className="text-lg font-bold mb-2">Low Stock Items</h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {[1, 2, 3, 4, 5, 6].map((_, i) => (
-            <StockCard
-              key={i}
-              name="Necklace"
-              category="Accessories"
-              price="#3,500"
-              stock={{
-                value: '5 units - Low Stock',
-                status: 'low',
-              }}
-            />
-          ))}
+
+        <div className="mb-6">
+          <div className="space-y-5">
+            <PendingOrders />
+            <LowStockItems />
+          </div>
         </div>
       </div>
     </section>
-  </div>
-);
+  );
+};
 
 export default DashboardPage;

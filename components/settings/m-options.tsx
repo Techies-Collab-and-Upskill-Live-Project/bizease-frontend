@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import * as React from "react";
 import { Button } from "@/components/ui/button";
@@ -8,8 +8,8 @@ import {
   DropdownMenuRadioGroup,
   DropdownMenuRadioItem,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { ChevronDown } from "lucide-react";
+} from '@/components/ui/dropdown-menu';
+import { ChevronDown } from 'lucide-react';
 
 type SettingType = "Personal Info" | "Business Info" | "Preferences";
 

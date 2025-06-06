@@ -24,7 +24,7 @@ export default function InventoryComponent({
 }: SearchProductProps) {
   const [isOpen, setisOpen] = useState(false);
 
-  const itemsPerPage = 3;
+  const itemsPerPage = 6;
 
   const filteredProduct = inventoryItems
     .filter((item) =>
@@ -58,7 +58,7 @@ export default function InventoryComponent({
       />
       {/*  Desktop View */}
       <div className="max-md:hidden grid grid-cols-1 gap-4">
-        <div className="px-4 grid grid-cols-7 text-center bg-gray-100 p-4 text-surface-500 font-semibold rounded gap-4 text-sm">
+        <div className="px-4 grid grid-cols-7 text-center bg-gray-100 py-3 text-surface-500 font-semibold rounded gap-4 text-sm">
           <span>Items in Stock</span>
           <span>Category</span>
           <span>Stock</span>
@@ -78,9 +78,10 @@ export default function InventoryComponent({
             actions,
             itemsInStock,
           }) => (
-            <Card key={id} className="p-5">
-              <CardContent className=" px-4 text-center grid grid-cols-7 gap-2 text-[11px] text-surface-600">
-                <div className="flex items-center text-left">
+            <Card key={id} className="p-2 border-0 shadow-accent">
+              <CardContent className=" px-0 py-0 text-center grid grid-cols-7 gap-2 text-[12px] text-surface-600">
+                <div className="flex w-fit items-center gap-2 text-left">
+                  <div className="max-h-6 h-6 max-w-6 w-6 flex-1/2 bg-gray-100" />
                   {itemsInStock}
                 </div>
                 <div className="flex-center">{category}</div>
@@ -89,16 +90,18 @@ export default function InventoryComponent({
                 <div
                   className={`flex flex-center text-center ${cn(
                     status === 'Low Stock'
-                      ? 'bg-yellow-500 font-semibold'
-                      : 'bg-green-400 font-semibold',
-                    'px-2 py-2  rounded-2xl',
+                      ? 'bg-warning font-semibold'
+                      : 'bg-success font-semibold',
+                    'px-0 py-0  rounded-2xl',
                   )}`}
                 >
                   {status}
                 </div>
-                <div className="px-2 mr-4">{lastUpdated}</div>
+                <div className="flex-center px-2 ml-2 text-center">
+                  {lastUpdated}
+                </div>
                 <Link href={`/inventory/edit-product/${id}`}>
-                  <Button className="bg-darkblue text-surface-100 font-normal rounded-lg cursor-pointer hover:bg-lightblue">
+                  <Button className="w-full bg-darkblue text-surface-200 font-normal rounded-lg cursor-pointer hover:bg-lightblue py-4">
                     {actions}
                   </Button>
                 </Link>
@@ -119,7 +122,7 @@ export default function InventoryComponent({
                     {itemsInStock}
                   </h3>
                   <div className="text-gray-400">{category}</div>
-                  <div className="bg-amber-400 text-[10px] text-gray-800 font-bold py-0.5 px-2 rounded-lg">
+                  <div className="bg-warning text-[10px] text-gray-800 font-bold py-0.5 px-2 rounded-lg">
                     <div className="flex items-center gap-1">
                       <div className="bg-red-600 h-1.5 w-1.5 rounded-full" />
                       {stockLevel} - {status}

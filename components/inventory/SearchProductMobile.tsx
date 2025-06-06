@@ -27,22 +27,22 @@ const SearchProduct = ({
         <Search className="absolute left-2 top-1/2 -translate-y-1/2 text-muted-foreground w-4 h-4" />
         <Input
           type="text"
-          placeholder="Search inventory"
+          placeholder="Search inventory..."
           value={searchTerm}
           onChange={(e) => {
             setSearchTerm(e.target.value);
             setCurrentPage(1);
           }}
-          className="pl-8 border border-lightblue text-xs md:text-sm font-semibold"
+          className="pl-8 border placeholder:italic text-xs md:text-sm font-semibold border-lightblue"
         />
       </div>
 
       <div className="flex items-center gap-4 mt-2">
         <Select onValueChange={(val) => setFilter(val)} defaultValue="all">
-          <SelectTrigger className="w-[160px] text-xs md:text-sm font-semibold">
+          <SelectTrigger className="w-[160px] border-1 border-lightblue text-xs md:text-sm font-semibold">
             <SelectValue placeholder="Filter Products" />
           </SelectTrigger>
-          <SelectContent>
+          <SelectContent className="border-1 border-lightblue">
             <SelectItem value="all">All Products</SelectItem>
             <SelectItem value="low">Low Stock</SelectItem>
             <SelectItem value="in">In Stock</SelectItem>
