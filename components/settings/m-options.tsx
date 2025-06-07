@@ -1,51 +1,58 @@
 'use client';
 
-import * as React from 'react';
-
-import { Button } from '@/components/ui/button';
+import * as React from "react";
+import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuLabel,
   DropdownMenuRadioGroup,
   DropdownMenuRadioItem,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { ChevronDown } from 'lucide-react';
 
-export function Options() {
-  const [selectedOption, setSelectedOption] = React.useState('Personal Info');
+type SettingType = "Personal Info" | "Business Info" | "Preferences";
 
+type OptionsProps = {
+  settingType?: SettingType;
+  setSettingType?: React.Dispatch<React.SetStateAction<SettingType>>;
+};
+
+export function Options({
+  settingType = "Personal Info",
+  setSettingType,
+}: OptionsProps) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button
           variant="outline"
-          className="py-1 text-sm font-semibold border-[#06005B] lg:hidden"
+          className="py-1 text-xs font-semibold border-[#06005B] lg:hidden"
         >
-          <span className="text-gray-700">{selectedOption} </span>
-          <ChevronDown />
+          <span className="text-gray-700">{settingType}</span>
+          <ChevronDown className="ml-1 h-4 w-4" />
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="w-34">
+      <DropdownMenuContent className="w-36">
         <DropdownMenuRadioGroup
-          value={selectedOption}
-          onValueChange={setSelectedOption}
+          value={settingType}
+          onValueChange={(value) => {
+            if (
+              value === "Personal Info" ||
+              value === "Business Info" ||
+              value === "Preferences"
+            ) {
+              setSettingType?.(value);
+            }
+          }}
         >
-          <DropdownMenuRadioItem
-            className="text-gray-700"
-            value="Personal Info"
-          >
+          <DropdownMenuRadioItem value="Personal Info">
             Personal Info
           </DropdownMenuRadioItem>
-          <DropdownMenuRadioItem
-            className="text-gray-700"
-            value="Business Info"
-          >
+          <DropdownMenuRadioItem value="Business Info">
             Business Info
           </DropdownMenuRadioItem>
-          <DropdownMenuRadioItem className="text-gray-700" value="Preferences">
+          <DropdownMenuRadioItem value="Preferences">
             Preferences
           </DropdownMenuRadioItem>
         </DropdownMenuRadioGroup>

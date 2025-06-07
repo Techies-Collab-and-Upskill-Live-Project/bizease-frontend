@@ -33,13 +33,13 @@ const SearchProduct = ({
             setSearchTerm(e.target.value);
             setCurrentPage(1);
           }}
-          className="pl-8 border placeholder:italic border-lightblue"
+          className="pl-8 border placeholder:italic text-xs md:text-sm font-semibold border-lightblue"
         />
       </div>
 
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-4 mt-2">
         <Select onValueChange={(val) => setFilter(val)} defaultValue="all">
-          <SelectTrigger className="w-[160px] border-1 border-lightblue">
+          <SelectTrigger className="w-[160px] border-1 border-lightblue text-xs md:text-sm font-semibold">
             <SelectValue placeholder="Filter Products" />
           </SelectTrigger>
           <SelectContent className="border-1 border-lightblue">
