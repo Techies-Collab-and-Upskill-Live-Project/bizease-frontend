@@ -86,7 +86,7 @@ export default function InventoryComponent({
                 </div>
                 <div className="flex-center">{category}</div>
                 <div className="flex-center">{stockLevel}</div>
-                <div className="flex-center">{price}</div>
+                <div className="flex-center">₦{price}</div>
                 <div
                   className={`flex flex-center text-center ${cn(
                     status === 'Low Stock'
