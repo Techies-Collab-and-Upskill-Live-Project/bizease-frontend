@@ -540,3 +540,34 @@ export const user = {
   email: 'jessie@gmail.com',
   businessPlan: 'Premium Plan',
 };
+
+export const aboutBiz = {
+  title: 'About BizEase',
+
+  subTitle: `Running a business is hard enough — managing your orders and inventory shouldn't be. That's where BizEase comes in.`,
+
+  sub: `We created BizEase with one simple goal: to take the stress out of business management for small and medium-sized enterprises. Whether you're juggling sales, shipping, or stock levels, BizEase gives you the tools to stay in control — all from one intuitive platform.`,
+
+  missionHead: 'Our Mission',
+  missionSub: `At BizEase, we believe powerful business tools shouldn't come with a steep learning curve. That is why we built a platform thats easy to use, efficient, and designed to grow with your business.`,
+
+  missionSub2: `Born out of frustration with clunky spreadsheets and over-complicated software, BizEase was created to simplify daily operations — so business owners can focus on what truly matters: growing their business and serving their customers.`,
+
+  amazingHead: 'What Makes BizEase Amazing?',
+  amazingSub: `Here is what you can expect when you switch to BizEase:`,
+
+  amazingList: [
+    '✅ Smart Order Management Track orders from start to finish, keep your customers in the loop, and never miss a sale.',
+    '📦 Real-Time Inventory Tracking - Know exactly what is in stock, what is running low, and when to reorder — all in real time.',
+    '🔗 Seamless Integration - Easily connect with your existing tools and platforms — no tech headaches.',
+    '📊 Insightful Reports & Dashboards - Get a clear picture of your business with customizable analytics and performance metrics.',
+    '⏱️ Time-Saving Automation - Automate repetitive tasks and cut down on manual work, so you can focus on growth.',
+    '🔒 Secure and Reliable - Your data is safe with us. BizEase uses top-grade security so you can operate with peace of mind.',
+    '📱 Access Anywhere, Anytime - Manage your business from your laptop, tablet, or phone — wherever you are.',
+  ],
+
+  builtForH: 'Built for Business Owners Like You',
+  builtsub: `Whether you're managing a retail shop, running an online store, or overseeing multiple warehouses, BizEase adapts to your needs — not the other way around. We're here to make your life easier, your operations smoother, and your growth unstoppable.`,
+
+  ready: 'Ready to simplify your business?',
+};
