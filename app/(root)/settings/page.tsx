@@ -1,11 +1,12 @@
 "use client";
+
 import TopAvatar from "@/components/navigations/TopAvatar";
 import { Options } from "@/components/settings/m-options";
 import Logout from "@/components/settings/logout";
 import ProfileSettings from "@/components/settings/personal-content";
 import { useState } from "react";
 import BusinessSettings from "@/components/settings/business-content";
-import PreferenceSettings from "@/components/settings/preference-content";
+import { PreferenceSettings } from "@/components/settings/preference-content";
 
 const PersonalSettings = () => {
   const [settingType, setSettingType] = useState<
