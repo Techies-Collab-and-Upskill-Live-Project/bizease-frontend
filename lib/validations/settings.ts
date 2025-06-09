@@ -28,5 +28,13 @@ export const businessSchema = z.object({
     }),
 });
 
+
+export const preferenceSchema = z.object({
+  new_stocks: z.boolean().default(false).optional(),
+  low_stocks: z.boolean().default(true).optional(),
+  alert_threshold: z.string()
+})
+
 export type BusinessFormValues = z.infer<typeof businessSchema>;
 export type ProfileFormValues = z.infer<typeof profileSchema>;
+export type PreferenceSchema = z.infer<typeof preferenceSchema>;
