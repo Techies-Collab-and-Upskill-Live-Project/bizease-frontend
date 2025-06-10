@@ -7,11 +7,12 @@ import ProfileSettings from "@/components/settings/personal-content";
 import { useState } from "react";
 import BusinessSettings from "@/components/settings/business-content";
 import { PreferenceSettings } from "@/components/settings/preference-content";
+import LargeOptionsTab from "@/components/settings/l-options";
 
 const PersonalSettings = () => {
   const [settingType, setSettingType] = useState<
-    "Personal Info" | "Business Info" | "Preferences"
-  >("Personal Info");
+    "Personal Information" | "Business Information" | "Preferences"
+  >("Personal Information");
   return (
     <div className="w-full  relative ">
       {/* Sticky header */}
@@ -19,16 +20,20 @@ const PersonalSettings = () => {
         <TopAvatar type="Settings" />
       </div>
 
-      {/* Controls */}
-      <div className="p-6 flex items-center justify-between md:p-10">
+      {/* Mobile Controls */}
+      <div className="p-6 flex lg:flex-col items-center justify-between max-md:p-10  ">
         <Logout />
         <Options settingType={settingType} setSettingType={setSettingType} />
+        <LargeOptionsTab
+          settingType={settingType}
+          setSettingType={setSettingType}
+        />
       </div>
 
       {/*  Content */}
       <div className=" ">
-        {settingType === "Personal Info" && <ProfileSettings />}
-        {settingType === "Business Info" && <BusinessSettings />}
+        {settingType === "Personal Information" && <ProfileSettings />}
+        {settingType === "Business Information" && <BusinessSettings />}
         {settingType === "Preferences" && <PreferenceSettings />}
       </div>
     </div>
