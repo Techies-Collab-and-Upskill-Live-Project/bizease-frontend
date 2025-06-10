@@ -537,7 +537,7 @@ export const paymentStatus = [
 export const user = {
   id: '1',
   name: `Jessie's Tees`,
-  email: 'jessie@gmail.com',
+  email: 'simeonstat@gmail.com',
   businessPlan: 'Premium Plan',
 };
 
