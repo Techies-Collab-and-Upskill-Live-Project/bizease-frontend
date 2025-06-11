@@ -1,17 +1,21 @@
-import { inventoryItems } from '@/constants';
+'use client';
+
 import { formatCurrency } from '@/lib/utils';
+import { useInventoryStore } from '@/lib/store';
 
 const TotalInventory = () => {
+  const inventoryItems = useInventoryStore((state) => state.inventory);
+
   const totalProducts = inventoryItems.length;
 
   const totalValue = inventoryItems.reduce((sum, item) => {
-    const unitCount = parseInt(item.stockLevel);
-    const price = parseInt(item.price.replace(/,/g, ''));
+    const unitCount = item.stock ?? 0;
+    const price = item.price ?? 0;
     return sum + unitCount * price;
   }, 0);
 
   const totalLowStock = inventoryItems.filter(
-    (item) => item.status === 'Low Stock',
+    (item) => Number(item.stock) < 5,
   ).length;
 
   return (
@@ -20,7 +24,7 @@ const TotalInventory = () => {
         <div>
           <p className="text-surface-200 text-[10px]">Total Stock Value</p>
           <p className="font-semibold text-surface-200 ">
-            <span> {formatCurrency(totalValue)} </span>
+            <span>{formatCurrency(totalValue)}</span>
           </p>
         </div>
       </div>
@@ -29,7 +33,7 @@ const TotalInventory = () => {
         <div>
           <p className="text-surface-200 text-[10px]">Total Products</p>
           <p className="font-semibold text-surface-200 ">
-            <span> {totalProducts} </span>
+            <span>{totalProducts}</span>
           </p>
         </div>
       </div>

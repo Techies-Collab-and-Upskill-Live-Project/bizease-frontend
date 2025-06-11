@@ -1,5 +1,6 @@
 'use client';
 
+import React from 'react';
 import {
   Select,
   SelectTrigger,
@@ -7,12 +8,11 @@ import {
   SelectContent,
   SelectItem,
 } from '@/components/ui/select';
-
-import React from 'react';
 import { Button } from '../ui/button';
 import { Search } from 'lucide-react';
 import { Input } from '../ui/input';
 import { SearchProductProps } from '@/types';
+import { useInventoryStore } from '@/lib/store';
 
 const SearchProduct = ({
   setFilter,
@@ -21,6 +21,14 @@ const SearchProduct = ({
   searchTerm,
   setCurrentPage,
 }: SearchProductProps) => {
+  const inventoryItems = useInventoryStore((state) => state.inventory);
+
+  // const uniqueStatuses = Array.from(
+  //   new Set(inventoryItems.map((item) => item.status)),
+  // );
+
+  const customStatuses = ['Low Stock', 'In Stock'];
+
   return (
     <div className="flex max-md:hidden items-center text-center justify-between">
       <div className="relative w-fit max-w-md mt-2">
@@ -46,6 +54,13 @@ const SearchProduct = ({
             <SelectItem value="all">All Products</SelectItem>
             <SelectItem value="low">Low Stock</SelectItem>
             <SelectItem value="in">In Stock</SelectItem>
+            {customStatuses
+              .filter((status) => !['Low Stock', 'In Stock'].includes(status))
+              .map((status) => (
+                <SelectItem key={status} value={status?.toLowerCase()}>
+                  {status}
+                </SelectItem>
+              ))}
           </SelectContent>
         </Select>
         <Button
