@@ -5,13 +5,13 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 
-import { cn } from '@/lib/utils';
-import { inventoryItems } from '@/constants';
+import { cn, formatCurrency } from '@/lib/utils';
 import { ChevronLeft, ChevronRight, X } from 'lucide-react';
 
 import SearchProduct from './SearchProductDesk';
 import { SearchProductProps } from '@/types';
 import Link from 'next/link';
+import { useInventoryStore } from '@/lib/store';
 
 export default function InventoryComponent({
   setCurrentPage,
@@ -22,28 +22,22 @@ export default function InventoryComponent({
   searchTerm,
   setSearchTerm,
 }: SearchProductProps) {
+  const inventoryItems = useInventoryStore((state) => state.inventory);
+
   const [isOpen, setisOpen] = useState(false);
 
   const itemsPerPage = 6;
 
-  const filteredProduct = inventoryItems
-    .filter((item) =>
-      item.itemsInStock.toLowerCase().includes(searchTerm.toLowerCase()),
-    )
-    .filter((item) => {
-      if (filter === 'low') return item.status === 'Low Stock';
-      if (filter === 'in') return item.status === 'In Stock';
-      return true;
-    });
+  const filteredProduct = inventoryItems.filter((item) => {
+    if (filter === 'low') return item.stock < 5;
+    if (filter === 'in') return item.stock >= 5;
+    return true;
+  });
 
   const totalPages = Math.ceil(filteredProduct.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
   const currentProducts = filteredProduct.slice(startIndex, endIndex);
-
-  // const lowStockItems = inventoryItems.filter(
-  //   (item) => item.status === 'Low Stock',
-  // );
 
   return (
     <div className="space-y-4 bg-surface-100 max-md:bg-gray-100 max-md:overflow-hidden py-4 px-5">
@@ -68,41 +62,32 @@ export default function InventoryComponent({
           <span>Actions</span>
         </div>
         {currentProducts.map(
-          ({
-            id,
-            category,
-            status,
-            stockLevel,
-            lastUpdated,
-            price,
-            actions,
-            itemsInStock,
-          }) => (
+          ({ id, category, stock, lastUpdated, price, name }) => (
             <Card key={id} className="p-2 border-0 shadow-accent">
               <CardContent className=" px-0 py-0 text-center grid grid-cols-7 gap-2 text-[12px] text-surface-600">
                 <div className="flex w-fit items-center gap-2 text-left">
-                  <div className="max-h-6 h-6 max-w-6 w-6 flex-1/2 bg-gray-100" />
-                  {itemsInStock}
+                  <div className="max-h-6 h-5 max-w-6 w-5 flex-1/2 bg-gray-100" />
+                  {name}
                 </div>
                 <div className="flex-center">{category}</div>
-                <div className="flex-center">{stockLevel}</div>
-                <div className="flex-center">{price}</div>
+                <div className="flex-center">{stock}</div>
+                <div className="flex-center">{formatCurrency(price)}</div>
                 <div
                   className={`flex flex-center text-center ${cn(
-                    status === 'Low Stock'
+                    stock < 5
                       ? 'bg-warning font-semibold'
                       : 'bg-success font-semibold',
                     'px-0 py-0  rounded-2xl',
                   )}`}
                 >
-                  {status}
+                  {stock >= 5 ? <span>In Stock</span> : <span>Low Stock</span>}
                 </div>
                 <div className="flex-center px-2 ml-2 text-center">
                   {lastUpdated}
                 </div>
                 <Link href={`/inventory/edit-product/${id}`}>
                   <Button className="w-full bg-darkblue text-surface-200 font-normal rounded-lg cursor-pointer hover:bg-lightblue py-4">
-                    {actions}
+                    Restock
                   </Button>
                 </Link>
               </CardContent>
@@ -113,34 +98,32 @@ export default function InventoryComponent({
 
       {/* ✅ Mobile View */}
       <div className="md:hidden relative overflow-hidden bg-gray-100 max-md:bg-gray-100 flex flex-col gap-4">
-        {currentProducts.map(
-          ({ id, category, status, stockLevel, price, itemsInStock }) => (
-            <Card key={id} className="p-4 bg-gray-100">
-              <CardContent className="flex bg-gray-100 justify-between items-end p-0 gap-4">
-                <div className="flex flex-col gap-1 text-sm">
-                  <h3 className="text-[14px] text-gray-600 font-semibold">
-                    {itemsInStock}
-                  </h3>
-                  <div className="text-gray-400">{category}</div>
-                  <div className="bg-warning text-[10px] text-gray-800 font-bold py-0.5 px-2 rounded-lg">
-                    <div className="flex items-center gap-1">
-                      <div className="bg-red-600 h-1.5 w-1.5 rounded-full" />
-                      {stockLevel} - {status}
-                    </div>
-                  </div>
-                  <div className="text-surface-600 text-[16px] font-semibold">
-                    ₦{price}
+        {currentProducts.map(({ id, category, stock, price, name }) => (
+          <Card key={id} className="p-4 bg-gray-100">
+            <CardContent className="flex bg-gray-100 justify-between items-end p-0 gap-4">
+              <div className="flex flex-col gap-1 text-sm">
+                <h3 className="text-[14px] text-gray-600 font-semibold">
+                  {name}
+                </h3>
+                <div className="text-gray-400">{category}</div>
+                <div className="bg-warning text-[10px] text-gray-800 font-bold py-0.5 px-2 rounded-lg">
+                  <div className="flex items-center gap-1">
+                    <div className="bg-red-600 h-1.5 w-1.5 rounded-full" />
+                    {stock} - Units
                   </div>
                 </div>
-                <Link href={`/inventory/edit-product/${id}`}>
-                  <Button className="bg-darkblue font-normal text-surface-100 hover:bg-lightblue whitespace-nowrap">
-                    Restock
-                  </Button>
-                </Link>
-              </CardContent>
-            </Card>
-          ),
-        )}
+                <div className="text-surface-600 text-[16px] font-semibold">
+                  {formatCurrency(price)}
+                </div>
+              </div>
+              <Link href={`/inventory/edit-product/${id}`}>
+                <Button className="bg-darkblue font-normal text-surface-100 hover:bg-lightblue whitespace-nowrap">
+                  Restock
+                </Button>
+              </Link>
+            </CardContent>
+          </Card>
+        ))}
 
         {/* Floating Action Buttons */}
         <div className="fixed bottom-25 right-4 z-50 flex gap-2">

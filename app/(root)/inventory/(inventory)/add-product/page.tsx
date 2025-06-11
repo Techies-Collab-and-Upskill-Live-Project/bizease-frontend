@@ -1,10 +1,10 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { z } from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { ChevronLeft } from 'lucide-react';
+
 import {
   Form,
   FormField,
@@ -16,9 +16,12 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { addInventoryformSchema } from '@/lib/validations/addnewInventory';
 import { AddInventoryFormData } from '@/types';
+import { useInventoryStore } from '@/lib/store';
 
 export default function AddProductPage() {
   const router = useRouter();
+
+  const addProduct = useInventoryStore((state) => state.addProduct);
 
   const form = useForm<AddInventoryFormData>({
     resolver: zodResolver(addInventoryformSchema),
@@ -32,26 +35,30 @@ export default function AddProductPage() {
   });
 
   const onSubmit = (data: AddInventoryFormData) => {
-    const existing = JSON.parse(localStorage.getItem('inventory') || '[]');
-    const newProduct = { ...data, id: Date.now() };
+    const newProduct = {
+      ...data,
+      id: Date.now(),
+      lastUpdated: new Date().toISOString(),
+    };
 
-    localStorage.setItem(
-      'inventory',
-      JSON.stringify([...existing, newProduct]),
-    );
-
-    router.push('/inventory');
+    try {
+      addProduct(newProduct);
+      router.push(`/inventory/add-product-success/${newProduct.id}`);
+    } catch (error) {
+      console.error(error);
+      router.push(`/inventory/add-product-failed/${newProduct.id}`);
+    }
   };
 
   return (
     <div className="min-h-screen flex items-center justify-center px-8 py-8">
       <div className="w-full max-w-lg space-y-6">
         {/* Header */}
-        <div className="flex-center space-x-4">
+        <div className="flex items-center space-x-4">
           <Button variant="ghost" onClick={() => router.back()} size="icon">
             <ChevronLeft className="h-5 w-5" />
           </Button>
-          <h1 className="max-sm:text-sm text-gray-600 font-semibold">
+          <h1 className="text-lg font-semibold text-gray-600 max-sm:text-sm">
             Add New Product
           </h1>
         </div>
@@ -71,7 +78,6 @@ export default function AddProductPage() {
                 </FormItem>
               )}
             />
-
             <FormField
               control={form.control}
               name="category"
@@ -84,7 +90,6 @@ export default function AddProductPage() {
                 </FormItem>
               )}
             />
-
             <FormField
               control={form.control}
               name="description"
@@ -97,7 +102,6 @@ export default function AddProductPage() {
                 </FormItem>
               )}
             />
-
             <FormField
               control={form.control}
               name="stock"
@@ -115,7 +119,6 @@ export default function AddProductPage() {
                 </FormItem>
               )}
             />
-
             <FormField
               control={form.control}
               name="price"
@@ -134,7 +137,8 @@ export default function AddProductPage() {
               )}
             />
 
-            <div className="space-y-1 pt-2">
+            {/* Actions */}
+            <div className="space-y-2 pt-2">
               <Button
                 type="submit"
                 className="w-full font-normal text-surface-200 bg-darkblue hover:bg-lightblue"

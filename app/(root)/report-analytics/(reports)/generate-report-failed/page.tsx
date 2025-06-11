@@ -11,12 +11,12 @@ const GerenerateResPage = () => {
           width={60}
           height={60}
           alt="Success-Icon"
-          src={'/icon/success.svg'}
+          src={'/icon/failure.svg'}
         />
         <div className="text-center">
-          <p className="text-darkblue font-bold">Success!</p>
+          <p className="text-darkblue font-bold">Failed!</p>
           <p className="text-[12px] text-darkblue mt-2">
-            Your report has been sent to your email.
+            Unable to generate report.
           </p>
         </div>
         <Link href={'/report-analytics'} className="w-full mt-4">

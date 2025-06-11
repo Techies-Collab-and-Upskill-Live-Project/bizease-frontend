@@ -1,7 +1,6 @@
 'use client';
 
-import { useState } from 'react';
-
+import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -15,18 +14,25 @@ import { Card, CardContent } from '@/components/ui/card';
 
 import { editInventoryformSchema } from '@/lib/validations/editInventoryProduct';
 import { EditInventoryFormData, EditProductProps } from '@/types';
-import { inventoryItems } from '@/constants';
-import { parseNumber } from '@/lib/utils';
+import { useInventoryStore } from '@/lib/store';
 
 export default function EditProduct({ editProduct }: EditProductProps) {
   const router = useRouter();
   const params = useParams();
-
   const productId = Number(params.id);
 
-  const [product] = useState(() =>
-    inventoryItems.find((item) => item.id === productId),
+  const inventory = useInventoryStore((state) => state.inventory);
+  const updateProduct = useInventoryStore((state) => state.editProduct);
+
+  const [product, setProduct] = useState(() =>
+    inventory.find((item) => item.id === productId),
   );
+
+  useEffect(() => {
+    if (!product) {
+      router.push('/inventory/edit-product-failed');
+    }
+  }, [product, router]);
 
   const {
     register,
@@ -35,27 +41,28 @@ export default function EditProduct({ editProduct }: EditProductProps) {
   } = useForm<EditInventoryFormData>({
     resolver: zodResolver(editInventoryformSchema),
     defaultValues: {
-      itemName: product?.itemsInStock || '',
+      itemName: product?.name || '',
       category: product?.category || '',
-      stockLevel: parseNumber(product?.stockLevel),
-      price: parseNumber(product?.price),
-      lowStockThreshold: 0,
-      description: '',
+      stockLevel: product?.stock,
+      price: product?.price,
+      lowStockThreshold: product?.lowStockThreshold ?? 5,
+      description: product?.description || '',
     },
   });
 
   const onSubmit = (data: EditInventoryFormData) => {
-    console.log('Updated Product:', data);
-    router.push('/inventory');
-  };
+    updateProduct(productId, {
+      id: productId,
+      name: data.itemName,
+      category: data.category,
+      stock: data.stockLevel,
+      price: data.price,
+      lowStockThreshold: data.lowStockThreshold,
+      description: data.description,
+    });
 
-  if (!product) {
-    return (
-      <div className="flex-center text-center p-6 text-red-500">
-        Product not found.
-      </div>
-    );
-  }
+    router.push(`/inventory/edit-product-success/${productId}`);
+  };
 
   return (
     <section className="h-screen w-full flex-center">
@@ -66,22 +73,16 @@ export default function EditProduct({ editProduct }: EditProductProps) {
           </Button>
           <h2 className="text-xl max-md:text-sm text-surface-500 font-semibold">
             Edit Product: "
-            <span className="text-blue-600">{product.itemsInStock}</span>"
+            <span className="text-blue-600">{product?.name}</span>"
           </h2>
         </div>
 
-        {/* Form */}
         <Card className="border-0 p-4">
           <CardContent className="space-y-1 pt-6">
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-2">
-              {/* Item Name */}
               <div>
-                <Label className="text-surface-500 mb-1">Item Name</Label>
-                <Input
-                  className="text-surface-400"
-                  placeholder={product.itemsInStock}
-                  {...register('itemName')}
-                />
+                <Label className="text-surface-400 mb-1">Item Name</Label>
+                <Input className="text-surface-400" {...register('itemName')} />
                 {errors.itemName && (
                   <p className="text-red-500 text-sm">
                     {errors.itemName.message}
@@ -89,14 +90,9 @@ export default function EditProduct({ editProduct }: EditProductProps) {
                 )}
               </div>
 
-              {/* Category */}
               <div>
-                <Label className="text-surface-500 mb-1">Category</Label>
-                <Input
-                  className="text-surface-400"
-                  placeholder={product.category}
-                  {...register('category')}
-                />
+                <Label className="text-surface-400 mb-1">Category</Label>
+                <Input className="text-surface-400" {...register('category')} />
                 {errors.category && (
                   <p className="text-red-500 text-sm">
                     {errors.category.message}
@@ -104,13 +100,11 @@ export default function EditProduct({ editProduct }: EditProductProps) {
                 )}
               </div>
 
-              {/* Stock Level */}
-              <div className="p-0 m-0">
-                <Label className="text-surface-600 mb-1">Stock Level</Label>
+              <div>
+                <Label className="text-surface-400 mb-1">Stock Level</Label>
                 <Input
                   className="text-surface-400"
                   type="number"
-                  placeholder={parseNumber(product.stockLevel).toString()}
                   {...register('stockLevel', { valueAsNumber: true })}
                 />
                 {errors.stockLevel && (
@@ -120,13 +114,11 @@ export default function EditProduct({ editProduct }: EditProductProps) {
                 )}
               </div>
 
-              {/* Price */}
-              <div className="mt-1">
-                <Label className="text-surface-600 mb-1">Price</Label>
+              <div>
+                <Label className="text-surface-400 mb-1">Price</Label>
                 <Input
                   className="text-surface-400"
                   type="number"
-                  placeholder={parseNumber(product.price).toString()}
                   {...register('price', { valueAsNumber: true })}
                 />
                 {errors.price && (
@@ -134,15 +126,13 @@ export default function EditProduct({ editProduct }: EditProductProps) {
                 )}
               </div>
 
-              {/* Low Stock Threshold */}
               <div>
-                <Label className="text-surface-600 mb-1">
+                <Label className="text-surface-400 mb-1">
                   Low Stock Threshold
                 </Label>
                 <Input
                   className="text-surface-400"
                   type="number"
-                  placeholder="Enter low stock threshold"
                   {...register('lowStockThreshold', { valueAsNumber: true })}
                 />
                 {errors.lowStockThreshold && (
@@ -152,12 +142,10 @@ export default function EditProduct({ editProduct }: EditProductProps) {
                 )}
               </div>
 
-              {/* Description */}
               <div>
-                <Label className="text-surface-600 mb-1">Description</Label>
+                <Label className="text-surface-400 mb-1">Description</Label>
                 <Textarea
                   className="text-surface-400"
-                  placeholder="Product description..."
                   {...register('description')}
                 />
                 {errors.description && (
@@ -167,7 +155,6 @@ export default function EditProduct({ editProduct }: EditProductProps) {
                 )}
               </div>
 
-              {/* Buttons */}
               <div className="flex flex-col items-center gap-3 pt-4">
                 <Button
                   type="submit"

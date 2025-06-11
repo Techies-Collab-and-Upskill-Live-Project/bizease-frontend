@@ -130,12 +130,12 @@ const SignUp = () => {
                       />
                       <Button
                         onClick={() => setShowPassword(!showPassword)}
-                        className="absolute right-3 top-1/4 transform -translate-y-1/2focus:outline-none"
+                        className="absolute right-1 top-1/2 transform -translate-y-1/2 focus:outline-none text-black"
                       >
                         {showPassword ? (
-                          <EyeOff size={18} className="cursor-pointer" />
+                          <EyeOff size={24} className="cursor-pointer" />
                         ) : (
-                          <Eye size={18} className="cursor-pointer" />
+                          <Eye size={24} className="cursor-pointer" />
                         )}
                       </Button>
                     </div>
@@ -266,7 +266,7 @@ const SignUp = () => {
       </div>
 
       {/* Login Alternatives */}
-      <div className="absolute top-220 md:top-264 left-1/2 transform -translate-x-1/2 w-10/12 max-w-md z-10 p-6">
+      <div className="absolute top-240 md:top-284 left-1/2 transform -translate-x-1/2 w-10/12 max-w-md z-10 p-6">
         <div className=" justify-center  flex flex-col gap-3 items-center ">
           <p className="text-gray-500 text-sm tracking-wide">
             -or Signup with-

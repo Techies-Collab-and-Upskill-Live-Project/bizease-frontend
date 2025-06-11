@@ -2,10 +2,10 @@
 
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { recentOders } from '@/constants';
+import { recentOrders } from '@/constants';
 
 const PendingOrders = () => {
-  const pendingOrders = recentOders.filter(
+  const pendingOrders = recentOrders.filter(
     ({ status }) => status === 'Pending',
   );
   const [showAll, setShowAll] = useState(false);
@@ -26,7 +26,7 @@ const PendingOrders = () => {
                 <span className="text-[11px]">{date}</span>
               </div>
               <div className="flex font-medium text-[14px]">
-                {customerName} - <span>{total}</span>
+                {customerName} - <span className="ml-1">₦{total}</span>
               </div>
               <div className="flex justify-between items-center text-sm">
                 <span className="flex items-center gap-2 font-semibold bg-warning-bg text-warning px-2 py-1 rounded-full">

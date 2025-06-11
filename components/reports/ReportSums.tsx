@@ -1,11 +1,11 @@
 import React from 'react';
 import Image from 'next/image';
 
-import { recentOders, reportSummary } from '@/constants';
+import { recentOrders, reportSummary } from '@/constants';
 import { formatCurrency } from '@/lib/utils';
 
 const ReportSums = () => {
-  const totalOrder = recentOders.length;
+  const totalOrder = recentOrders.length;
 
   const topSold = reportSummary.reduce((prev, curr) =>
     curr.productSold > prev.productSold ? curr : prev,
