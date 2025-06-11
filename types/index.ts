@@ -44,6 +44,14 @@ export interface SearchProductProps {
   searchTerm: string;
   setSearchTerm: (term: string) => void;
 }
+export type Order = {
+  id: string;
+  name: string;
+  status: 'Pending' | 'Delivered' | 'Cancelled';
+  total: number;
+  lastUpdated: string;
+  date: string;
+};
 
 export type EditProductProps = {
   editProduct: {
