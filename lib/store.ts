@@ -1,6 +1,9 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import { inventoryItems as defaultInventory } from '@/constants'; // make sure this is defined/imported
+import {
+  inventoryItems as defaultInventory,
+  recentOrders as defaultOrders,
+} from '@/constants';
 
 type Product = {
   id: number;
@@ -9,24 +12,36 @@ type Product = {
   stock: number;
   price: number;
   lastUpdated: string;
+  status: string;
   lowStockThreshold?: number;
   description?: string;
 };
 
+type Order = {
+  id: string;
+  name: string;
+  status: 'Pending' | 'Delivered' | 'Cancelled';
+  total: number;
+  lastUpdated: string;
+  date: string;
+};
+
 interface InventoryStore {
   inventory: Product[];
+  setInventory: (items: Product[]) => void;
   addProduct: (product: Product) => void;
   updateProduct: (updatedProduct: Product) => void;
   removeProduct: (id: number) => void;
-  setInventory: (items: Product[]) => void;
-  updateInventory: (updatedItems: Product[]) => void;
   editProduct: (id: number, data: Partial<Product>) => void;
+  reduceStock: (id: number, quantity: number) => void;
 }
 
 export const useInventoryStore = create<InventoryStore>()(
   persist(
     (set, get) => ({
       inventory: defaultInventory,
+
+      setInventory: (items) => set({ inventory: items }),
 
       addProduct: (product) =>
         set({ inventory: [...get().inventory, product] }),
@@ -43,17 +58,22 @@ export const useInventoryStore = create<InventoryStore>()(
           inventory: get().inventory.filter((item) => item.id !== id),
         }),
 
-      setInventory: (items) => set({ inventory: items }),
-
-      updateInventory: (updatedItems) => set({ inventory: updatedItems }),
-
       editProduct: (id, data) =>
+        set({
+          inventory: get().inventory.map((item) =>
+            item.id === id
+              ? { ...item, ...data, lastUpdated: new Date().toLocaleString() }
+              : item,
+          ),
+        }),
+
+      reduceStock: (id, quantity) =>
         set({
           inventory: get().inventory.map((item) =>
             item.id === id
               ? {
                   ...item,
-                  ...data,
+                  stock: Math.max(0, item.stock - quantity),
                   lastUpdated: new Date().toLocaleString(),
                 }
               : item,
@@ -66,28 +86,42 @@ export const useInventoryStore = create<InventoryStore>()(
   ),
 );
 
-type User = {
-  id: string;
-  name: string;
-  email: string;
-  businessPlan: string;
-};
+interface OrderStore {
+  orders: Order[];
+  addOrder: (order: Order) => void;
+  updateOrderStatus: (id: string, status: Order['status']) => void;
+  updateOrder: (updatedOrder: Order) => void;
+  deleteOrder: (id: string) => void;
+}
 
-type UserState = {
-  user: User | null;
-  login: (user: User) => void;
-  logout: () => void;
-};
-
-export const useUserStore = create<UserState>()(
+export const useOrderStore = create<OrderStore>()(
   persist(
-    (set) => ({
-      user: null,
-      login: (user) => set({ user }),
-      logout: () => set({ user: null }),
+    (set, get) => ({
+      orders: defaultOrders,
+
+      addOrder: (order) => set({ orders: [...get().orders, order] }),
+
+      updateOrderStatus: (id, status) =>
+        set({
+          orders: get().orders.map((order) =>
+            order.id === id ? { ...order, status } : order,
+          ),
+        }),
+
+      updateOrder: (updatedOrder) =>
+        set({
+          orders: get().orders.map((order) =>
+            order.id === updatedOrder.id ? updatedOrder : order,
+          ),
+        }),
+
+      deleteOrder: (id) =>
+        set({
+          orders: get().orders.filter((order) => order.id !== id),
+        }),
     }),
     {
-      name: 'user-storage',
+      name: 'order-storage',
     },
   ),
 );

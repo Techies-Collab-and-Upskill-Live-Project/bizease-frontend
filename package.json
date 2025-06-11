@@ -33,6 +33,7 @@
     "react-hook-form": "^7.56.4",
     "sonner": "^2.0.5",
     "tailwind-merge": "^3.3.0",
+    "uuid": "^11.1.0",
     "xlsx": "^0.18.5",
     "zod": "^3.25.41",
     "zustand": "^5.0.5"
