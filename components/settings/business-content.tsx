@@ -64,7 +64,7 @@ export default function BusinessSettings() {
         <Input
           id="businessName"
           {...register("businessName")}
-          className="text-xs tracking-wide"
+          className="text-xs tracking-wide md:py-6 shadow-sm"
           placeholder="Jessica Reeves"
         />
         {errors.businessName && (
@@ -85,7 +85,7 @@ export default function BusinessSettings() {
           type="email"
           {...register("businessEmail")}
           placeholder="jessyreeves@gmail.com"
-          className="text-xs tracking-wide"
+          className="text-xs tracking-wide md:py-6 shadow-sm"
         />
         {errors.businessEmail && (
           <p className="text-sm text-red-500">{errors.businessEmail.message}</p>
@@ -105,7 +105,7 @@ export default function BusinessSettings() {
           type="tel"
           {...register("businessPhone")}
           placeholder="+234 906 4473 435"
-          className="text-xs tracking-wide"
+          className="text-xs tracking-wide md:py-6 shadow-sm"
         />
         {errors.businessPhone && (
           <p className="text-sm text-red-500">{errors.businessPhone.message}</p>
@@ -124,7 +124,7 @@ export default function BusinessSettings() {
           id="businessAddress"
           type="text"
           {...register("businessAddress")}
-          className="text-xs tracking-wide"
+          className="text-xs tracking-wide md:py-6 shadow-sm"
           placeholder="Address"
         />
         {errors.businessAddress && (
@@ -145,7 +145,7 @@ export default function BusinessSettings() {
         <select
           id="businessType"
           {...register("businessType")}
-          className="border-2 border-gray-200 text-xs tracking-wide rounded-sm px-3 py-2"
+          className="border-2 border-gray-200 text-xs tracking-wide rounded-sm px-3 py-2 md:py-4 shadow-sm"
         >
           <option value="">Select a type</option>
           <option value="Retail">Retail</option>
@@ -170,7 +170,7 @@ export default function BusinessSettings() {
         <select
           id="currency"
           {...register("currency")}
-          className="border-2 border-gray-200 text-xs tracking-wide rounded-sm px-3 py-2"
+          className="border-2 border-gray-200 text-xs tracking-wide rounded-sm px-3 py-2 md:py-4 shadow-sm"
         >
           <option value="">Select currency</option>
           <option value="USD">USD – US Dollar</option>
@@ -188,7 +188,7 @@ export default function BusinessSettings() {
       <div className="flex justify-center w-full my-2">
         <Button
           type="submit"
-          className="w-full rounded-sm py-5 cursor-pointer bg-[#06005B]"
+          className="w-full rounded-sm py-5 md:py-6 cursor-pointer bg-[#06005B]"
           disabled={isSubmitting}
         >
           Save Changes

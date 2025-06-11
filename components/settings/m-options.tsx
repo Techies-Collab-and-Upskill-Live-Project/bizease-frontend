@@ -11,7 +11,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { ChevronDown } from 'lucide-react';
 
-type SettingType = "Personal Info" | "Business Info" | "Preferences";
+type SettingType = "Personal Information" | "Business Information" | "Preferences";
 
 type OptionsProps = {
   settingType?: SettingType;
@@ -19,7 +19,7 @@ type OptionsProps = {
 };
 
 export function Options({
-  settingType = "Personal Info",
+  settingType = "Personal Information",
   setSettingType,
 }: OptionsProps) {
   return (
@@ -38,18 +38,18 @@ export function Options({
           value={settingType}
           onValueChange={(value) => {
             if (
-              value === "Personal Info" ||
-              value === "Business Info" ||
+              value === "Personal Information" ||
+              value === "Business Information" ||
               value === "Preferences"
             ) {
               setSettingType?.(value);
             }
           }}
         >
-          <DropdownMenuRadioItem value="Personal Info">
+          <DropdownMenuRadioItem value="Personal Information">
             Personal Info
           </DropdownMenuRadioItem>
-          <DropdownMenuRadioItem value="Business Info">
+          <DropdownMenuRadioItem value="Business Information">
             Business Info
           </DropdownMenuRadioItem>
           <DropdownMenuRadioItem value="Preferences">

@@ -32,7 +32,7 @@ export default function ProfileSettings() {
     >
       {/* Avatar */}
       <div className="flex flex-col gap-2  items-center justify-center space-y-3 ">
-        <Avatar className="w-30 h-30">
+        <Avatar className="w-30 h-30  ">
           <AvatarImage src={avatarPreview || ""} alt="Avatar" />
           <AvatarFallback className="font-bold text-gray-600 text-lg">
             EA
@@ -44,7 +44,7 @@ export default function ProfileSettings() {
             type="file"
             accept="image/*"
             onChange={handleAvatarChange}
-            className="hidden"
+            className="hidden "
           />
           <Label
             htmlFor="avatar"
@@ -66,7 +66,7 @@ export default function ProfileSettings() {
         <Input
           id="fullName"
           {...register("fullName")}
-          className="text-xs tracking-wide"
+          className="text-xs tracking-wide md:py-6 shadow-sm"
           placeholder="Jessica Reeves"
         />
         {errors.fullName && (
@@ -84,7 +84,7 @@ export default function ProfileSettings() {
           type="email"
           {...register("email")}
           placeholder="jessyreeves@gmail.com"
-          className="text-xs tracking-wide"
+          className="text-xs tracking-wide md:py-6 shadow-sm"
         />
         {errors.email && (
           <p className="text-sm text-red-500">{errors.email.message}</p>
@@ -101,7 +101,7 @@ export default function ProfileSettings() {
           type="tel"
           {...register("phone")}
           placeholder="+234 906 4473 435"
-            className="text-xs tracking-wide"
+          className="text-xs tracking-wide md:py-6 shadow-sm"
         />
         {errors.phone && (
           <p className="text-sm text-red-500">{errors.phone.message}</p>
@@ -120,14 +120,13 @@ export default function ProfileSettings() {
           id="password"
           type={showPassword ? "text" : "password"}
           {...register("password")}
-          className="pr-10 text-xs text-gray-500 tracking-wide"
+          className="pr-10 text-xs text-gray-500 tracking-wide md:py-6 shadow-sm"
           placeholder="Password"
-
         />
         <button
           type="button"
           onClick={() => setShowPassword((prev: boolean) => !prev)}
-          className="absolute right-3 top-8 text-gray-500 hover:text-gray-700"
+          className="absolute right-3 top-10 text-gray-500 hover:text-gray-700"
           tabIndex={-1}
         >
           {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
@@ -141,7 +140,7 @@ export default function ProfileSettings() {
       <div className="flex justify-center w-full my-2">
         <Button
           type="submit"
-          className="w-full rounded-sm py-5 cursor-pointer bg-[#06005B]"
+          className="w-full rounded-sm py-5 md:py-6 cursor-pointer bg-[#06005B]"
           disabled={isSubmitting}
         >
           Save Changes
