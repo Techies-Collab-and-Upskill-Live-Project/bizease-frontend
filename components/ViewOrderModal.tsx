@@ -17,9 +17,9 @@ interface Props {
   onClose: () => void;
 }
 
-export default function ViewOrderModal({ order, onClose }: Props) {
+const ViewOrderModal = ({ order, onClose }: Props) => {
   const { deleteOrder, updateOrder } = useOrderStore();
-
+  const { id, name, date, status, lastUpdated, total } = order;
   const handleMarkDelivered = () => {
     updateOrder({
       ...order,
@@ -30,7 +30,7 @@ export default function ViewOrderModal({ order, onClose }: Props) {
   };
 
   const handleDelete = () => {
-    deleteOrder(order.id);
+    deleteOrder(id);
     onClose();
   };
 
@@ -43,27 +43,27 @@ export default function ViewOrderModal({ order, onClose }: Props) {
 
         <div className="space-y-2 text-sm text-gray-600">
           <p>
-            <strong>Order ID:</strong> Ord - {order.id}
+            <strong>Order ID:</strong> Ord - {id}
           </p>
           <p>
-            <strong>Customer:</strong> {order.name}
+            <strong>Customer:</strong> {name}
           </p>
           <p>
-            <strong>Date:</strong> {order.date}
+            <strong>Date:</strong> {date}
           </p>
           <p>
-            <strong>Status:</strong> {order.status}
+            <strong>Status:</strong> {status}
           </p>
           <p>
-            <strong>Total:</strong> {formatCurrency(order.total)}
+            <strong>Total:</strong> {formatCurrency(total)}
           </p>
           <p>
-            <strong>Last Updated:</strong> {order.lastUpdated}
+            <strong>Last Updated:</strong> {lastUpdated}
           </p>
         </div>
 
         <DialogFooter>
-          {order.status.toLowerCase() === 'pending' && (
+          {status.toLowerCase() === 'pending' && (
             <Button
               onClick={handleMarkDelivered}
               className="bg-success hover:bg-green-600 text-white"
@@ -81,4 +81,6 @@ export default function ViewOrderModal({ order, onClose }: Props) {
       </DialogContent>
     </Dialog>
   );
-}
+};
+
+export default ViewOrderModal;

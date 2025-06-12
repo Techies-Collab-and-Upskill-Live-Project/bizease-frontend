@@ -34,21 +34,29 @@ export default function AddOrderModal({ onClose }: Props) {
   const [customer, setCustomer] = useState('');
   const [quantity, setQuantity] = useState(1);
 
-  const product = inventory.find((p) => p.id === selectedId);
+  const product = inventory.find(({ id }) => id === selectedId);
   const total = product ? product.price * quantity : 0;
 
   const handleSubmit = () => {
     if (!product || !customer || quantity < 1 || quantity > product.stock)
       return;
 
-    // Create order
+    // Create order with product details
     addOrder({
       id: uuidv4(),
       name: customer,
       total,
-      date: new Date().toISOString(), // ✅ Include this
+      date: new Date().toISOString(),
       status: 'Pending',
       lastUpdated: new Date().toISOString(),
+      products: [
+        {
+          productId: product.id.toString(),
+          productName: product.name,
+          quantity,
+          price: product.price,
+        },
+      ],
     });
 
     // Reduce stock
@@ -59,20 +67,24 @@ export default function AddOrderModal({ onClose }: Props) {
 
   return (
     <Dialog open onOpenChange={onClose}>
-      <DialogContent>
-        <DialogHeader>
+      <DialogContent className="p-10 max-sm:p-5">
+        <DialogHeader className="flex-center mb-4">
           <DialogTitle>Add New Order</DialogTitle>
         </DialogHeader>
 
-        <div className="space-y-4">
+        <div className="space-y-6">
           <Select onValueChange={(val) => setSelectedId(Number(val))}>
             <SelectTrigger className="w-full">
               <SelectValue placeholder="Select product" />
             </SelectTrigger>
             <SelectContent>
-              {inventory.map((item) => (
-                <SelectItem key={item.id} value={item.id.toString()}>
-                  {item.name} (Stock: {item.stock})
+              {inventory.map(({ id, stock, name }) => (
+                <SelectItem
+                  className="text-lightblue hover:text-darkblue"
+                  key={id}
+                  value={id.toString()}
+                >
+                  {name} - (product left in inventory is {stock})
                 </SelectItem>
               ))}
             </SelectContent>
@@ -92,7 +104,7 @@ export default function AddOrderModal({ onClose }: Props) {
             placeholder="Quantity"
           />
 
-          <div className="text-sm">
+          <div className="text-darkblue text-sm">
             Total: <strong>{formatCurrency(total)}</strong>
           </div>
         </div>
@@ -109,7 +121,7 @@ export default function AddOrderModal({ onClose }: Props) {
               quantity < 1 ||
               quantity > (product?.stock ?? 0)
             }
-            className="bg-darkblue hover:bg-lightblue text-white"
+            className="bg-darkblue hover:bg-lightblue text-surface-100"
           >
             Place Order
           </Button>

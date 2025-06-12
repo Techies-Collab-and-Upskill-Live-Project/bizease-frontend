@@ -72,3 +72,11 @@ export type ReportItem = {
   stockStatus: 'In Stock' | 'Low Stock' | 'Out of Stock';
   productSold: number;
 };
+
+export type OrderProduct = {
+  productId: string;
+  productName: string;
+  quantity: number;
+  price: number;
+  products: string[];
+};

@@ -74,13 +74,21 @@ export default function InventoryComponent({
                 <div className="flex-center">{formatCurrency(price)}</div>
                 <div
                   className={`flex flex-center text-center ${cn(
-                    stock < 5
+                    stock === 0
+                      ? 'bg-red-500 font-semibold text-surface-100'
+                      : stock <= 5
                       ? 'bg-warning font-semibold'
                       : 'bg-success font-semibold',
                     'px-0 py-0  rounded-2xl',
                   )}`}
                 >
-                  {stock >= 5 ? <span>In Stock</span> : <span>Low Stock</span>}
+                  {stock <= 5 ? (
+                    <span>Low Stock</span>
+                  ) : stock === 0 ? (
+                    <span>Zero Stock</span>
+                  ) : (
+                    <span>In Stock</span>
+                  )}
                 </div>
                 <div className="flex-center px-2 ml-2 text-center">
                   {lastUpdated}

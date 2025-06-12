@@ -19,14 +19,7 @@ const ReportAnalytics = () => {
         <Charts />
       </div>
 
-      <SummaryTable
-        summary={reportSummary.map((item) => ({
-          product: item.Product,
-          unitSold: item.productSold,
-          revenue: item.revenue,
-          stockStatus: item.stockStatus,
-        }))}
-      />
+      <SummaryTable />
     </section>
   );
 };
