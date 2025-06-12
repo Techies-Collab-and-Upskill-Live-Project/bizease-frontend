@@ -41,7 +41,7 @@ export default function AddOrderModal({ onClose }: Props) {
     if (!product || !customer || quantity < 1 || quantity > product.stock)
       return;
 
-    // Create order
+    // Create order with product details
     addOrder({
       id: uuidv4(),
       name: customer,
@@ -49,6 +49,14 @@ export default function AddOrderModal({ onClose }: Props) {
       date: new Date().toISOString(),
       status: 'Pending',
       lastUpdated: new Date().toISOString(),
+      products: [
+        {
+          productId: product.id.toString(),
+          productName: product.name,
+          quantity,
+          price: product.price,
+        },
+      ],
     });
 
     // Reduce stock

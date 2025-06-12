@@ -1,6 +1,5 @@
 'use client';
 
-import { reportSummary } from '@/constants';
 import React from 'react';
 import { Bar, Line } from 'react-chartjs-2';
 import {
@@ -13,7 +12,11 @@ import {
   Tooltip,
   Legend,
 } from 'chart.js';
+
+import { useReportStore, useOrderStore } from '@/lib/store';
 import CustomLegend from './CustomLegend';
+import { getLastNDates } from '@/lib/date-utils';
+import { computeTopProductRevenues } from '@/lib/revenue';
 
 ChartJS.register(
   CategoryScale,
@@ -26,88 +29,101 @@ ChartJS.register(
 );
 
 const Charts = () => {
+  const { period } = useReportStore();
+  const { orders } = useOrderStore();
+
+  const periodLength = parseInt(period.replace(/\D/g, ''), 10) || 5;
+  const dateLabels = getLastNDates(periodLength);
+
+  // Get top 5 products by revenue
+  const topProducts = computeTopProductRevenues(orders, 5);
+
   const colors = [
-    'rgba(59, 130, 246, 0.6)',
-    'rgba(16, 130, 246, 0.4)',
-    'rgba(59, 130, 246, 0.6)',
-    'rgba(59, 197, 200, 0.6)',
+    'rgba(34,211,238,0.7)',
+    'rgba(34,211,238,0.5)',
+    'rgba(34,211,238,0.3)',
+    'rgba(34,211,238,0.6)',
+    'rgba(34,211,238,0.4)',
   ];
 
-  const dynamicBarColors = reportSummary.map(
-    (_, index) => colors[index % colors.length],
-  );
+  const barChartData = {
+    labels: topProducts.map((item) => item.name),
+    datasets: [
+      {
+        label: 'Revenue',
+        data: topProducts.map((item) => item.revenue),
+        backgroundColor: topProducts.map((_, i) => colors[i % colors.length]),
+        borderRadius: 2,
+      },
+    ],
+  };
 
   const lineChartData = {
-    labels: ['May 1st', 'May 2nd', 'May 3rd', 'May 4th'],
+    labels: dateLabels,
     datasets: [
       {
         label: 'Sales',
-        data: reportSummary.map((item) => item.productSold),
-        borderColor: dynamicBarColors,
-        backgroundColor: 'rgba(59, 130, 246, 0.2)',
-        borderWidth: 1,
-        tension: 0.5,
-        pointRadius: 5,
+        data: dateLabels.map(() => Math.floor(Math.random() * 100)), // Replace with actual per-day sales
+        borderColor: 'rgba(34,211,238,1)',
+        backgroundColor: 'rgba(34,211,238,0.2)',
+        tension: 0.4,
+        fill: true,
+        pointRadius: 4,
       },
     ],
   };
 
-  const barChartData = {
-    labels: reportSummary.map((item) => item.Product),
-    datasets: [
-      {
-        label: 'Products',
-        data: reportSummary.map((item) => item.productSold),
-        backgroundColor: dynamicBarColors,
-        borderWidth: 1,
-      },
-    ],
-  };
-
-  const lineOptions = {
+  const chartOptions = {
+    responsive: true,
+    maintainAspectRatio: false,
     scales: {
-      x: {
-        grid: {
-          display: false,
-        },
-      },
+      x: { grid: { display: false } },
       y: {
-        grid: {
-          display: false,
-        },
+        grid: { color: 'rgba(0, 0, 0, 0.05)' },
         ticks: {
-          stepSize: 25,
-          beginAtZero: true,
+          callback(tickValue: string | number) {
+            if (typeof tickValue === 'number') {
+              return `₦${tickValue.toLocaleString()}`;
+            }
+            return tickValue;
+          },
         },
       },
     },
     plugins: {
-      legend: {
-        display: false,
-      },
-      tooltip: {
-        enabled: true,
-      },
+      legend: { display: false },
+      tooltip: { enabled: true },
     },
   };
 
   return (
     <div>
-      <div className=" w-full mx-auto px-7 mt-6">
+      <div className="w-full px-7 mt-6">
         <h2 className="text-base font-semibold mb-4">Charts</h2>
-        <div className="flex bg-surface-100  max-w-6xl mx-auto justify-center items-center gap-4 px-6">
-          <CustomLegend label={'Order'} />
-          <div className="flex-1 w-[100%] max-md:max-w-lg pr-8 py-6  bg-surface-100">
-            <Line data={lineChartData} options={lineOptions} />
-            <CustomLegend label={'Time'} />
+        <div className="flex flex-col md:flex-row bg-surface-100 max-w-6xl mx-auto justify-center items-center gap-4 px-6">
+          <CustomLegend label="Order" />
+          <div className="flex-1 w-full max-md:max-w-lg pr-8 py-6">
+            <div className="h-72">
+              <Line data={lineChartData} options={chartOptions} />
+            </div>
+            <CustomLegend label="Time" />
           </div>
         </div>
       </div>
 
-      <div className="w-full mx-auto px-8 mt-4">
-        <div className="flex flex-col w-[100%] max-md:max-w-lg  py-6 mx-auto justify-center max-w-6xl px-5 bg-surface-100">
-          <Bar data={barChartData} options={lineOptions} />
-          <CustomLegend label={'Product'} />
+      <div className="w-full px-8 mt-4">
+        <div className="flex flex-col w-full max-md:max-w-lg py-6 mx-auto justify-center max-w-6xl px-5 bg-surface-100">
+          <div className="h-72 relative">
+            {topProducts.length === 0 ? (
+              <p className="text-center text-muted-foreground">
+                No product data available.
+              </p>
+            ) : (
+              <Bar data={barChartData} options={chartOptions} />
+            )}
+            <div className="absolute inset-0 bg-cyan-100 opacity-5 pointer-events-none" />
+          </div>
+          <CustomLegend label="Product" />
         </div>
       </div>
     </div>

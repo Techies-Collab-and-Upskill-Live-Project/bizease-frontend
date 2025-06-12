@@ -5,6 +5,19 @@ import {
   recentOrders as defaultOrders,
 } from '@/constants';
 
+type ReportPeriod = '7d' | '30d' | 'thisMonth' | 'all';
+
+interface ReportStore {
+  period: ReportPeriod;
+  setPeriod: (period: ReportPeriod) => void;
+
+  // Derived data
+  totalRevenue: number;
+  topProducts: { name: string; revenue: number }[];
+
+  computeReport: () => void;
+}
+
 type Product = {
   id: number;
   name: string;
@@ -20,6 +33,12 @@ type Product = {
 type Order = {
   id: string;
   name: string;
+  products: {
+    productId: string;
+    productName: string;
+    quantity: number;
+    price: number;
+  }[];
   status: 'Pending' | 'Delivered' | 'Cancelled';
   total: number;
   lastUpdated: string;
@@ -125,3 +144,94 @@ export const useOrderStore = create<OrderStore>()(
     },
   ),
 );
+
+interface ReportStoreState {
+  period: ReportPeriod;
+  setPeriod: (period: ReportPeriod) => void;
+  totalRevenue: number;
+  previousRevenue: number;
+  topProducts: { name: string; revenue: number }[];
+  percentageChange: number;
+  computeReport: () => void;
+}
+
+export const useReportStore = create<ReportStoreState>()(
+  persist(
+    (set, get) => ({
+      period: '7d',
+      totalRevenue: 0,
+      topProducts: [],
+
+      previousRevenue: 0,
+      percentageChange: 0,
+
+      setPeriod: (period) => {
+        set({ period });
+        get().computeReport();
+      },
+
+      computeReport: () => {
+        const { orders } = useOrderStore.getState();
+        const { period } = get();
+
+        const now = new Date();
+        const fromDate = new Date();
+
+        switch (period) {
+          case '7d':
+            fromDate.setDate(now.getDate() - 7);
+            break;
+          case '30d':
+            fromDate.setDate(now.getDate() - 30);
+            break;
+          case 'thisMonth':
+            fromDate.setDate(1);
+            break;
+          case 'all':
+            fromDate.setFullYear(2000);
+            break;
+        }
+
+        const filteredOrders = orders.filter((order) => {
+          const orderDate = new Date(order.date);
+          return orderDate >= fromDate;
+        });
+
+        let totalRevenue = 0;
+        const productMap: Record<string, { name: string; revenue: number }> =
+          {};
+
+        filteredOrders?.forEach((order) => {
+          totalRevenue += order.total;
+
+          for (const product of order.products ?? []) {
+            const { productId, productName, quantity, price } = product;
+
+            const entry = (productMap[productId] ??= {
+              name: productName,
+              revenue: 0,
+            });
+
+            entry.revenue += quantity * price;
+          }
+        });
+
+        const topProducts = Object.values(productMap)
+          .sort((a, b) => b.revenue - a.revenue)
+          .slice(0, 4);
+
+        set({ totalRevenue, topProducts });
+      },
+    }),
+    {
+      name: 'report-settings', // storage key
+      partialize: (state) => ({ period: state.period }), // only persist period
+    },
+  ),
+);
+
+// Auto-run computeReport when orders change
+
+useOrderStore.subscribe(() => {
+  useReportStore.getState().computeReport();
+});
