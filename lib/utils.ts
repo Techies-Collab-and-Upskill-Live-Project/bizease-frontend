@@ -9,8 +9,8 @@ export function formatCurrency(amount: number): string {
   return amount.toLocaleString('en-NG', {
     style: 'currency',
     currency: 'NGN',
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2,
+    minimumFractionDigits: 1,
+    maximumFractionDigits: 1,
   });
 }
 
