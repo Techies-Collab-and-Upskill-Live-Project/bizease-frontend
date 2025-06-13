@@ -21,6 +21,7 @@ export default function InventoryComponent({
   setSearchTerm,
 }: SearchProductProps) {
   const inventoryItems = useInventoryStore((state) => state.inventory);
+  const deleteInventoryItem = useInventoryStore((state) => state.removeProduct);
   const [isOpen, setIsOpen] = useState(false);
   const itemsPerPage = 6;
 
@@ -111,11 +112,21 @@ export default function InventoryComponent({
                 <div className="flex-center px-2 ml-2 text-center">
                   {lastUpdated}
                 </div>
-                <Link href={`/inventory/edit-product/${id}`}>
-                  <Button className="w-full bg-darkblue text-surface-200 font-normal rounded-lg hover:bg-lightblue py-4">
-                    Restock
+                <div className="flex items-center justify-center gap-2">
+                  <Link href={`/inventory/edit-product/${id}`}>
+                    <Button className="bg-darkblue text-surface-200 font-normal rounded-lg hover:bg-lightblue py-2 px-4 text-xs">
+                      Restock
+                    </Button>
+                  </Link>
+                  <Button
+                    onClick={() => deleteInventoryItem(id)}
+                    variant="ghost"
+                    size="icon"
+                    className="hover:bg-red-100 hover:text-red-600 p-1"
+                  >
+                    <X className="h-4 w-4" />
                   </Button>
-                </Link>
+                </div>
               </CardContent>
             </Card>
           ),
@@ -142,17 +153,27 @@ export default function InventoryComponent({
                   {formatCurrency(price)}
                 </div>
               </div>
-              <Link href={`/inventory/edit-product/${id}`}>
-                <Button className="bg-darkblue font-normal text-surface-100 hover:bg-lightblue whitespace-nowrap">
-                  Restock
+              <div className="flex flex-col gap-1 items-end">
+                <Link href={`/inventory/edit-product/${id}`}>
+                  <Button className="bg-darkblue font-normal text-surface-100 hover:bg-lightblue whitespace-nowrap text-xs px-3">
+                    Restock
+                  </Button>
+                </Link>
+                <Button
+                  onClick={() => deleteInventoryItem(id)}
+                  variant="ghost"
+                  size="icon"
+                  className="hover:bg-red-100 hover:text-red-600 p-1"
+                >
+                  <X className="h-4 w-4" />
                 </Button>
-              </Link>
+              </div>
             </CardContent>
           </Card>
         ))}
 
         {/* Floating Action Buttons */}
-        <div className="fixed bottom-25 right-4 z-50 flex gap-2">
+        <div className="fixed bottom-24 right-4 z-50 flex gap-2">
           {isOpen && (
             <Button
               onClick={handleAddProduct}
