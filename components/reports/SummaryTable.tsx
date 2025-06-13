@@ -30,16 +30,19 @@ const SummaryTable = () => {
   //  Generate inventory summary for displayed products
   const summary = inventory
     .filter((product) => soldUnitsMap[product.id]) // Only show products from recent orders
-    .map((product) => {
-      const sold = soldUnitsMap[product.id] || 0;
-      const revenue = sold * product.price;
-      const stockStatus =
-        product.stock > (product.lowStockThreshold ?? 5)
-          ? 'In Stock'
-          : 'Low Stock';
+    .map(({ id, price, stock, name, lowStockThreshold }) => {
+      const sold = soldUnitsMap[id] || 0;
+      const revenue = sold * price;
+
+      let stockStatus = 'In Stock';
+      if (stock === 0) {
+        stockStatus = 'Zero Stock';
+      } else if (stock <= (lowStockThreshold ?? 5)) {
+        stockStatus = 'Low Stock';
+      }
 
       return {
-        product: product.name,
+        product: name,
         unitSold: sold,
         revenue,
         stockStatus,

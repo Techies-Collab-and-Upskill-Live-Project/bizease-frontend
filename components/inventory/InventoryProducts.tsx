@@ -1,16 +1,14 @@
 'use client';
 
 import { useState } from 'react';
-
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-
 import { cn, formatCurrency } from '@/lib/utils';
 import { ChevronLeft, ChevronRight, X } from 'lucide-react';
+import Link from 'next/link';
 
 import SearchProduct from './SearchProductDesk';
 import { SearchProductProps } from '@/types';
-import Link from 'next/link';
 import { useInventoryStore } from '@/lib/store';
 
 export default function InventoryComponent({
@@ -23,16 +21,33 @@ export default function InventoryComponent({
   setSearchTerm,
 }: SearchProductProps) {
   const inventoryItems = useInventoryStore((state) => state.inventory);
-
-  const [isOpen, setisOpen] = useState(false);
-
+  const [isOpen, setIsOpen] = useState(false);
   const itemsPerPage = 6;
 
-  const filteredProduct = inventoryItems.filter((item) => {
-    if (filter === 'low') return item.stock < 5;
-    if (filter === 'in') return item.stock >= 5;
-    return true;
-  });
+  const getStockStatus = (stock: number) => {
+    if (stock === 0) return 'Zero Stock';
+    if (stock < 5) return 'Low Stock';
+    return 'In Stock';
+  };
+
+  const getStockStatusClass = (stock: number) => {
+    if (stock === 0) return 'bg-red-500 font-semibold text-surface-100';
+    if (stock < 5) return 'bg-warning font-semibold';
+    return 'bg-success font-semibold';
+  };
+
+  const filteredProduct = inventoryItems
+    .filter(({ stock }) => {
+      if (filter === 'zero') return stock === 0;
+      if (filter === 'low') return stock > 0 && stock < 5;
+      if (filter === 'in') return stock >= 5;
+      return true;
+    })
+    .map((product) => ({
+      ...product,
+      stockStatus: getStockStatus(product.stock),
+      statusClass: getStockStatusClass(product.stock),
+    }));
 
   const totalPages = Math.ceil(filteredProduct.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
@@ -50,7 +65,8 @@ export default function InventoryComponent({
         setCurrentPage={setCurrentPage}
         currentPage={currentPage}
       />
-      {/*  Desktop View */}
+
+      {/* Desktop View */}
       <div className="max-md:hidden grid grid-cols-1 gap-4">
         <div className="px-4 grid grid-cols-7 text-center bg-gray-100 py-3 text-surface-500 font-semibold rounded gap-4 text-sm">
           <span>Items in Stock</span>
@@ -61,10 +77,20 @@ export default function InventoryComponent({
           <span>Last Updated</span>
           <span>Actions</span>
         </div>
+
         {currentProducts.map(
-          ({ id, category, stock, lastUpdated, price, name }) => (
+          ({
+            id,
+            category,
+            stock,
+            lastUpdated,
+            price,
+            name,
+            stockStatus,
+            statusClass,
+          }) => (
             <Card key={id} className="p-2 border-0 shadow-accent">
-              <CardContent className=" px-0 py-0 text-center grid grid-cols-7 gap-2 text-[12px] text-surface-600">
+              <CardContent className="px-0 py-0 text-center grid grid-cols-7 gap-2 text-[12px] text-surface-600">
                 <div className="flex w-fit items-center gap-2 text-left">
                   <div className="max-h-6 h-5 max-w-6 w-5 flex-1/2 bg-gray-100" />
                   {name}
@@ -73,28 +99,18 @@ export default function InventoryComponent({
                 <div className="flex-center">{stock}</div>
                 <div className="flex-center">{formatCurrency(price)}</div>
                 <div
-                  className={`flex flex-center text-center ${cn(
-                    stock === 0
-                      ? 'bg-red-500 font-semibold text-surface-100'
-                      : stock <= 5
-                      ? 'bg-warning font-semibold'
-                      : 'bg-success font-semibold',
-                    'px-0 py-0  rounded-2xl',
-                  )}`}
-                >
-                  {stock <= 5 ? (
-                    <span>Low Stock</span>
-                  ) : stock === 0 ? (
-                    <span>Zero Stock</span>
-                  ) : (
-                    <span>In Stock</span>
+                  className={cn(
+                    'flex flex-center text-center px-2 py-0 rounded-2xl',
+                    statusClass,
                   )}
+                >
+                  <span>{stockStatus}</span>
                 </div>
                 <div className="flex-center px-2 ml-2 text-center">
                   {lastUpdated}
                 </div>
                 <Link href={`/inventory/edit-product/${id}`}>
-                  <Button className="w-full bg-darkblue text-surface-200 font-normal rounded-lg cursor-pointer hover:bg-lightblue py-4">
+                  <Button className="w-full bg-darkblue text-surface-200 font-normal rounded-lg hover:bg-lightblue py-4">
                     Restock
                   </Button>
                 </Link>
@@ -104,20 +120,20 @@ export default function InventoryComponent({
         )}
       </div>
 
-      {/* ✅ Mobile View */}
-      <div className="md:hidden relative overflow-hidden bg-gray-100 max-md:bg-gray-100 flex flex-col gap-4">
+      {/* Mobile View */}
+      <div className="md:hidden relative overflow-hidden bg-gray-100 flex flex-col gap-4">
         {currentProducts.map(({ id, category, stock, price, name }) => (
           <Card key={id} className="p-4 bg-gray-100">
-            <CardContent className="flex bg-gray-100 justify-between items-end p-0 gap-4">
+            <CardContent className="flex justify-between items-end p-0 gap-4">
               <div className="flex flex-col gap-1 text-sm">
                 <h3 className="text-[14px] text-gray-600 font-semibold">
                   {name}
                 </h3>
                 <div className="text-gray-400">{category}</div>
-                <div className="bg-warning text-[10px] text-gray-800 font-bold py-0.5 px-2 rounded-lg">
+                <div className="text-[10px] font-bold py-0.5 px-2 rounded-lg bg-warning text-gray-800">
                   <div className="flex items-center gap-1">
                     <div className="bg-red-600 h-1.5 w-1.5 rounded-full" />
-                    {stock} - Units
+                    {stock === 0 ? 'Zero Stock' : `${stock} - Units`}
                   </div>
                 </div>
                 <div className="text-surface-600 text-[16px] font-semibold">
@@ -140,22 +156,20 @@ export default function InventoryComponent({
               onClick={handleAddProduct}
               className="bg-darkblue text-surface-200 hover:bg-lightblue font-normal text-[12px] shadow-lg"
             >
-              {isOpen && <span>Add New Product</span>}
+              Add New Product
             </Button>
           )}
           <Button
-            onClick={() => {
-              setisOpen((prev) => !prev);
-            }}
+            onClick={() => setIsOpen((prev) => !prev)}
             variant="outline"
             className="bg-darkblue hover:text-surface-100 hover:bg-lightblue text-surface-100 shadow-lg"
           >
-            x
+            <X />
           </Button>
         </div>
       </div>
 
-      {/*  Pagination Footer */}
+      {/* Pagination */}
       <div className="flex items-center justify-between pt-2 mb-2 text-sm">
         <div className="text-muted-foreground">
           Showing {startIndex + 1} -{' '}
