@@ -37,6 +37,8 @@ const OrderModal = ({ order, onClose, showActions = true }: Props) => {
     onClose();
   };
 
+  const { id, name, date, status, total, lastUpdated } = order;
+
   return (
     <Dialog open onOpenChange={onClose}>
       <DialogContent>
@@ -46,22 +48,22 @@ const OrderModal = ({ order, onClose, showActions = true }: Props) => {
 
         <div className="space-y-2 text-sm text-gray-600">
           <p>
-            <strong>Order ID:</strong> Ord - {order.id}
+            <strong>Order ID:</strong> {id}
           </p>
           <p>
-            <strong>Customer:</strong> {order.name}
+            <strong>Customer:</strong> {name}
           </p>
           <p>
-            <strong>Date:</strong> {order.date}
+            <strong>Date:</strong> {date}
           </p>
           <p>
-            <strong>Status:</strong> {order.status}
+            <strong>Status:</strong> {status}
           </p>
           <p>
-            <strong>Total:</strong> {formatCurrency(order.total)}
+            <strong>Total:</strong> {formatCurrency(total)}
           </p>
           <p>
-            <strong>Last Updated:</strong> {order.lastUpdated}
+            <strong>Last Updated:</strong> {lastUpdated}
           </p>
         </div>
 
