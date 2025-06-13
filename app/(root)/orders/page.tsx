@@ -200,7 +200,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import AddOrderModal from '@/components/AddOrderModal';
+import AddOrderModal from '@/components/modals/AddOrderModal';
 
 import { Search, ChevronRight, ChevronLeft, Plus } from 'lucide-react';
 import { useOrderStore, useInventoryStore } from '@/lib/store';
@@ -254,6 +254,7 @@ export default function OrdersPage() {
       date: new Date().toLocaleDateString(),
       status: status,
       lastUpdated: new Date().toLocaleString(),
+      products: [],
     };
 
     addOrder(newOrder);
@@ -379,6 +380,7 @@ export default function OrdersPage() {
                       date,
                       status,
                       lastUpdated,
+                      products: [],
                     })
                   }
                   className="w-full bg-darkblue hover:bg-lightblue font-normal text-surface-200 text-[10px]"

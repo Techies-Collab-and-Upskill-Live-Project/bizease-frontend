@@ -61,7 +61,7 @@ const ReportSums = () => {
   orders.forEach((order) => {
     if (order.status === 'Cancelled') return;
 
-    order.items?.forEach((item) => {
+    order.products?.forEach((item) => {
       const name = item?.productName;
       if (name && typeof item.quantity === 'number') {
         productSales[name] = (productSales[name] || 0) + item.quantity;
