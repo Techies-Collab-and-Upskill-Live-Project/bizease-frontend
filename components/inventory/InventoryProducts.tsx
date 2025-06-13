@@ -96,7 +96,9 @@ export default function InventoryComponent({
                   {name}
                 </div>
                 <div className="flex-center">{category}</div>
-                <div className="flex-center">{stock}</div>
+                <div className="flex-center">
+                  {stock} {stock > 1 ? 'Units' : 'Unit'}
+                </div>
                 <div className="flex-center">{formatCurrency(price)}</div>
                 <div
                   className={cn(

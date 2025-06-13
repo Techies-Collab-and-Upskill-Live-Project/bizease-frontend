@@ -47,6 +47,12 @@ export interface SearchProductProps {
 export type Order = {
   id: string;
   name: string;
+  products: {
+    productId: string;
+    productName: string;
+    quantity: number;
+    price: number;
+  }[];
   status: 'Pending' | 'Delivered' | 'Cancelled';
   total: number;
   lastUpdated: string;

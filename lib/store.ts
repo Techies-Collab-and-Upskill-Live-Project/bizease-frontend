@@ -5,6 +5,8 @@ import {
   recentOrders as defaultOrders,
 } from '@/constants';
 
+import { Order } from '@/types';
+
 type ReportPeriod = '7d' | '30d' | 'thisMonth' | 'all';
 
 interface ReportStore {
@@ -30,20 +32,20 @@ type Product = {
   description?: string;
 };
 
-type Order = {
-  id: string;
-  name: string;
-  products: {
-    productId: string;
-    productName: string;
-    quantity: number;
-    price: number;
-  }[];
-  status: 'Pending' | 'Delivered' | 'Cancelled';
-  total: number;
-  lastUpdated: string;
-  date: string;
-};
+// type Order = {
+//   id: string;
+//   name: string;
+//   products: {
+//     productId: string;
+//     productName: string;
+//     quantity: number;
+//     price: number;
+//   }[];
+//   status: 'Pending' | 'Delivered' | 'Cancelled';
+//   total: number;
+//   lastUpdated: string;
+//   date: string;
+// };
 
 interface InventoryStore {
   inventory: Product[];

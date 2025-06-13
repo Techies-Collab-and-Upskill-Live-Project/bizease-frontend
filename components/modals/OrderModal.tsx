@@ -13,7 +13,7 @@ import { formatCurrency } from '@/lib/utils';
 import { Order } from '@/types';
 
 interface Props {
-  order: Order | null; // make it nullable for defensive check
+  order: Order | null;
   onClose: () => void;
   showActions?: boolean;
 }
@@ -21,7 +21,7 @@ interface Props {
 const OrderModal = ({ order, onClose, showActions = true }: Props) => {
   const { updateOrder, deleteOrder } = useOrderStore();
 
-  if (!order) return null; // 🛡 Prevent rendering without order
+  if (!order) return null;
 
   const handleMarkDelivered = () => {
     updateOrder({
