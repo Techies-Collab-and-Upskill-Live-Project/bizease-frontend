@@ -19,3 +19,45 @@ export const parseNumber = (value: string | undefined): number => {
   const numeric = value.replace(/[^\d]/g, '');
   return parseInt(numeric, 10) || 0;
 };
+
+// lib/utils/stats.ts
+
+interface ProductEntry {
+  productId: string;
+  productName: string;
+}
+
+interface Order {
+  products?: ProductEntry[];
+}
+
+interface ProductCount {
+  name: string;
+  count: number;
+}
+
+export function calculateMostOrderedProduct(orders: Order[]): ProductCount {
+  const productCountMap: Record<string, ProductCount> = {};
+
+  orders.forEach(({ products }) => {
+    products?.forEach(({ productId, productName }) => {
+      if (!productId) return;
+
+      if (!productCountMap[productId]) {
+        productCountMap[productId] = {
+          name: productName,
+          count: 1,
+        };
+      } else {
+        productCountMap[productId].count += 1;
+      }
+    });
+  });
+
+  const mostOrdered = Object.values(productCountMap).reduce(
+    (top, current) => (current.count > top.count ? current : top),
+    { name: 'N/A', count: 0 },
+  );
+
+  return mostOrdered;
+}
