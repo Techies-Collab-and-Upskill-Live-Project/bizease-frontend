@@ -7,7 +7,7 @@ import TopAvatar from '@/components/navigations/TopAvatar';
 import { formatCurrency } from '@/lib/utils';
 import UsernameAndButtons from '@/components/dashboard/UsernameAndAddbutton';
 import MobileButtons from '@/components/dashboard/MobileButton';
-import PendingOrders from '@/components/dashboard/PendingOrder';
+import PendingOrders from '@/components/dashboard/PendingOrders';
 import LowStockItems from '@/components/dashboard/LowStockItems';
 
 import { useOrderStore, useInventoryStore } from '@/lib/store';

@@ -207,7 +207,7 @@ import { useOrderStore, useInventoryStore } from '@/lib/store';
 import TopAvatar from '@/components/navigations/TopAvatar';
 import { cn, formatCurrency } from '@/lib/utils';
 import { v4 as uuidv4 } from 'uuid';
-import ViewOrderModal from '@/components/ViewOrderModal';
+import ViewOrderModal from '@/components/modals/OrderModal';
 import { Order } from '@/types';
 
 export default function OrdersPage() {
