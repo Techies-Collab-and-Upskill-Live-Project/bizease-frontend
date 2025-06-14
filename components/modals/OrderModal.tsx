@@ -1,6 +1,5 @@
 'use client';
 
-import { useOrderStore } from '@/lib/store';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -9,8 +8,10 @@ import {
   DialogTitle,
   DialogFooter,
 } from '@/components/ui/dialog';
+
 import { formatCurrency } from '@/lib/utils';
 import { Order } from '@/types';
+import { useOrderStore } from '@/lib/store';
 
 interface Props {
   order: Order | null;
@@ -69,7 +70,7 @@ const OrderModal = ({ order, onClose, showActions = true }: Props) => {
 
         {showActions && (
           <DialogFooter className="flex gap-2">
-            {order.status.toLowerCase() === 'pending' && (
+            {status.toLowerCase() === 'pending' && (
               <Button
                 onClick={handleMarkDelivered}
                 className="bg-success hover:bg-green-600 text-white"
