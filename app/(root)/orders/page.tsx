@@ -12,13 +12,14 @@ import {
 } from '@/components/ui/select';
 import AddOrderModal from '@/components/modals/AddOrderModal';
 
-import { Search, ChevronRight, ChevronLeft, Plus } from 'lucide-react';
+import { Search, ChevronRight, ChevronLeft } from 'lucide-react';
 import { useOrderStore, useInventoryStore } from '@/lib/store';
 import TopAvatar from '@/components/navigations/TopAvatar';
 import { cn, formatCurrency } from '@/lib/utils';
 import { v4 as uuidv4 } from 'uuid';
 import ViewOrderModal from '@/components/modals/OrderModal';
 import { Order } from '@/types';
+import AnimatedCountUp from '@/components/animations/AnimatedCountUp';
 
 export default function OrdersPage() {
   const [showAddOrderModal, setShowAddOrderModal] = useState(false);
@@ -99,7 +100,7 @@ export default function OrdersPage() {
             <div>
               <p className="text-surface-200 text-[10px]">Total Revenue</p>
               <p className="font-semibold text-surface-200 ">
-                {formatCurrency(totalRevenue)}
+                <AnimatedCountUp amount={totalRevenue} />
               </p>
             </div>
           </div>
@@ -165,7 +166,9 @@ export default function OrdersPage() {
               >
                 <span className="text-left">Ord - {id}</span>
                 <span>{name}</span>
-                <span>{formatCurrency(total)}</span>
+                <span className="text-sm text-surface-500 font-normal">
+                  <AnimatedCountUp amount={total} />
+                </span>
                 <span>{date}</span>
                 <span
                   className={cn('capitalize', {

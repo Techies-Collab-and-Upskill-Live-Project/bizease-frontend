@@ -4,7 +4,6 @@ import React from 'react';
 import Image from 'next/image';
 
 import TopAvatar from '@/components/navigations/TopAvatar';
-import { formatCurrency } from '@/lib/utils';
 import UsernameAndButtons from '@/components/dashboard/UsernameAndAddbutton';
 import MobileButtons from '@/components/dashboard/MobileButton';
 import PendingOrders from '@/components/dashboard/PendingOrders';
@@ -12,6 +11,8 @@ import LowStockItems from '@/components/dashboard/LowStockItems';
 
 import { useOrderStore, useInventoryStore } from '@/lib/store';
 import { calculateMostOrderedProduct } from '@/lib/utils';
+import AnimatedCountUp from '@/components/animations/AnimatedCountUp';
+import CountUp from 'react-countup';
 
 const DashboardPage = () => {
   const orders = useOrderStore((state) => state.orders);
@@ -40,7 +41,7 @@ const DashboardPage = () => {
           <div className="flex-1/2 flex-col bg-gradient px-4 py-2 rounded-sm">
             <p className="text-surface-200 text-[10px]">Revenue</p>
             <p className="text-surface-200 text-sm font-semibold">
-              {formatCurrency(totalRevenue)}
+              <AnimatedCountUp amount={totalRevenue} />
             </p>
             <div className="flex gap-1.5 mt-2">
               <Image

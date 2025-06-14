@@ -2,6 +2,7 @@
 
 import { formatCurrency } from '@/lib/utils';
 import { useInventoryStore } from '@/lib/store';
+import AnimatedCountUp from '../animations/AnimatedCountUp';
 
 const TotalInventory = () => {
   const inventoryItems = useInventoryStore((state) => state.inventory);
@@ -24,7 +25,9 @@ const TotalInventory = () => {
         <div>
           <p className="text-surface-200 text-[10px]">Total Stock Value</p>
           <p className="font-semibold text-surface-200 ">
-            <span>{formatCurrency(totalValue)}</span>
+            <span>
+              <AnimatedCountUp amount={totalValue} />
+            </span>
           </p>
         </div>
       </div>
