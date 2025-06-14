@@ -73,7 +73,7 @@ export default function AddOrderModal({ onClose }: Props) {
         </DialogHeader>
 
         <div className="space-y-6">
-          <Select onValueChange={(val) => setSelectedId(Number(val))}>
+          <Select onValueChange={(id) => setSelectedId(Number(id))}>
             <SelectTrigger className="w-full">
               <SelectValue placeholder="Select product" />
             </SelectTrigger>
@@ -84,7 +84,7 @@ export default function AddOrderModal({ onClose }: Props) {
                   key={id}
                   value={id.toString()}
                 >
-                  {name} - (product left in inventory is {stock})
+                  {name} - ( Left in inventory: {stock})
                 </SelectItem>
               ))}
             </SelectContent>

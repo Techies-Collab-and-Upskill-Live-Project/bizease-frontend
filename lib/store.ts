@@ -5,9 +5,7 @@ import {
   recentOrders as defaultOrders,
 } from '@/constants';
 
-import { Order } from '@/types';
-
-type ReportPeriod = '7d' | '30d' | 'thisMonth' | 'all';
+import { Order, Product, ReportPeriod } from '@/types';
 
 interface ReportStore {
   period: ReportPeriod;
@@ -19,33 +17,6 @@ interface ReportStore {
 
   computeReport: () => void;
 }
-
-type Product = {
-  id: number;
-  name: string;
-  category: string;
-  stock: number;
-  price: number;
-  lastUpdated: string;
-  status: string;
-  lowStockThreshold?: number;
-  description?: string;
-};
-
-// type Order = {
-//   id: string;
-//   name: string;
-//   products: {
-//     productId: string;
-//     productName: string;
-//     quantity: number;
-//     price: number;
-//   }[];
-//   status: 'Pending' | 'Delivered' | 'Cancelled';
-//   total: number;
-//   lastUpdated: string;
-//   date: string;
-// };
 
 interface InventoryStore {
   inventory: Product[];
@@ -62,7 +33,7 @@ export const useInventoryStore = create<InventoryStore>()(
     (set, get) => ({
       inventory: defaultInventory,
 
-      setInventory: (items) => set({ inventory: items }),
+      setInventory: (products) => set({ inventory: products }),
 
       addProduct: (product) =>
         set({ inventory: [...get().inventory, product] }),
@@ -232,7 +203,7 @@ export const useReportStore = create<ReportStoreState>()(
   ),
 );
 
-// Auto-run computeReport when orders change
+// When orders change, auto-run computeReport.
 
 useOrderStore.subscribe(() => {
   useReportStore.getState().computeReport();

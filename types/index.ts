@@ -86,3 +86,17 @@ export type OrderProduct = {
   price: number;
   products: string[];
 };
+
+export type Product = {
+  id: number;
+  name: string;
+  category: string;
+  stock: number;
+  price: number;
+  lastUpdated: string;
+  status: string;
+  lowStockThreshold?: number;
+  description?: string;
+};
+
+export type ReportPeriod = '7d' | '30d' | 'thisMonth' | 'all';
