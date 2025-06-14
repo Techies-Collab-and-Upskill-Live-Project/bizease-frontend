@@ -23,10 +23,6 @@ const SearchProduct = ({
 }: SearchProductProps) => {
   const inventoryItems = useInventoryStore((state) => state.inventory);
 
-  // const uniqueStatuses = Array.from(
-  //   new Set(inventoryItems.map((item) => item.status)),
-  // );
-
   const customStatuses = ['Low Stock', 'In Stock'];
 
   return (
