@@ -3,7 +3,7 @@
 import React from 'react';
 import Image from 'next/image';
 import { useInventoryStore, useOrderStore } from '@/lib/store';
-import { formatCurrency } from '@/lib/utils';
+import { calculateMostOrderedProduct, formatCurrency } from '@/lib/utils';
 
 const MetricCard = ({
   label,
@@ -56,25 +56,12 @@ const ReportSums = () => {
   const pendingOrders = orders.filter((o) => o.status === 'Pending').length;
 
   // Calculate sales count for each product
-  const productSales: Record<string, number> = {};
+  const mostOrdered = calculateMostOrderedProduct(orders);
 
-  orders.forEach((order) => {
-    if (order.status === 'Cancelled') return;
-
-    order.products?.forEach((item) => {
-      const name = item?.productName;
-      if (name && typeof item.quantity === 'number') {
-        productSales[name] = (productSales[name] || 0) + item.quantity;
-      }
-    });
-  });
-
-  const topSellingProduct =
-    Object.entries(productSales).sort((a, b) => b[1] - a[1])[0]?.[0] ||
-    'No Leading Product';
-
-  const revenueChange = 7; // mock for now
-  const stockChange = 12; // mock for now
+  // Mock values for revenue and stock changes
+  // In a real application, these would be calculated based on historical data
+  const revenueChange = 7;
+  const stockChange = 12;
 
   return (
     <div className="flex flex-col w-full mt-3 gap-2">
@@ -98,7 +85,7 @@ const ReportSums = () => {
 
       <div className="flex w-full gap-4 px-6 h-20">
         <MetricCard label="Low Stock Items" value={lowStockItems} />
-        <MetricCard label="Top Selling Product" value={topSellingProduct} />
+        <MetricCard label="Top Selling Product" value={mostOrdered.name} />
       </div>
 
       <div className="flex w-1/2 gap-4 pl-6 pr-2 h-20">

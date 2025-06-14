@@ -5,6 +5,8 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
+// This formats  currency to a string with the appropriate locale and formatting.
+// It uses the Nigerian locale and ensures one decimal place is shown.
 export function formatCurrency(amount: number): string {
   return amount.toLocaleString('en-NG', {
     style: 'currency',
@@ -20,8 +22,7 @@ export const parseNumber = (value: string | undefined): number => {
   return parseInt(numeric, 10) || 0;
 };
 
-// lib/utils/stats.ts
-
+// This function calculates the most ordered product from a list of orders.
 interface ProductEntry {
   productId: string;
   productName: string;
@@ -56,7 +57,7 @@ export function calculateMostOrderedProduct(orders: Order[]): ProductCount {
 
   const mostOrdered = Object.values(productCountMap).reduce(
     (top, current) => (current.count > top.count ? current : top),
-    { name: 'N/A', count: 0 },
+    { name: 'No Leading Products', count: 0 },
   );
 
   return mostOrdered;
