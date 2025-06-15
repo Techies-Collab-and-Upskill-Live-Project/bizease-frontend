@@ -5,9 +5,11 @@ import { cn, formatCurrency } from '@/lib/utils';
 import { ChevronLeft, ChevronRight, X } from 'lucide-react';
 import Link from 'next/link';
 
-import SearchProduct from './SearchProductDesk';
 import { SearchProductProps } from '@/types';
 import { useInventoryStore } from '@/lib/store';
+import SearchInput from '../shared/SearchInput';
+import AddButton from '../shared/AddButton';
+import FilterSelect from '../shared/FilterButton';
 
 export default function InventoryComponent({
   setCurrentPage,
@@ -15,11 +17,12 @@ export default function InventoryComponent({
   currentPage,
   filter,
   setFilter,
-  searchTerm,
-  setSearchTerm,
 }: SearchProductProps) {
   const inventoryItems = useInventoryStore((state) => state.inventory);
   const deleteInventoryItem = useInventoryStore((state) => state.removeProduct);
+  const inventorySearch = useInventoryStore((state) => state.searchTerm);
+  const setInventorySearch = useInventoryStore((state) => state.setSearchTerm);
+
   const [isOpen, setIsOpen] = useState(false);
   const itemsPerPage = 6;
 
@@ -36,6 +39,9 @@ export default function InventoryComponent({
   };
 
   const filteredProduct = inventoryItems
+    .filter(({ name }) =>
+      name.toLowerCase().includes(inventorySearch.toLowerCase()),
+    )
     .filter(({ stock }) => {
       if (filter === 'zero') return stock === 0;
       if (filter === 'low') return stock > 0 && stock < 5;
@@ -55,15 +61,28 @@ export default function InventoryComponent({
 
   return (
     <div className="space-y-4 bg-surface-100 max-md:bg-gray-100 max-md:overflow-hidden py-4 px-5">
-      <SearchProduct
-        handleAddProduct={handleAddProduct}
-        filter={filter}
-        setSearchTerm={setSearchTerm}
-        setFilter={setFilter}
-        searchTerm={searchTerm}
-        setCurrentPage={setCurrentPage}
-        currentPage={currentPage}
-      />
+      <div className="flex items-center justify-between mb-4">
+        <SearchInput
+          placeholder="Search inventory..."
+          searchTerm={inventorySearch}
+          setSearchTerm={setInventorySearch}
+          onResetPage={() => setCurrentPage(1)}
+        />
+        <div className="flex items-center gap-2 max-md:gap-2">
+          <FilterSelect
+            filterValue={filter}
+            onChange={setFilter}
+            placeholder="Filter Products"
+            options={[
+              { label: 'All Products', value: 'all' },
+              { label: 'Low Stock', value: 'low' },
+              { label: 'In Stock', value: 'in' },
+            ]}
+          />
+
+          <AddButton label="Add New Product" />
+        </div>
+      </div>
 
       {/* Desktop View */}
       <div className="max-md:hidden grid grid-cols-1 gap-4">
@@ -189,7 +208,6 @@ export default function InventoryComponent({
           </Button>
         </div>
       </div>
-
       {/* Pagination */}
       <div className="flex items-center justify-between pt-2 mb-2 text-sm">
         <div className="text-muted-foreground">

@@ -5,7 +5,7 @@ import {
   recentOrders as defaultOrders,
 } from '@/constants';
 
-import { Order, Product, ReportPeriod } from '@/types';
+import { InventoryStore, Order, Product, ReportPeriod } from '@/types';
 
 interface ReportStore {
   period: ReportPeriod;
@@ -18,20 +18,13 @@ interface ReportStore {
   computeReport: () => void;
 }
 
-interface InventoryStore {
-  inventory: Product[];
-  setInventory: (items: Product[]) => void;
-  addProduct: (product: Product) => void;
-  updateProduct: (updatedProduct: Product) => void;
-  removeProduct: (id: number) => void;
-  editProduct: (id: number, data: Partial<Product>) => void;
-  reduceStock: (id: number, quantity: number) => void;
-}
-
 export const useInventoryStore = create<InventoryStore>()(
   persist(
     (set, get) => ({
       inventory: defaultInventory,
+      searchTerm: '',
+
+      setSearchTerm: (term: string) => set({ searchTerm: term }),
 
       setInventory: (products) => set({ inventory: products }),
 

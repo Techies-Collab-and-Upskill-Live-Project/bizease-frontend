@@ -3,8 +3,12 @@
 import React from 'react';
 import { Button } from '../ui/button';
 import { user } from '@/constants';
+import AddButton from '../shared/AddButton';
+import AddOrderModal from '../modals/AddOrderModal';
 
 const UsernameAndButtons = () => {
+  const [showModal, setShowModal] = React.useState(false);
+
   return (
     <div className="flex text-center justify-between">
       <div className="mb-3">
@@ -13,21 +17,17 @@ const UsernameAndButtons = () => {
       </div>
 
       <div className="flex items-center gap-2 max-md:hidden">
-        <Button
-          variant={'ghost'}
-          onClick={() => {}}
-          className=" font-normal text-darkblue border border-lightblue"
-        >
-          Add New Order
-        </Button>
+        <>
+          <Button
+            onClick={() => setShowModal(true)}
+            className=" text-darkblue focus-pointer border border-lightblue "
+          >
+            Add New Order
+          </Button>
 
-        <Button
-          variant={'ghost'}
-          onClick={() => {}}
-          className=" font-normal text-darkblue border border-lightblue"
-        >
-          Add New Product
-        </Button>
+          {showModal && <AddOrderModal onClose={() => setShowModal(false)} />}
+        </>
+        <AddButton />
       </div>
     </div>
   );

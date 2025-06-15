@@ -100,3 +100,15 @@ export type Product = {
 };
 
 export type ReportPeriod = '7d' | '30d' | 'thisMonth' | 'all';
+
+export interface InventoryStore {
+  inventory: Product[];
+  searchTerm: string;
+  setSearchTerm: (term: string) => void;
+  setInventory: (products: Product[]) => void;
+  addProduct: (product: Product) => void;
+  updateProduct: (updatedProduct: Product) => void;
+  removeProduct: (id: number) => void;
+  editProduct: (id: number, data: Partial<Product>) => void;
+  reduceStock: (id: number, quantity: number) => void;
+}

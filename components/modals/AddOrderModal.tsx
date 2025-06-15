@@ -22,13 +22,18 @@ import { v4 as uuidv4 } from 'uuid';
 
 import { formatCurrency } from '@/lib/utils';
 
-interface Props {
+interface AddOrderModalProps {
   onClose: () => void;
+  isOpen?: boolean;
 }
 
-export default function AddOrderModal({ onClose }: Props) {
-  const { inventory, updateProduct } = useInventoryStore();
-  const { addOrder } = useOrderStore();
+export default function AddOrderModal({
+  onClose,
+  isOpen = true,
+}: AddOrderModalProps) {
+  const inventory = useInventoryStore((state) => state.inventory);
+  const updateProduct = useInventoryStore((state) => state.updateProduct);
+  const addOrder = useOrderStore((state) => state.addOrder);
 
   const [selectedId, setSelectedId] = useState<number | null>(null);
   const [customer, setCustomer] = useState('');
@@ -41,7 +46,6 @@ export default function AddOrderModal({ onClose }: Props) {
     if (!product || !customer || quantity < 1 || quantity > product.stock)
       return;
 
-    // Create order with product details
     addOrder({
       id: uuidv4(),
       name: customer,
@@ -59,14 +63,12 @@ export default function AddOrderModal({ onClose }: Props) {
       ],
     });
 
-    // Reduce stock
     updateProduct({ ...product, stock: product.stock - quantity });
-
     onClose();
   };
 
   return (
-    <Dialog open onOpenChange={onClose}>
+    <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="p-10 max-sm:p-5">
         <DialogHeader className="flex-center mb-4">
           <DialogTitle>Add New Order</DialogTitle>
@@ -80,11 +82,11 @@ export default function AddOrderModal({ onClose }: Props) {
             <SelectContent>
               {inventory.map(({ id, stock, name }) => (
                 <SelectItem
-                  className="text-lightblue hover:text-darkblue"
                   key={id}
                   value={id.toString()}
+                  className="text-lightblue hover:text-darkblue"
                 >
-                  {name} - ( Left in inventory: {stock})
+                  {name} - (Left: {stock})
                 </SelectItem>
               ))}
             </SelectContent>
@@ -109,7 +111,7 @@ export default function AddOrderModal({ onClose }: Props) {
           </div>
         </div>
 
-        <DialogFooter>
+        <DialogFooter className="flex gap-2">
           <Button variant="outline" onClick={onClose}>
             Cancel
           </Button>
