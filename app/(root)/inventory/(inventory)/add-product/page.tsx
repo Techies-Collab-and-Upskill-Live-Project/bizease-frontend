@@ -37,6 +37,7 @@ export default function AddProductPage() {
   const onSubmit = (data: AddInventoryFormData) => {
     const newProduct = {
       ...data,
+      status: 'pending',
       id: Date.now(),
       lastUpdated: new Date().toISOString(),
     };
