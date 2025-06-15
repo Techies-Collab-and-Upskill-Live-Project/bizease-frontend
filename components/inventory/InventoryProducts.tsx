@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { cn, formatCurrency } from '@/lib/utils';
-import { ChevronLeft, ChevronRight, X } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Trash, Trash2, X } from 'lucide-react';
 import Link from 'next/link';
 
 import { SearchProductProps } from '@/types';
@@ -10,6 +10,7 @@ import { useInventoryStore } from '@/lib/store';
 import SearchInput from '../shared/SearchInput';
 import AddButton from '../shared/AddButton';
 import FilterSelect from '../shared/FilterButton';
+import DeleteConfirmationModal from '../modals/DeleteModal';
 
 export default function InventoryComponent({
   setCurrentPage,
@@ -22,6 +23,13 @@ export default function InventoryComponent({
   const deleteInventoryItem = useInventoryStore((state) => state.removeProduct);
   const inventorySearch = useInventoryStore((state) => state.searchTerm);
   const setInventorySearch = useInventoryStore((state) => state.setSearchTerm);
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [selectedProductId, setSelectedProductId] = useState<number | null>(
+    null,
+  );
+  const selectedProduct = inventoryItems.find(
+    ({ id }) => id === selectedProductId,
+  );
 
   const [isOpen, setIsOpen] = useState(false);
   const itemsPerPage = 6;
@@ -61,7 +69,7 @@ export default function InventoryComponent({
 
   return (
     <div className="space-y-4 bg-surface-100 max-md:bg-gray-100 max-md:overflow-hidden py-4 px-5">
-      <div className="flex items-center justify-between mb-4">
+      <div className="flex items-center justify-between mb-4 max-md:hidden">
         <SearchInput
           placeholder="Search inventory..."
           searchTerm={inventorySearch}
@@ -136,17 +144,36 @@ export default function InventoryComponent({
                     </Button>
                   </Link>
                   <Button
-                    onClick={() => deleteInventoryItem(id)}
+                    onClick={() => {
+                      setSelectedProductId(id);
+                      setDeleteModalOpen(true);
+                    }}
                     variant="ghost"
                     size="icon"
                     className="hover:bg-red-100 hover:text-red-600 p-1"
                   >
-                    <X className="h-4 w-4" />
+                    <Trash2 className="h-4 w-4" />
                   </Button>
                 </div>
               </CardContent>
             </Card>
           ),
+        )}
+
+        {selectedProduct && (
+          <DeleteConfirmationModal
+            open={deleteModalOpen}
+            onClose={() => {
+              setDeleteModalOpen(false);
+              setSelectedProductId(null);
+            }}
+            onConfirm={() => {
+              deleteInventoryItem(selectedProductId!);
+              setDeleteModalOpen(false);
+              setSelectedProductId(null);
+            }}
+            productName={selectedProduct.name}
+          />
         )}
       </div>
 
@@ -180,9 +207,9 @@ export default function InventoryComponent({
                   onClick={() => deleteInventoryItem(id)}
                   variant="ghost"
                   size="icon"
-                  className="hover:bg-red-100 hover:text-red-600 p-1"
+                  className="hover:bg-red-100 hover:text-red-600 p-1 max-md:justify-start"
                 >
-                  <X className="h-4 w-4" />
+                  <Trash2 className="h-4 w-4" />
                 </Button>
               </div>
             </CardContent>
