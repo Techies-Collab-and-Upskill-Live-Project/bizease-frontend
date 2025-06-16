@@ -3,12 +3,14 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { inventoryItems } from '@/constants';
-import { formatCurrency } from '@/lib/utils';
 
-export const lowStockItems = inventoryItems.filter(({ stock }) => stock < 5);
+import { formatCurrency } from '@/lib/utils';
+import { useInventoryStore } from '@/lib/store';
 
 const LowStockItems = () => {
+  const inventoryItems = useInventoryStore((state) => state.inventory);
+  const lowStockItems = inventoryItems.filter(({ stock }) => stock < 5);
+
   const [showAll, setShowAll] = useState(false);
   const visibleItems = showAll ? lowStockItems : lowStockItems.slice(0, 6);
 
