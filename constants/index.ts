@@ -388,3 +388,5 @@ export const aboutBiz = {
 
   ready: 'Ready to simplify your business?',
 };
+
+export const recentOrders = [];

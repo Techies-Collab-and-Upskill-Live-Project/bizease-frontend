@@ -20,7 +20,7 @@ const UsernameAndButtons = () => {
         <>
           <Button
             onClick={() => setShowModal(true)}
-            className=" text-darkblue focus-pointer border border-lightblue "
+            className=" text-darkblue cursor-pointer border border-lightblue "
           >
             Add New Order
           </Button>

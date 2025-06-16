@@ -17,7 +17,7 @@ const AddButton = ({
     <Link href="/inventory/add-product">
       <Button
         className={cn(
-          'bg-darkblue hover:bg-lightblue font-normal text-surface-100',
+          'bg-darkblue hover:bg-lightblue font-normal text-surface-100 cursor-pointer',
           className,
         )}
       >
