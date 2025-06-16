@@ -112,7 +112,11 @@ export default function AddOrderModal({
         </div>
 
         <DialogFooter className="flex gap-2">
-          <Button variant="outline" onClick={onClose}>
+          <Button
+            variant="outline"
+            onClick={onClose}
+            className="cursor-pointer"
+          >
             Cancel
           </Button>
           <Button
@@ -123,7 +127,7 @@ export default function AddOrderModal({
               quantity < 1 ||
               quantity > (product?.stock ?? 0)
             }
-            className="bg-darkblue hover:bg-lightblue text-surface-100"
+            className="bg-darkblue hover:bg-lightblue cursor-pointer text-surface-100"
           >
             Place Order
           </Button>

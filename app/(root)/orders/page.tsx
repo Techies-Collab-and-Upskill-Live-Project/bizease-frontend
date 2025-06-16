@@ -123,7 +123,7 @@ export default function OrdersPage() {
 
           <div className="flex gap-2 w-full md:w-auto">
             <Select value={filter} onValueChange={setFilter}>
-              <SelectTrigger className="w-[160px] border border-lightblue">
+              <SelectTrigger className="w-[160px] border cursor-pointer border-lightblue">
                 <SelectValue placeholder="Filter by status" />
               </SelectTrigger>
               <SelectContent className="border border-lightblue">
@@ -136,7 +136,7 @@ export default function OrdersPage() {
 
             <Button
               onClick={() => setShowAddOrderModal(true)}
-              className="bg-darkblue hover:bg-lightblue font-normal text-[14px] text-surface-200"
+              className="bg-darkblue curs hover:bg-lightblue font-normal text-[14px] text-surface-200 cursor-pointer"
             >
               Add New Order
             </Button>
@@ -196,7 +196,7 @@ export default function OrdersPage() {
                       products: [],
                     })
                   }
-                  className="w-full bg-darkblue hover:bg-lightblue font-normal text-surface-200 text-[10px]"
+                  className="w-full cursor-pointer bg-darkblue hover:bg-lightblue font-normal text-surface-200 text-[10px]"
                   size="sm"
                 >
                   View Details
