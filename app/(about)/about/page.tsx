@@ -46,7 +46,7 @@ const AboutPage = () => {
           {aboutBiz.ready}
         </h4>
         <footer className="my-4 flex items-center gap-2 text-sm text-surface-500">
-          <Link href={'/register'}>
+          <Link href={'/sign-up'}>
             <Button className="font-normal text-[12px] bg-darkblue text-surface-200 hover:bg-lightblue cursor-pointer">
               Try BizEase Today
             </Button>
