@@ -43,7 +43,6 @@
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
-    "@next/swc-linux-arm64-gnu": "^15.3.2",
     "@tailwindcss/postcss": "^4",
     "@types/jspdf": "^1.3.3",
     "@types/node": "^20",
