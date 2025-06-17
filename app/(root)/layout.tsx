@@ -9,9 +9,9 @@ export default function RootLayout({
 }>) {
   return (
     <section className="min-h-screen w-full h-screen mb-10 lg:flex-row ">
-      <div className=" flex">
+      <div className=" flex flex-1 w-full">
         <SideNavBar />
-        {children}
+        <main className="flex-1"> {children}</main>
       </div>
       <Footer />
       <MobileNav />
