@@ -1,11 +1,9 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import {
-  inventoryItems as defaultInventory,
-  recentOrders as defaultOrders,
-} from '@/constants';
+import { recentOrders as defaultOrders } from '@/constants';
 
 import { InventoryStore, Order, Product, ReportPeriod } from '@/types';
+import { fetchInventory } from './api/user';
 
 interface ReportStore {
   period: ReportPeriod;
@@ -21,12 +19,21 @@ interface ReportStore {
 export const useInventoryStore = create<InventoryStore>()(
   persist(
     (set, get) => ({
-      inventory: defaultInventory,
+      inventory: [],
       searchTerm: '',
 
-      setSearchTerm: (term: string) => set({ searchTerm: term }),
+      setSearchTerm: (term) => set({ searchTerm: term }),
 
       setInventory: (products) => set({ inventory: products }),
+
+      fetchInventoryFromAPI: async () => {
+        try {
+          const data = await fetchInventory();
+          set({ inventory: data });
+        } catch (error) {
+          console.error('Failed to fetch inventory', error);
+        }
+      },
 
       addProduct: (product) =>
         set({ inventory: [...get().inventory, product] }),
@@ -47,7 +54,11 @@ export const useInventoryStore = create<InventoryStore>()(
         set({
           inventory: get().inventory.map((item) =>
             item.id === id
-              ? { ...item, ...data, lastUpdated: new Date().toLocaleString() }
+              ? {
+                  ...item,
+                  ...data,
+                  last_updated: new Date().toISOString(),
+                }
               : item,
           ),
         }),
@@ -58,19 +69,16 @@ export const useInventoryStore = create<InventoryStore>()(
             item.id === id
               ? {
                   ...item,
-                  stock: Math.max(0, item.stock - quantity),
-                  lastUpdated: new Date().toLocaleString(),
+                  stock_level: Math.max(0, item.stock - quantity),
+                  last_updated: new Date().toISOString(),
                 }
               : item,
           ),
         }),
     }),
-    {
-      name: 'inventory',
-    },
+    { name: 'inventory' },
   ),
 );
-
 interface OrderStore {
   orders: Order[];
   addOrder: (order: Order) => void;
