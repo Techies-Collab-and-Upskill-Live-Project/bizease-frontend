@@ -1,7 +1,5 @@
 import React from 'react';
 
-import { reportSummary } from '@/constants';
-
 import TopAvatar from '@/components/navigations/TopAvatar';
 import ReportSums from '@/components/reports/ReportSums';
 import HeaderPeriodSelection from '@/components/reports/ReportPeriodSelection';

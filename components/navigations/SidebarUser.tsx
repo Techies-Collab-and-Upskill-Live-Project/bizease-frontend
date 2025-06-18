@@ -1,5 +1,4 @@
 import { user } from '@/constants';
-import React from 'react';
 
 const SidebarUser = () => {
   const { businessPlan, name } = user;

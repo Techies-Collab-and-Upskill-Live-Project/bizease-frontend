@@ -9,10 +9,11 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Mail } from "lucide-react";
-import useForgotPassoword from "@/hooks/useForgotPassword";
+} from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import { Mail } from 'lucide-react';
+import useForgotPassoword from '@/hooks/useForgotPassword';
+import Image from 'next/image';
 
 const SignUp = () => {
   const { resetSchema, onSubmit } = useForgotPassoword();
@@ -21,7 +22,12 @@ const SignUp = () => {
     <div className="min-h-screen bg-[#F5F5F5] ">
       {/* Top Section */}
       <div className="flex py-25 md:py-40 items-center justify-center gap-2 bg-gradient-to-b rounded-b-lg from-blue-800 to-blue-600 text-white">
-        <img src="/icon/logo-2.png" alt="logo" className="w-10 h-10" />
+        <Image
+          sizes="fill"
+          src="/icon/logo-2.png"
+          alt="logo"
+          className="w-10 h-10"
+        />
         <p className="text-2xl font-bold">Bizease</p>
       </div>
       {/* Floating Form */}

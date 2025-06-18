@@ -1,6 +1,5 @@
 'use client';
 
-import React from 'react';
 import { Search } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 
@@ -27,7 +26,7 @@ const SearchInput: React.FC<SearchInputProps> = ({
         value={searchTerm}
         onChange={(e) => {
           setSearchTerm(e.target.value);
-          onResetPage;
+          onResetPage?.();
         }}
         className="pl-10 border placeholder:italic border-lightblue"
       />

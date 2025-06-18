@@ -2,19 +2,8 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { recentOrders as defaultOrders } from '@/constants';
 
-import { InventoryStore, Order, Product, ReportPeriod } from '@/types';
+import { InventoryStore, Order, ReportPeriod } from '@/types';
 import { fetchInventory } from './api/user';
-
-interface ReportStore {
-  period: ReportPeriod;
-  setPeriod: (period: ReportPeriod) => void;
-
-  // Derived data
-  totalRevenue: number;
-  topProducts: { name: string; revenue: number }[];
-
-  computeReport: () => void;
-}
 
 export const useInventoryStore = create<InventoryStore>()(
   persist(

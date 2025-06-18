@@ -9,14 +9,12 @@ import MobileButtons from '@/components/dashboard/MobileButton';
 import PendingOrders from '@/components/dashboard/PendingOrders';
 import LowStockItems from '@/components/dashboard/LowStockItems';
 
-import { useOrderStore, useInventoryStore } from '@/lib/store';
+import { useOrderStore } from '@/lib/store';
 import { calculateMostOrderedProduct } from '@/lib/utils';
 import AnimatedCountUp from '@/components/animations/AnimatedCountUp';
-import CountUp from 'react-countup';
 
 const DashboardPage = () => {
   const orders = useOrderStore((state) => state.orders);
-  const inventoryItems = useInventoryStore((state) => state.inventory);
 
   //  Calculate total revenue from order totals
   const totalRevenue = orders.reduce((sum, order) => sum + order.total, 0);

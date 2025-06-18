@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { cn, formatCurrency } from '@/lib/utils';
-import { ChevronLeft, ChevronRight, Trash, Trash2, X } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Trash2, X } from 'lucide-react';
 import Link from 'next/link';
 
 import { SearchProductProps } from '@/types';
@@ -239,11 +239,12 @@ export default function InventoryComponent({
           </Button>
         </div>
       </div>
+
       {/* Pagination */}
       <div className="flex items-center justify-between pt-2 mb-2 text-sm">
         <div className="text-muted-foreground">
-          Showing {startIndex + 1} -{' '}
-          {Math.min(endIndex, filteredProduct.length)} of{' '}
+          Showing {startIndex + 1} -{Math.min(endIndex, filteredProduct.length)}
+          of
           {filteredProduct.length} products
         </div>
         <div className="flex gap-2">

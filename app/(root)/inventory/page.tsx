@@ -1,16 +1,16 @@
 'use client';
 
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
+
 import InventoryComponent from '@/components/inventory/InventoryProducts';
 import SearchProduct from '@/components/inventory/SearchProductMobile';
 import TotalInventory from '@/components/inventory/TotalInventory';
 import TopAvatar from '@/components/navigations/TopAvatar';
-import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
 
 const Inventory = () => {
   const router = useRouter();
 
-  const [products, setProducts] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [filter, setFilter] = useState('all');
   const [currentPage, setCurrentPage] = useState(1);
@@ -18,12 +18,6 @@ const Inventory = () => {
   const handleAddProduct = () => {
     router.push('/inventory/add-product');
   };
-
-  useEffect(() => {
-    const stored = localStorage.getItem('inventory');
-    const parsed = stored ? JSON.parse(stored) : [];
-    setProducts(parsed);
-  }, []);
 
   return (
     <section className="w-full bg-gray-100">

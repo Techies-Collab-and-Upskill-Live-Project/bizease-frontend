@@ -62,3 +62,12 @@ export function calculateMostOrderedProduct(orders: Order[]): ProductCount {
 
   return mostOrdered;
 }
+
+export function getLastNDates(n: number): string[] {
+  const today = new Date();
+  return Array.from({ length: n }).map((_, i) => {
+    const date = new Date(today);
+    date.setDate(today.getDate() - (n - i - 1));
+    return date.toDateString();
+  });
+}

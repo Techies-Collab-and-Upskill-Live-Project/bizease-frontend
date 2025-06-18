@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import React, { useState } from "react";
-import { Button } from "@/components/ui/button";
+import React, { useState } from 'react';
+import { Button } from '@/components/ui/button';
 import {
   Form,
   FormControl,
@@ -9,11 +9,12 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Checkbox } from "@/components/ui/checkbox";
-import useLogin from "@/hooks/useLogin";
-import { Eye, EyeOff, Mail } from "lucide-react";
+} from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import { Checkbox } from '@/components/ui/checkbox';
+import useLogin from '@/hooks/useLogin';
+import { Eye, EyeOff, Mail } from 'lucide-react';
+import Image from 'next/image';
 
 const LogIn = () => {
   const { loginSchema, onSubmit } = useLogin();
@@ -23,7 +24,13 @@ const LogIn = () => {
     <div className="min-h-screen">
       {/* Top Section */}
       <div className="flex py-15 md:py-30 items-center justify-center gap-2 bg-gradient-to-b rounded-b-lg from-blue-800 to-blue-600 text-white">
-        <img src="/icon/logo-2.png" alt="logo" className="w-10 h-10" />
+        <Image
+          width={60} // any appropriate size in pixels
+          height={58}
+          src="/icon/logo-2.png"
+          alt="logo"
+          className="w-10 h-10"
+        />
         <p className="text-2xl font-bold">Bizease</p>
       </div>
 
@@ -79,7 +86,7 @@ const LogIn = () => {
                   <FormControl>
                     <div className="relative">
                       <Input
-                        type={showPassword ? "text" : "password"}
+                        type={showPassword ? 'text' : 'password'}
                         placeholder="*********"
                         className=" pr-10 text-sm"
                         {...field}
@@ -136,12 +143,30 @@ const LogIn = () => {
         <div className=" justify-center  flex flex-col gap-3 items-center ">
           <p className="text-gray-500 text-sm tracking-wide">-or login with-</p>
           <div className="flex gap-6 items-center justify-center">
-            <img src={"/google.png"} alt="" className="w-10 h-10 cursor-pointer" />
-            <img src={"/apple.png"} alt="" className="w-10 h-10 cursor-pointer" />
-            <img src={"/microsoft.png"} alt="" className="w-10 h-10 cursor-pointer" />
+            <Image
+              width={60} // any appropriate size in pixels
+              height={58}
+              src={'/google.png'}
+              alt=""
+              className="w-10 h-10 cursor-pointer"
+            />
+            <Image
+              width={60} // any appropriate size in pixels
+              height={58}
+              src={'/apple.png'}
+              alt=""
+              className="w-10 h-10 cursor-pointer"
+            />
+            <Image
+              width={60} // any appropriate size in pixels
+              height={58}
+              src={'/microsoft.png'}
+              alt=""
+              className="w-10 h-10 cursor-pointer"
+            />
           </div>
           <a href="/sign-up" className=" text-[13px] underline ">
-            Don’t have an account? Sign up
+            Do not have account? Sign up
           </a>
         </div>
       </div>

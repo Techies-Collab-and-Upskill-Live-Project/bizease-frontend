@@ -1,17 +1,16 @@
-"use client";
+'use client';
 
-import React from "react";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
-import { userLoginSchema } from "@/lib/validations/auth";
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
+import { userLoginSchema } from '@/lib/validations/auth';
 
 export default function useLogin() {
   const loginSchema = useForm<z.infer<typeof userLoginSchema>>({
     resolver: zodResolver(userLoginSchema),
     defaultValues: {
-      email: "",
-      password: "",
+      email: '',
+      password: '',
     },
   });
 
