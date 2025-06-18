@@ -1,0 +1,43 @@
+name: Deploy Bizease to Vercel
+
+on:
+  push:
+    branches:
+      - dev
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build project
+        run: npm run build
+
+      - name: Deploy to Vercel
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+        run: |
+          if [ "${{ github.ref }}" == "refs/heads/dev" ]; then
+            npx vercel --yes --token=$VERCEL_TOKEN --prod --confirm --alias devbizease.vercel.app
+          elif [ "${{ github.ref }}" == "refs/heads/main" ]; then
+            npx vercel --yes --token=$VERCEL_TOKEN --prod --confirm --alias prodbizease.vercel.app
+          fi
+      - name: Post deployment message
+        run: |
+          if [ "${{ github.ref }}" == "refs/heads/dev" ]; then
+            echo "Deployed to dev environment: https://devbizease.vercel.app"
+          elif [ "${{ github.ref }}" == "refs/heads/main" ]; then
+            echo "Deployed to production environment: https://prodbizease.vercel.app"
+          fi
