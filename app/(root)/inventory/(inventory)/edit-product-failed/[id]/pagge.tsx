@@ -27,7 +27,7 @@ const AddFailurePage = () => {
           </h1>
           <p className="text-sm text-red-500 mt-2">
             {product
-              ? `Failed to add "${product.itemsInStock}". Please try again.`
+              ? `Failed to add "${product.name}". Please try again.`
               : 'Product could not be added. Please try again.'}
           </p>
         </div>

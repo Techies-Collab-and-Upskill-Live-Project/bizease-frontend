@@ -27,7 +27,7 @@ const AddSuccessPage = () => {
           <h1 className="text-2xl font-bold text-darkblue">Product Updated!</h1>
           <p className="text-sm text-darkblue mt-2">
             {product
-              ? `Product "${product.itemsInStock}" was updated successfully.`
+              ? `Product "${product.name}" was updated successfully.`
               : 'Product was updated successfully.'}
           </p>
         </div>
