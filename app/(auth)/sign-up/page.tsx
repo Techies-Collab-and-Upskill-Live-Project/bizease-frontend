@@ -13,7 +13,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { Checkbox } from '@/components/ui/checkbox';
 import useSignUp from '@/hooks/useSignUp';
-import { Eye, EyeOff, Mail, Lock } from 'lucide-react';
+import { Eye, EyeOff, Mail } from 'lucide-react';
 
 const SignUp = () => {
   const { signUpSchema, onSubmit } = useSignUp();

@@ -5,7 +5,6 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import LoadingSpinner from "../spinner";
-import { useState } from "react";
 import { useBusiness } from "@/hooks/useBusiness";
 
 export default function BusinessSettings() {
