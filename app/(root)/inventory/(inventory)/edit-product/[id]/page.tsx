@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -24,10 +24,13 @@ export default function EditProduct() {
   const inventory = useInventoryStore((state) => state.inventory);
   const updateProduct = useInventoryStore((state) => state.editProduct);
 
-  const [product, setProduct] = useState(() =>
-    inventory.find((item) => item.id === productId),
+  // 🧠 Memoized product from store
+  const product = useMemo(
+    () => inventory.find((item) => item.id === productId),
+    [inventory, productId],
   );
 
+  // 🔁 Redirect if product is not found
   useEffect(() => {
     if (!product) {
       router.push('/inventory/edit-product-failed');
@@ -40,14 +43,17 @@ export default function EditProduct() {
     formState: { errors },
   } = useForm<EditInventoryFormData>({
     resolver: zodResolver(editInventoryformSchema),
-    defaultValues: {
-      itemName: product?.name || '',
-      category: product?.category || '',
-      stockLevel: product?.stock,
-      price: product?.price,
-      lowStockThreshold: product?.lowStockThreshold ?? 5,
-      description: product?.description || '',
-    },
+    defaultValues: useMemo(
+      () => ({
+        itemName: product?.name || '',
+        category: product?.category || '',
+        stockLevel: product?.stock ?? 0,
+        price: product?.price ?? 0,
+        lowStockThreshold: product?.lowStockThreshold ?? 5,
+        description: product?.description || '',
+      }),
+      [product],
+    ),
   });
 
   const onSubmit = (data: EditInventoryFormData) => {
@@ -72,75 +78,38 @@ export default function EditProduct() {
             <ChevronLeft className="w-5 h-5 text-surface-500" />
           </Button>
           <h2 className="text-xl max-md:text-sm text-surface-500 font-semibold">
-            Edit Product: "
-            <span className="text-blue-600">{product?.name}</span>"
+            Edit Product:
+            <span className="text-blue-600">{product?.name}</span>
           </h2>
         </div>
 
         <Card className="border-0 p-4">
           <CardContent className="space-y-1 pt-6">
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-2">
-              <div>
-                <Label className="text-surface-400 mb-1">Item Name</Label>
-                <Input className="text-surface-400" {...register('itemName')} />
-                {errors.itemName && (
-                  <p className="text-red-500 text-sm">
-                    {errors.itemName.message}
-                  </p>
-                )}
-              </div>
-
-              <div>
-                <Label className="text-surface-400 mb-1">Category</Label>
-                <Input className="text-surface-400" {...register('category')} />
-                {errors.category && (
-                  <p className="text-red-500 text-sm">
-                    {errors.category.message}
-                  </p>
-                )}
-              </div>
-
-              <div>
-                <Label className="text-surface-400 mb-1">Stock Level</Label>
-                <Input
-                  className="text-surface-400"
-                  type="number"
-                  {...register('stockLevel', { valueAsNumber: true })}
-                />
-                {errors.stockLevel && (
-                  <p className="text-red-500 text-sm">
-                    {errors.stockLevel.message}
-                  </p>
-                )}
-              </div>
-
-              <div>
-                <Label className="text-surface-400 mb-1">Price</Label>
-                <Input
-                  className="text-surface-400"
-                  type="number"
-                  {...register('price', { valueAsNumber: true })}
-                />
-                {errors.price && (
-                  <p className="text-red-500 text-sm">{errors.price.message}</p>
-                )}
-              </div>
-
-              <div>
-                <Label className="text-surface-400 mb-1">
-                  Low Stock Threshold
-                </Label>
-                <Input
-                  className="text-surface-400"
-                  type="number"
-                  {...register('lowStockThreshold', { valueAsNumber: true })}
-                />
-                {errors.lowStockThreshold && (
-                  <p className="text-red-500 text-sm">
-                    {errors.lowStockThreshold.message}
-                  </p>
-                )}
-              </div>
+              {/* Fields */}
+              {[
+                ['Item Name', 'itemName'],
+                ['Category', 'category'],
+                ['Stock Level', 'stockLevel', 'number'],
+                ['Price', 'price', 'number'],
+                ['Low Stock Threshold', 'lowStockThreshold', 'number'],
+              ].map(([label, name, type]) => (
+                <div key={name}>
+                  <Label className="text-surface-400 mb-1">{label}</Label>
+                  <Input
+                    className="text-surface-400"
+                    type={type ?? 'text'}
+                    {...register(name as keyof EditInventoryFormData, {
+                      valueAsNumber: type === 'number',
+                    })}
+                  />
+                  {errors[name as keyof EditInventoryFormData] && (
+                    <p className="text-red-500 text-sm">
+                      {errors[name as keyof EditInventoryFormData]?.message}
+                    </p>
+                  )}
+                </div>
+              ))}
 
               <div>
                 <Label className="text-surface-400 mb-1">Description</Label>
@@ -155,6 +124,7 @@ export default function EditProduct() {
                 )}
               </div>
 
+              {/* Buttons */}
               <div className="flex flex-col items-center gap-3 pt-4">
                 <Button
                   type="submit"

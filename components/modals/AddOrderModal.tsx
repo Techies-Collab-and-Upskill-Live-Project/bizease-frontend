@@ -18,9 +18,10 @@ import {
   SelectContent,
   SelectValue,
 } from '@/components/ui/select';
+
 import { v4 as uuidv4 } from 'uuid';
 
-import { formatCurrency } from '@/lib/utils';
+import AnimatedCountUp from '../animations/AnimatedCountUp';
 
 interface AddOrderModalProps {
   onClose: () => void;
@@ -107,7 +108,10 @@ export default function AddOrderModal({
           />
 
           <div className="text-darkblue text-sm">
-            Total: <strong>{formatCurrency(total)}</strong>
+            Total:
+            <strong>
+              <AnimatedCountUp amount={total} />
+            </strong>
           </div>
         </div>
 

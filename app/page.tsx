@@ -1,26 +1,29 @@
 'use client';
 
 import { Button } from '@/components/ui/button';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-
-import React from 'react';
 
 export default function Landing() {
   const router = useRouter();
+
   const handleGetStarted = () => {
     router.push('/sign-up');
   };
+
   return (
     <div className="flex flex-col lg:flex-row-reverse min-h-screen">
       {/* Top Section */}
       <div className="relative bg-gradient-to-b from-blue-800 to-blue-600 px-2 md:px-4 py-3 md:py-8 rounded-b-2xl lg:rounded-none lg:w-1/2 flex items-center justify-center">
         <div className="flex flex-col gap-2 md:gap-4 items-center justify-center">
           <p className="text-center text-white font-semibold">
-            Manage your Orders{' '}
+            Manage your Orders
             <span className="text-blue-600">Efficiently.</span>
           </p>
-          <img
-            src="splash.png"
+          <Image
+            width={400} // any appropriate size in pixels
+            height={300}
+            src="/splash.png"
             alt="Order image"
             className="w-75 h-75 md:w-85 md:h-85"
           />
@@ -41,7 +44,12 @@ export default function Landing() {
               Bizease!
             </p>
           </div>
-          <img src="/icon/logo-2.png" alt="logo" className="my-6 h-20 w-20" />
+          <Image
+            width={60} // any appropriate size in pixels
+            height={58}
+            src="/icon/logo-2.png"
+            alt="logo"
+          />
           <div className="px-5 py-2 md:px-20 md:py-4 lg:py-10 w-full lg:w-2/3">
             <Button
               onClick={handleGetStarted}

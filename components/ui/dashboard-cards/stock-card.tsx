@@ -21,19 +21,6 @@ const StockCard: React.FC<StockCardProps> = ({
   stock,
   id,
 }) => {
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'low':
-        return 'bg-orange-500';
-      case 'normal':
-        return 'bg-green-500';
-      case 'high':
-        return 'bg-blue-500';
-      default:
-        return 'bg-orange-500';
-    }
-  };
-
   return (
     <div className="bg-white rounded-lg shadow-[0_2px_8px_rgba(0,0,0,0.15)] p-4 flex flex-col min-w-[200px] hover:shadow-[0_4px_12px_rgba(0,0,0,0.2)] transition-shadow duration-200">
       <div className="font-semibold">{name}</div>

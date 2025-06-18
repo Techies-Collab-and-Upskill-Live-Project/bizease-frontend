@@ -1,6 +1,6 @@
 'use client';
 
-import { useParams, useRouter } from 'next/navigation';
+import { useParams } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -9,7 +9,6 @@ import { inventoryItems } from '@/constants';
 
 const AddSuccessPage = () => {
   const params = useParams();
-  const router = useRouter();
 
   const id = Number(params.id);
   const product = inventoryItems.find((item) => item.id === id);

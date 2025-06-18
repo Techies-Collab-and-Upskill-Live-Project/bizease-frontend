@@ -1,6 +1,5 @@
 'use client';
 
-import React from 'react';
 import { Bar, Line } from 'react-chartjs-2';
 import {
   Chart as ChartJS,
@@ -15,7 +14,7 @@ import {
 
 import { useReportStore, useOrderStore } from '@/lib/store';
 import CustomLegend from './CustomLegend';
-import { getLastNDates } from '@/lib/date-utils';
+import { getLastNDates } from '@/lib/utils';
 import { computeTopProductRevenues } from '@/lib/revenue';
 
 ChartJS.register(
@@ -47,11 +46,11 @@ const Charts = () => {
   ];
 
   const barChartData = {
-    labels: topProducts.map((item) => item.name),
+    labels: topProducts.map(({ name }) => name),
     datasets: [
       {
         label: 'Revenue',
-        data: topProducts.map((item) => item.revenue),
+        data: topProducts.map((revenue) => revenue),
         backgroundColor: topProducts.map((_, i) => colors[i % colors.length]),
         borderRadius: 2,
       },

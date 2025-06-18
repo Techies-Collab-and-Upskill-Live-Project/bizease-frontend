@@ -1,7 +1,7 @@
 'use client';
 
-import * as React from "react";
-import { Button } from "@/components/ui/button";
+import * as React from 'react';
+import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -9,9 +9,13 @@ import {
   DropdownMenuRadioItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+
 import { ChevronDown } from 'lucide-react';
 
-type SettingType = "Personal Information" | "Business Information" | "Preferences";
+type SettingType =
+  | 'Personal Information'
+  | 'Business Information'
+  | 'Preferences';
 
 type OptionsProps = {
   settingType?: SettingType;
@@ -19,7 +23,7 @@ type OptionsProps = {
 };
 
 export function Options({
-  settingType = "Personal Information",
+  settingType = 'Personal Information',
   setSettingType,
 }: OptionsProps) {
   return (
@@ -38,9 +42,9 @@ export function Options({
           value={settingType}
           onValueChange={(value) => {
             if (
-              value === "Personal Information" ||
-              value === "Business Information" ||
-              value === "Preferences"
+              value === 'Personal Information' ||
+              value === 'Business Information' ||
+              value === 'Preferences'
             ) {
               setSettingType?.(value);
             }

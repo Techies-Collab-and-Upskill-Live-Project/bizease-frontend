@@ -9,9 +9,9 @@ import {
   DialogFooter,
 } from '@/components/ui/dialog';
 
-import { formatCurrency } from '@/lib/utils';
 import { Order } from '@/types';
 import { useOrderStore } from '@/lib/store';
+import AnimatedCountUp from '../animations/AnimatedCountUp';
 
 interface Props {
   order: Order | null;
@@ -61,7 +61,7 @@ const OrderModal = ({ order, onClose, showActions = true }: Props) => {
             <strong>Status:</strong> {status}
           </p>
           <p>
-            <strong>Total:</strong> {formatCurrency(total)}
+            <strong>Total:</strong> <AnimatedCountUp amount={total} />
           </p>
           <p>
             <strong>Last Updated:</strong> {lastUpdated}

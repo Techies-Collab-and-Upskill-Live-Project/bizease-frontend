@@ -84,7 +84,6 @@ export type OrderProduct = {
   productName: string;
   quantity: number;
   price: number;
-  // products: string[];
 };
 
 export type Product = {
