@@ -13,10 +13,9 @@ import {
 import AddOrderModal from '@/components/modals/AddOrderModal';
 
 import { Search, ChevronRight, ChevronLeft } from 'lucide-react';
-import { useOrderStore, useInventoryStore } from '@/lib/store';
+import { useOrderStore } from '@/lib/store';
 import TopAvatar from '@/components/navigations/TopAvatar';
 import { cn } from '@/lib/utils';
-import { v4 as uuidv4 } from 'uuid';
 import ViewOrderModal from '@/components/modals/OrderModal';
 import { Order } from '@/types';
 import AnimatedCountUp from '@/components/animations/AnimatedCountUp';
@@ -25,8 +24,7 @@ export default function OrdersPage() {
   const [showAddOrderModal, setShowAddOrderModal] = useState(false);
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
 
-  const { orders, addOrder } = useOrderStore();
-  const { inventory, editProduct } = useInventoryStore();
+  const { orders } = useOrderStore();
 
   const [search, setSearch] = useState('');
   const [filter, setFilter] = useState('all');
@@ -51,26 +49,6 @@ export default function OrdersPage() {
     ({ status }) => status.toLowerCase() === 'pending',
   ).length;
   const totalOrders = filtered.length;
-
-  const handleAddOrder = () => {
-    const item = inventory.find((p) => p.stock > 0);
-    if (!item) return alert('No items in stock to order.');
-
-    const status: 'Pending' | 'Delivered' | 'Cancelled' = 'Pending';
-
-    const newOrder = {
-      id: uuidv4(),
-      name: item.name,
-      total: item.price,
-      date: new Date().toLocaleDateString(),
-      status: status,
-      lastUpdated,
-      products: [],
-    };
-
-    addOrder(newOrder);
-    editProduct(item.id, { stock: item.stock - 1 });
-  };
 
   return (
     <section className="bg-gray-100 pb-10">

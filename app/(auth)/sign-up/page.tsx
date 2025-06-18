@@ -13,7 +13,8 @@ import {
 import { Input } from '@/components/ui/input';
 import { Checkbox } from '@/components/ui/checkbox';
 import useSignUp from '@/hooks/useSignUp';
-import { Eye, EyeOff, Mail, Lock } from 'lucide-react';
+import { Eye, EyeOff, Mail } from 'lucide-react';
+import Image from 'next/image';
 
 const SignUp = () => {
   const { signUpSchema, onSubmit } = useSignUp();
@@ -23,7 +24,13 @@ const SignUp = () => {
     <div className="min-h-screenbg-gray-100 ">
       {/* Top Section */}
       <div className="flex py-20 md:py-30 items-center justify-center gap-2 bg-gradient-to-b rounded-b-lg from-blue-800 to-blue-600 text-white">
-        <img src="/icon/logo-2.png" alt="logo" className="w-10 h-10" />
+        <Image
+          width={60} // any appropriate size in pixels
+          height={58}
+          src="/icon/logo-2.png"
+          alt="logo"
+          className="w-10 h-10"
+        />
         <p className="text-2xl font-bold">Bizease</p>
       </div>
 
@@ -272,19 +279,25 @@ const SignUp = () => {
             -or Signup with-
           </p>
           <div className="flex gap-6 items-center justify-center">
-            <img
+            <Image
+              width={60} // any appropriate size in pixels
+              height={58}
               src={'/google.png'}
-              alt=""
+              alt="google-icon"
               className="w-10 h-10 cursor-pointer"
             />
-            <img
+            <Image
+              width={60} // any appropriate size in pixels
+              height={58}
               src={'/apple.png'}
-              alt=""
+              alt="apple-icon"
               className="w-10 h-10 cursor-pointer"
             />
-            <img
+            <Image
+              width={60} // any appropriate size in pixels
+              height={58}
               src={'/microsoft.png'}
-              alt=""
+              alt="microsoft-icon"
               className="w-10 h-10 cursor-pointer"
             />
           </div>

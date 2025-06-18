@@ -1,7 +1,6 @@
-import { Button } from "@/components/ui/button";
-import Image from "next/image";
-import Link from "next/link";
-import React from "react";
+import Image from 'next/image';
+import Link from 'next/link';
+import React from 'react';
 
 export default function Onboarding() {
   return (
@@ -31,9 +30,9 @@ export default function Onboarding() {
             to help small business owners streamline their operations. With
             BizEase, you can effortlessly manage orders from multiple channels,
             track inventory in real-time, and communicate with customers—all in
-            one platform. Whether you're dealing with fluctuating stock levels
+            one platform. Whether you are dealing with fluctuating stock levels
             or keeping track of customer orders, BizEase simplifies complex
-            processes, saving you time and reducing stress.{" "}
+            processes, saving you time and reducing stress.
           </p>
           <p className="text-xs md:text-base lg:text-xl xl:text-3xl p-1  px-2">
             Perfect for entrepreneurs looking for a user-friendly solution to
@@ -86,7 +85,10 @@ export default function Onboarding() {
               </div>
             </div>
 
-            <Link href={"/login"} className="rounded cursor-pointer text-white text-center bg-blue-500 text-sm md:text-lg lg:text-2xl xl:text-4xl font-bold md:p-6 lg:p-8 xl:p-10 mt-4 md:mt-6 lg:mt-8 xl:mt-12">
+            <Link
+              href={'/login'}
+              className="rounded cursor-pointer text-white text-center bg-blue-500 text-sm md:text-lg lg:text-2xl xl:text-4xl font-bold md:p-6 lg:p-8 xl:p-10 mt-4 md:mt-6 lg:mt-8 xl:mt-12"
+            >
               Get Started
             </Link>
           </div>

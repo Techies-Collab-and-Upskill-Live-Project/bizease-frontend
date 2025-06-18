@@ -361,12 +361,12 @@ export const user = {
 export const aboutBiz = {
   title: 'About BizEase',
 
-  subTitle: `Running a business is hard enough — managing your orders and inventory shouldn't be. That's where BizEase comes in.`,
+  subTitle: `Running a business is hard enough — managing your orders and inventory should not be. That is where BizEase comes in.`,
 
-  sub: `We created BizEase with one simple goal: to take the stress out of business management for small and medium-sized enterprises. Whether you're juggling sales, shipping, or stock levels, BizEase gives you the tools to stay in control — all from one intuitive platform.`,
+  sub: `We created BizEase with one simple goal: to take the stress out of business management for small and medium-sized enterprises. Whether you are juggling sales, shipping, or stock levels, BizEase gives you the tools to stay in control — all from one intuitive platform.`,
 
   missionHead: 'Our Mission',
-  missionSub: `At BizEase, we believe powerful business tools shouldn't come with a steep learning curve. That is why we built a platform thats easy to use, efficient, and designed to grow with your business.`,
+  missionSub: `At BizEase, we believe powerful business tools should not come with a steep learning curve. That is why we built a platform thats easy to use, efficient, and designed to grow with your business.`,
 
   missionSub2: `Born out of frustration with clunky spreadsheets and over-complicated software, BizEase was created to simplify daily operations — so business owners can focus on what truly matters: growing their business and serving their customers.`,
 

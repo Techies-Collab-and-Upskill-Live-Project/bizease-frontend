@@ -1,6 +1,5 @@
 'use client';
 
-import { formatCurrency } from '@/lib/utils';
 import { useInventoryStore } from '@/lib/store';
 import AnimatedCountUp from '../animations/AnimatedCountUp';
 

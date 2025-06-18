@@ -18,9 +18,6 @@ type Order = {
   date: string;
 };
 
-/**
- * Compute top N products by total revenue (price × quantity)
- */
 export function computeTopProductRevenues(
   orders: Order[],
   top: number = 5,
