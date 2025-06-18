@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import { Button } from "@/components/ui/button";
+import { Button } from '@/components/ui/button';
 import {
   Form,
   FormControl,
@@ -8,17 +8,17 @@ import {
   FormField,
   FormItem,
   FormLabel,
-} from "@/components/ui/form";
-import { Switch } from "@/components/ui/switch";
-import { usePreference } from "@/hooks/usePreference";
-import { Input } from "../ui/input";
+} from '@/components/ui/form';
+import { Switch } from '@/components/ui/switch';
+import { usePreference } from '@/hooks/usePreference';
+import { Input } from '../ui/input';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
+} from '@/components/ui/select';
 
 export function PreferenceSettings() {
   const { form, onSubmit } = usePreference();
@@ -217,22 +217,13 @@ export function PreferenceSettings() {
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="en">English</SelectItem>
-                      <SelectItem
-                        className="text-xs  tracking-wide"
-                        value="fr"
-                      >
+                      <SelectItem className="text-xs  tracking-wide" value="fr">
                         French
                       </SelectItem>
-                      <SelectItem
-                        className="text-xs  tracking-wide"
-                        value="es"
-                      >
+                      <SelectItem className="text-xs  tracking-wide" value="es">
                         Spanish
                       </SelectItem>
-                      <SelectItem
-                        className="text-xs  tracking-wide"
-                        value="de"
-                      >
+                      <SelectItem className="text-xs  tracking-wide" value="de">
                         German
                       </SelectItem>
                     </SelectContent>
@@ -256,3 +247,5 @@ export function PreferenceSettings() {
     </Form>
   );
 }
+
+export default PreferenceSettings;
