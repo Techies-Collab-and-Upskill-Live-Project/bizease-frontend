@@ -13,10 +13,10 @@ import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent } from '@/components/ui/card';
 
 import { editInventoryformSchema } from '@/lib/validations/editInventoryProduct';
-import { EditInventoryFormData, EditProductProps } from '@/types';
+import { EditInventoryFormData } from '@/types';
 import { useInventoryStore } from '@/lib/store';
 
-export default function EditProduct({ editProduct }: EditProductProps) {
+export default function EditProduct() {
   const router = useRouter();
   const params = useParams();
   const productId = Number(params.id);
