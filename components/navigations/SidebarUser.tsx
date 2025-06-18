@@ -10,7 +10,7 @@ const SidebarUser = () => {
       </div>
 
       <div className="flex flex-col space-y-1 w-fit">
-        <p className="text-surface-100 font-medium text-[16px]">{name}</p>
+        <p className="text-surface-100 font-medium text-[14px]">{name}</p>
         <p className="text-surface-200 text-[10px]">{businessPlan}</p>
       </div>
     </div>

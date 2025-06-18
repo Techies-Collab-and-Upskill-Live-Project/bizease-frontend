@@ -79,6 +79,7 @@ export default function InventoryComponent({
         <div className="flex items-center gap-2 max-md:gap-2">
           <FilterSelect
             filterValue={filter}
+            className="cursor-pointer"
             onChange={setFilter}
             placeholder="Filter Products"
             options={[
@@ -139,7 +140,10 @@ export default function InventoryComponent({
                 </div>
                 <div className="flex items-center justify-center gap-2">
                   <Link href={`/inventory/edit-product/${id}`}>
-                    <Button className="bg-darkblue text-surface-200 font-normal rounded-lg hover:bg-lightblue py-2 px-4 text-xs">
+                    <Button
+                      className="bg-darkblue text-surface-200 font-normal cursor-pointer
+                     rounded-lg hover:bg-lightblue py-2 px-4 text-xs"
+                    >
                       Restock
                     </Button>
                   </Link>
@@ -150,7 +154,7 @@ export default function InventoryComponent({
                     }}
                     variant="ghost"
                     size="icon"
-                    className="hover:bg-red-100 hover:text-red-600 p-1"
+                    className="hover:bg-red-100 hover:text-red-600 cursor-pointer p-1"
                   >
                     <Trash2 className="h-4 w-4" />
                   </Button>

@@ -18,7 +18,7 @@ const SideNavbar = () => {
 
   return (
     <section className="sidebar sticky hidden lg:block ">
-      <nav className="flex flex-col  gap-4">
+      <nav className="flex flex-col  gap-2">
         <CustomLogo type="BizEase" />
         <SidebarUser />
         {navItems.map(({ name, route, id, iconPath }) => (

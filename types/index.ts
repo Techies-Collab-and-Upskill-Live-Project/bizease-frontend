@@ -112,3 +112,15 @@ export interface InventoryStore {
   editProduct: (id: number, data: Partial<Product>) => void;
   reduceStock: (id: number, quantity: number) => void;
 }
+
+export interface InventoryItem {
+  id?: number;
+  owner: string;
+  product_name: string;
+  description: string;
+  category: string;
+  stock_level: number;
+  low_stock_threshold: number;
+  price: number;
+  last_updated: string;
+}
