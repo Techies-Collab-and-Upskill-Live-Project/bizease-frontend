@@ -171,6 +171,7 @@ const SignUp = () => {
                           Select Country
                         </option>
                         <option value="us">United States</option>
+                        <option value="us">Nigeria</option>
                         <option value="ca">Canada</option>
                         <option value="uk">United Kingdom</option>
                         <option value="au">Australia</option>
@@ -200,6 +201,7 @@ const SignUp = () => {
                           Select State
                         </option>
                         <option value="ca">California</option>
+                        <option value="oy">Oyo</option>
                         <option value="ny">New York</option>
                         <option value="tx">Texas</option>
                         {/* Dynamically populate based on country if needed */}
