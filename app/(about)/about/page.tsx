@@ -6,7 +6,7 @@ import React from 'react';
 
 const AboutPage = () => {
   return (
-    <section className="min-w-full h-screen mb-10">
+    <section className="min-w-full min-h-screen mb-10">
       <div className="flex justify-start bg-darkblue w-full py-4 px-8">
         <Link href={'/'} className="p-1 hover:bg-lightblue rounded-full w-fit">
           <ChevronLeft className=" h-6 w-6 text-surface-200" />

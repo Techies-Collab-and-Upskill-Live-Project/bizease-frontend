@@ -8,7 +8,7 @@ export default function Landing() {
   const router = useRouter();
 
   const handleGetStarted = () => {
-    router.push('/sign-up');
+    router.push('/about');
   };
 
   return (
