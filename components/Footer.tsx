@@ -12,7 +12,7 @@ const Footer = () => {
         </p>
         <p className="flex font-medium text-gray-500 underline underline-offset-4 gap-3">
           <Link href={'/about'}>About</Link>
-          <Link href={'/contact'}>Contact</Link>
+          <Link href={'/contact-us'}>Contact</Link>
         </p>
       </div>
     </footer>
