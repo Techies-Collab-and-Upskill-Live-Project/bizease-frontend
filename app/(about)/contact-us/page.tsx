@@ -45,7 +45,7 @@ export default function ContactPage() {
       toast.success(' Message sent successfully!');
       reset();
     } catch (error) {
-      toast.error(' Failed to send message. Try again later.');
+      toast.error(` Failed to send message. Try again later, ${error}`);
     }
   };
 
