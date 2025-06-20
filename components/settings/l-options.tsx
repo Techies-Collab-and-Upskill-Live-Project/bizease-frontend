@@ -23,7 +23,7 @@ export default function LargeOptionsTab({
           (type) => (
             <Button
               key={type}
-              className={`p-4 text-left  ${
+              className={`p-4 text-left rounded-none  ${
                 settingType === type
                   ? 'border-b-4 border-white'
                   : 'border-b-4 border-transparent'
