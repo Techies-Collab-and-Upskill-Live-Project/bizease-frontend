@@ -28,6 +28,7 @@ export default function ProfileSettings() {
   ) : (
     <form
       onSubmit={handleSubmit(onSubmit)}
+    
       className="flex flex-col px-6 space-y-5 max-w-md mx-auto"
     >
       {/* Avatar */}
@@ -126,7 +127,7 @@ export default function ProfileSettings() {
         <Button
           type="button"
           onClick={() => setShowPassword((prev: boolean) => !prev)}
-          className="absolute right-3 top-10 text-gray-500 hover:text-gray-700"
+          className="absolute right-3 top-6 md:top-8 text-gray-500 hover:text-gray-700"
           tabIndex={-1}
         >
           {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}

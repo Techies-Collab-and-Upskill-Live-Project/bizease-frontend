@@ -19,6 +19,7 @@ import Image from 'next/image';
 const SignUp = () => {
   const { signUpSchema, onSubmit } = useSignUp();
   const [showPassword, setShowPassword] = useState(false);
+  const [agreedToTerms, setAgreedToTerms] = useState(false);
 
   return (
     <div className="min-h-screenbg-gray-100 ">
@@ -52,7 +53,7 @@ const SignUp = () => {
             {/* organization */}
             <FormField
               control={signUpSchema.control}
-              name="organization"
+              name="business_name"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className="text-xs md:text-sm font-semibold tracking-wide">
@@ -74,11 +75,11 @@ const SignUp = () => {
             {/* username */}
             <FormField
               control={signUpSchema.control}
-              name="username"
+              name="full_name"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className="text-xs md:text-sm font-semibold tracking-wide">
-                    Username
+                    Fullname
                   </FormLabel>
                   <FormControl>
                     <Input
@@ -170,11 +171,10 @@ const SignUp = () => {
                         <option value="" className="text-gray-500">
                           Select Country
                         </option>
-                        <option value="us">United States</option>
-                        <option value="us">Nigeria</option>
-                        <option value="ca">Canada</option>
-                        <option value="uk">United Kingdom</option>
-                        <option value="au">Australia</option>
+                        <option value="Uinted States">United States</option>
+                        <option value="Nigeria">Nigeria</option>
+                        <option value="Ghana">Ghana</option>
+                        <option value="Australia">Australia</option>
                         {/* Add more countries as needed */}
                       </select>
                     </FormControl>
@@ -230,10 +230,40 @@ const SignUp = () => {
                       <option value="" className="text-gray-500">
                         Select Currency
                       </option>
-                      <option value="USD">USD - US Dollar</option>
-                      <option value="CAD">CAD - Canadian Dollar</option>
-                      <option value="GBP">GBP - British Pound</option>
-                      <option value="EUR">EUR - Euro</option>
+                      <option value="USD">USD</option>
+                      <option value="NGN">NGN</option>
+                      <option value="GBP">GBP</option>
+                    </select>
+                  </FormControl>
+                  <FormMessage className="text-xs tracking-wide" />
+                </FormItem>
+              )}
+            />
+
+            {/* Business Type */}
+            <FormField
+              control={signUpSchema.control}
+              name="business_type"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-xs md:text-sm font-semibold tracking-wide">
+                    Business Type
+                  </FormLabel>
+                  <FormControl>
+                    <select
+                      className="w-full border rounded-md px-3 py-2 text-xs"
+                      {...field}
+                    >
+                      <option value="">Select Business Type</option>
+                      <option value="Nonprofit">Nonprofit</option>
+                      <option value="Limited partnership">
+                        Limited partnership
+                      </option>
+                      <option value="Joint Venture">Joint venture</option>
+                      <option value="General partnership">
+                        General partnership
+                      </option>
+                      <option value="Other">Other</option>
                     </select>
                   </FormControl>
                   <FormMessage className="text-xs tracking-wide" />
@@ -257,6 +287,8 @@ const SignUp = () => {
                   <Checkbox
                     id="terms"
                     className="bg-white w-4 h-4 border-none flex items-center justify-center"
+                    checked={agreedToTerms}
+                    onCheckedChange={(checked) => setAgreedToTerms(!!checked)}
                   />
                 </div>
                 I agree to the Terms of Service and Privacy Policy.
@@ -267,6 +299,7 @@ const SignUp = () => {
             <Button
               type="submit"
               className="w-full bg-[#06005B] hover:bg-blue-900 cursor-pointer py-3 md:py-6 text-xs md:text-sm font-semibold tracking-wide"
+              disabled={!agreedToTerms}
             >
               Sign Up
             </Button>
