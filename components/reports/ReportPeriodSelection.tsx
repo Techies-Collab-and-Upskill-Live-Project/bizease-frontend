@@ -9,7 +9,7 @@ const HeaderPeriodSelection = () => {
   const [filter, setFilter] = useState<string>('all');
 
   return (
-    <div className="flex justify-between max-lg:justify-end px-6 my-4">
+    <div className="flex justify-between max-lg:justify-end px-6  my-4 ">
       <h1 className="hidden lg:block text-lg  font-bold">Report & Analytics</h1>
       <div className="flex items-center gap-2">
         <Link href={'./report-analytics/generate-reports'}>

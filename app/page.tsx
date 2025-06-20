@@ -1,59 +1,91 @@
-'use client';
+"use client";
 
-import { Button } from '@/components/ui/button';
-import Image from 'next/image';
-import { useRouter } from 'next/navigation';
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import Image from "next/image";
+import { useRouter } from "next/navigation";
+
+const slides = [
+  {
+    text: "Manage your Orders ",
+    highlighted: "Efficiently.",
+    color: "text-[#06005B]",
+    image: "/splash.png",
+  },
+  {
+    text: "Keep stock of your ",
+    highlighted: "Inventory.",
+    color: "text-[#FFC400]",
+    image: "/splash-2.png",
+  },
+];
 
 export default function Landing() {
   const router = useRouter();
+  const [currentSlide, setCurrentSlide] = useState(0);
 
   const handleGetStarted = () => {
-    router.push('/about');
+    router.push("/about");
   };
+
+  const current = slides[currentSlide];
 
   return (
     <div className="flex flex-col lg:flex-row-reverse min-h-screen">
-      {/* Top Section */}
-      <div className="relative bg-gradient-to-b from-blue-800 to-blue-600 px-2 md:px-4 py-3 md:py-8 rounded-b-2xl lg:rounded-none lg:w-1/2 flex items-center justify-center">
-        <div className="flex flex-col gap-2 md:gap-4 items-center justify-center">
-          <p className="text-center text-white font-semibold">
-            Manage your Orders
-            <span className="text-blue-600">Efficiently.</span>
+      {/* Image Section */}
+      <div className="relative bg-gradient-to-b from-blue-800 to-blue-600 px-4 py-8 rounded-b-2xl lg:rounded-none lg:w-1/2 flex items-center justify-center">
+        <div className="flex flex-col gap-4 items-center justify-center text-center">
+          <p className="text-white font-semibold text-base md:text-lg">
+            {current.text}
+            <span className={current.color}>{current.highlighted}</span>
           </p>
+
           <Image
-            width={400} // any appropriate size in pixels
+            width={400}
             height={300}
-            src="/splash.png"
-            alt="Order image"
-            className="w-75 h-75 md:w-85 md:h-85"
+            src={current.image}
+            alt="Slide image"
+            className="w-72 h-72 md:w-80 md:h-80 object-contain"
           />
-          <div className="flex justify-center gap-2 md:gap-3 md:py-2 py-1">
-            <div className="w-2 h-2 md:w-3 md:h-3 bg-white rounded-full"></div>
-            <div className="w-2 h-2 md:w-3 md:h-3 bg-white/40 rounded-full"></div>
+
+          {/* Carousel Controls */}
+          <div className="flex justify-center gap-3 py-2">
+            {slides.map((_, index) => (
+              <div
+                key={index}
+                onClick={() => setCurrentSlide(index)}
+                className={`w-3 h-3 rounded-full cursor-pointer transition-all duration-300 ${
+                  currentSlide === index ? "bg-white" : "bg-white/40"
+                }`}
+              />
+            ))}
           </div>
         </div>
       </div>
 
-      {/* Bottom Section */}
-      <div className="px-6 py-4 md:px-8 md:py-10 lg:w-1/2 flex items-center justify-center">
+      {/* Content Section */}
+      <div className="px-6 py-10 md:px-10 lg:w-1/2 flex items-center justify-center">
         <div className="flex flex-col items-center justify-center w-full">
-          <div className="text-center">
+          <div className="text-center mb-6">
             <p className="text-2xl md:text-5xl font-bold">Welcome</p>
             <p className="text-2xl md:text-5xl font-bold">to</p>
             <p className="text-2xl md:text-5xl font-bold bg-gradient-to-b from-blue-800 to-blue-600 text-transparent bg-clip-text">
               Bizease!
             </p>
           </div>
+
           <Image
-            width={60} // any appropriate size in pixels
+            width={60}
             height={58}
             src="/icon/logo-2.png"
             alt="logo"
+            className="mb-6"
           />
-          <div className="px-5 py-2 md:px-20 md:py-4 lg:py-10 w-full lg:w-2/3">
+
+          <div className="w-full px-5 md:px-20 lg:w-2/3">
             <Button
               onClick={handleGetStarted}
-              className="rounded-lg text-base font-semibold bg-[#06005B] hover:bg-blue-900 cursor-pointer w-full py-6 md:py-8 lg:py-6"
+              className="rounded-lg text-base font-semibold bg-[#06005B] hover:bg-blue-900 w-full py-6 md:py-8"
             >
               Get Started
             </Button>

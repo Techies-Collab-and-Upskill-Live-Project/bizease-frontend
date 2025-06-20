@@ -8,7 +8,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <section className="min-h-screen w-full   lg:flex-row ">
+    <section className="min-h-screen  lg:flex-row ">
       <div className=" flex flex-1 w-full">
         <SideNavBar />
         <main className="flex-1  pb-20"> {children}</main>
