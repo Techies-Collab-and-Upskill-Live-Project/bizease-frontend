@@ -3,7 +3,7 @@ import { persist } from 'zustand/middleware';
 import { recentOrders as defaultOrders } from '@/constants';
 
 import { InventoryStore, Order, ReportPeriod } from '@/types';
-import { fetchInventory } from './api/user';
+import { fetchAllInventoryItems } from './api/user.actions';
 
 export const useInventoryStore = create<InventoryStore>()(
   persist(
@@ -17,7 +17,7 @@ export const useInventoryStore = create<InventoryStore>()(
 
       fetchInventoryFromAPI: async () => {
         try {
-          const data = await fetchInventory();
+          const data = await fetchAllInventoryItems();
           set({ inventory: data });
         } catch (error) {
           console.error('Failed to fetch inventory', error);
