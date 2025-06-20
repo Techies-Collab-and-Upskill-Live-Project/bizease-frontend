@@ -1,15 +1,17 @@
-import React from 'react';
+import React from "react";
 
-import TopAvatar from '@/components/navigations/TopAvatar';
-import ReportSums from '@/components/reports/ReportSums';
-import HeaderPeriodSelection from '@/components/reports/ReportPeriodSelection';
-import SummaryTable from '@/components/reports/SummaryTable';
-import Charts from '@/components/reports/Charts';
+import TopAvatar from "@/components/navigations/TopAvatar";
+import ReportSums from "@/components/reports/ReportSums";
+import HeaderPeriodSelection from "@/components/reports/ReportPeriodSelection";
+import SummaryTable from "@/components/reports/SummaryTable";
+import Charts from "@/components/reports/Charts";
 
 const ReportAnalytics = () => {
   return (
-    <section className="w-full flex flex-col pb-10 bg-gray-100">
-      <TopAvatar type="Reports" />
+    <div className="w-full pt-14 bg-red-300 ">
+      <div className=" w-full fixed top-0 left-0 z-50 ">
+        <TopAvatar type="Reports" />
+      </div>
       <HeaderPeriodSelection />
       <ReportSums />
 
@@ -18,7 +20,7 @@ const ReportAnalytics = () => {
       </div>
 
       <SummaryTable />
-    </section>
+    </div>
   );
 };
 
