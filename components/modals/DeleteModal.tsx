@@ -43,14 +43,14 @@ export default function DeleteConfirmationModal({
           <DialogFooter className="flex flex-col gap-2">
             <Button
               onClick={onConfirm}
-              className="bg-darkblue hover:bg-lightblue text-surface-200 flex-1 w-full"
+              className="bg-darkblue hover:bg-lightblue cursor-pointer text-surface-200 flex-1 w-full"
             >
               Delete
             </Button>
             <Button
               onClick={onClose}
               variant="outline"
-              className="w-full flex-1"
+              className="w-full flex-1 cursor-pointer"
             >
               Cancel
             </Button>

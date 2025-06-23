@@ -55,10 +55,10 @@ export const useInventoryStore = create<InventoryStore>()(
       reduceStock: (id, quantity) =>
         set({
           inventory: get().inventory.map((item) =>
-            item.id === id
+            String(item.id) === String(id)
               ? {
                   ...item,
-                  stock_level: Math.max(0, item.stock - quantity),
+                  stock: Math.max(0, item.stock - quantity),
                   last_updated: new Date().toISOString(),
                 }
               : item,
