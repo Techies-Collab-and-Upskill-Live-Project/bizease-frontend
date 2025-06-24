@@ -15,7 +15,7 @@ const ReportAnalytics = () => {
       </div>
 
       {/* Content Layout */}
-      <div className="max-w-7xl mx-auto space-y-8 mt-6">
+      <div className="w-full mx-auto space-y-8 mt-6">
         <HeaderPeriodSelection />
         <div className="overflow-x-auto">
           <ReportSums />
