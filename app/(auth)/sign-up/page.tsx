@@ -171,7 +171,7 @@ const SignUp = () => {
                         <option value="" className="text-gray-500">
                           Select Country
                         </option>
-                        <option value="Uinted States">United States</option>
+                        <option value="United States">United States</option>
                         <option value="Nigeria">Nigeria</option>
                         <option value="Ghana">Ghana</option>
                         <option value="Australia">Australia</option>

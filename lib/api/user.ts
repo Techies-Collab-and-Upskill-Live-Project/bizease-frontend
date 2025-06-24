@@ -1,14 +1,14 @@
-'use server';
+// REMOVE 'use server'; this is now usable both client/server depending on usage
 
 import { InventoryItem } from '@/types';
 import api from '../api';
 
-const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
 
-export const fetchInventory = async () => {
+export const fetchInventory = async (token: string) => {
   const res = await fetch(`${BASE_URL}/inventory/`, {
     headers: {
-      Authorization: `Bearer ${localStorage.getItem('token')}`,
+      Authorization: `Bearer ${token}`,
     },
   });
 
@@ -17,12 +17,15 @@ export const fetchInventory = async () => {
   return json.data.products;
 };
 
-export const addInventoryItem = async (item: Omit<InventoryItem, 'id'>) => {
+export const addInventoryItem = async (
+  token: string,
+  item: Omit<InventoryItem, 'id'>
+) => {
   const res = await fetch(`${BASE_URL}/inventory/`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      Authorization: `Bearer ${localStorage.getItem('token')}`,
+      Authorization: `Bearer ${token}`,
     },
     body: JSON.stringify([item]),
   });
@@ -32,14 +35,15 @@ export const addInventoryItem = async (item: Omit<InventoryItem, 'id'>) => {
 };
 
 export const updateInventoryItem = async (
+  token: string,
   id: number,
-  data: Partial<InventoryItem>,
+  data: Partial<InventoryItem>
 ) => {
   const res = await fetch(`${BASE_URL}/inventory/${id}`, {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
-      Authorization: `Bearer ${localStorage.getItem('token')}`,
+      Authorization: `Bearer ${token}`,
     },
     body: JSON.stringify(data),
   });
@@ -48,11 +52,11 @@ export const updateInventoryItem = async (
   return res.json();
 };
 
-export const deleteInventoryItem = async (id: number) => {
+export const deleteInventoryItem = async (token: string, id: number) => {
   const res = await fetch(`${BASE_URL}/inventory/${id}`, {
     method: 'DELETE',
     headers: {
-      Authorization: `Bearer ${localStorage.getItem('token')}`,
+      Authorization: `Bearer ${token}`,
     },
   });
 
