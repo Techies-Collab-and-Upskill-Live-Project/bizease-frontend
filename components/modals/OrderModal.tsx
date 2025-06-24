@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -12,6 +13,7 @@ import {
 import { Order } from '@/types';
 import { useOrderStore } from '@/lib/store';
 import AnimatedCountUp from '../animations/AnimatedCountUp';
+import DeleteConfirmationModal from './DeleteModal';
 
 interface Props {
   order: Order | null;
@@ -20,12 +22,11 @@ interface Props {
 }
 
 const OrderModal = ({ order, onClose, showActions = true }: Props) => {
-  const { updateOrder, deleteOrder } = useOrderStore();
-
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   if (!order) return null;
 
   const handleMarkDelivered = () => {
-    updateOrder({
+    useOrderStore.getState().updateOrder({
       ...order,
       status: 'Delivered',
       lastUpdated: new Date().toLocaleString(),
@@ -34,60 +35,85 @@ const OrderModal = ({ order, onClose, showActions = true }: Props) => {
   };
 
   const handleDelete = () => {
-    deleteOrder(order.id);
+    useOrderStore.getState().deleteOrder(order.id);
     onClose();
   };
 
   const { id, name, date, status, total, lastUpdated } = order;
 
   return (
-    <Dialog open onOpenChange={onClose}>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>Order Details</DialogTitle>
-        </DialogHeader>
+    <>
+      <Dialog open onOpenChange={onClose}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Order Details</DialogTitle>
+          </DialogHeader>
 
-        <div className="space-y-2 text-sm text-gray-600">
-          <p>
-            <strong>Order ID:</strong> {id}
-          </p>
-          <p>
-            <strong>Customer:</strong> {name}
-          </p>
-          <p>
-            <strong>Date:</strong> {date}
-          </p>
-          <p>
-            <strong>Status:</strong> {status}
-          </p>
-          <p>
-            <strong>Total:</strong> <AnimatedCountUp amount={total} />
-          </p>
-          <p>
-            <strong>Last Updated:</strong> {lastUpdated}
-          </p>
-        </div>
+          <div className="space-y-2 text-sm text-gray-600">
+            <p>
+              <strong>Order ID:</strong> {id}
+            </p>
+            <p>
+              <strong>Customer:</strong> {name}
+            </p>
+            <p>
+              <strong>Date:</strong> {date}
+            </p>
+            <p>
+              <strong>Status:</strong> {status}
+            </p>
+            <p>
+              <strong>Total:</strong> <AnimatedCountUp amount={total} />
+            </p>
+            <p>
+              <strong>Last Updated:</strong> {lastUpdated}
+            </p>
+          </div>
 
-        {showActions && (
-          <DialogFooter className="flex gap-2">
-            {status.toLowerCase() === 'pending' && (
+          {showActions && (
+            <DialogFooter className="flex gap-2">
+              {status.toLowerCase() === 'pending' && (
+                <Button
+                  onClick={handleMarkDelivered}
+                  className="bg-success hover:bg-green-600 cursor-pointer text-white"
+                >
+                  Mark as Delivered
+                </Button>
+              )}
+
+              {/* Simple delete without confirmation */}
               <Button
-                onClick={handleMarkDelivered}
-                className="bg-success hover:bg-green-600 text-white"
+                variant="destructive"
+                className="cursor-pointer"
+                onClick={handleDelete}
               >
-                Mark as Delivered
+                Delete Order
               </Button>
-            )}
-            <Button variant="destructive" onClick={handleDelete}>
-              Delete Order
-            </Button>
-            <Button variant="outline" onClick={onClose}>
-              Close
-            </Button>
-          </DialogFooter>
-        )}
-      </DialogContent>
-    </Dialog>
+
+              <Button
+                variant="outline"
+                className="cursor-pointer"
+                onClick={onClose}
+              >
+                Close
+              </Button>
+            </DialogFooter>
+          )}
+        </DialogContent>
+      </Dialog>
+
+      {/* Optional: Confirmation Modal for Delete  */}
+
+      <DeleteConfirmationModal
+        open={showDeleteConfirm}
+        onClose={() => setShowDeleteConfirm(false)}
+        onConfirm={() => {
+          handleDelete();
+          setShowDeleteConfirm(false);
+        }}
+        productName={order.name}
+      />
+    </>
   );
 };
 

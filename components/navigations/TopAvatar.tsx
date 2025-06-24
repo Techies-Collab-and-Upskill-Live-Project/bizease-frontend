@@ -5,7 +5,7 @@ import { CustomLogoProp } from '@/types';
 
 const TopAvatar = ({ type }: CustomLogoProp) => {
   return (
-    <div className="mobile-top justify-end max-lg:justify-between px-3 md:px-6 w-full z-20">
+    <div className="mobile-top justify-end max-lg:justify-between px-3 md:px-6 w-full z-50">
       <div className="hidden max-lg:flex gap-2">
         <CustomLogo type={type} />
       </div>
