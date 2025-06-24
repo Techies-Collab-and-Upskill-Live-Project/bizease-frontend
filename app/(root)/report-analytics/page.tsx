@@ -22,7 +22,7 @@ const ReportAnalytics = () => {
         <HeaderPeriodSelection />
 
         {/* KPI Sums and Charts */}
-        <div className="w-full overflow-x-visible">
+        <div className="w-full mx-auto overflow-x-visible">
           <ReportSums />
           <Charts />
         </div>

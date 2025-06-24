@@ -14,9 +14,13 @@ const MetricCard = ({
   value: string | number;
   change?: number;
 }) => (
-  <div className="flex flex-col bg-gradient rounded-md p-4 w-full min-w-0 shadow-sm">
-    <p className="text-surface-200 text-xs truncate">{label}</p>
-    <p className="font-semibold text-surface-200 text-base truncate">{value}</p>
+  <div className="flex flex-col justify-between bg-gradient rounded-md p-2 w-full h-full shadow-sm">
+    <div className="space-y-1">
+      <p className="text-surface-200 text-xs truncate">{label}</p>
+      <p className="font-semibold text-surface-200 text-base truncate">
+        {value}
+      </p>
+    </div>
     {typeof change === 'number' && (
       <div className="flex items-center gap-1 mt-2">
         <Image
@@ -62,7 +66,7 @@ const ReportSums = () => {
 
   return (
     <div className="mx-auto px-4 lg:px-8 mt-4 overflow-x-hidden">
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 auto-rows-fr">
         <MetricCard
           label="Total Revenue"
           value={formatCurrency(totalRevenue)}
