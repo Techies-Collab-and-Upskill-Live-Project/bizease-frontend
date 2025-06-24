@@ -25,7 +25,7 @@ const HeaderPeriodSelection = () => {
             </Button>
           </Link>
           <Select value={filter} onValueChange={setFilter}>
-            <SelectTrigger className="w-full sm:w-[150px] border border-lightblue capitalize">
+            <SelectTrigger className="w-full sm:w-[100px] border border-lightblue capitalize">
               {filter === 'all' ? 'All time' : filter}
             </SelectTrigger>
             <SelectContent className="border border-lightblue">

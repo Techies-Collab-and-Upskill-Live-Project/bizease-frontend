@@ -1,39 +1,65 @@
 'use client';
 
-import React, { useRef, useState } from 'react';
+import React, { useRef } from 'react';
 import { useRouter } from 'next/navigation';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Label } from '@/components/ui/label';
-import { Input } from '@/components/ui/input';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
-import { Button } from '@/components/ui/button';
-
-import { reportSummary, user } from '@/constants';
-import * as XLSX from 'xlsx';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { jsPDF } from 'jspdf';
+import * as XLSX from 'xlsx';
 import emailjs from 'emailjs-com';
 
-const Generatereports = () => {
-  const { email } = user;
+import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+import { Label } from '@/components/ui/label';
+import {
+  Select,
+  SelectTrigger,
+  SelectContent,
+  SelectItem,
+  SelectValue,
+} from '@/components/ui/select';
+
+import { ChevronLeft } from 'lucide-react';
+import { reportSummary, user } from '@/constants';
+
+const formSchema = z.object({
+  dateRange: z.string(),
+  category: z.string(),
+  fileName: z.string().min(1, 'File name is required'),
+  format: z.enum(['pdf', 'csv', 'xlsx']),
+});
+
+type FormData = z.infer<typeof formSchema>;
+
+const GenerateReports = () => {
   const router = useRouter();
-
-  const formRef = useRef<HTMLFormElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const formRef = useRef<HTMLFormElement>(null);
 
-  const [dateRange, setDateRange] = useState('last-30-days');
-  const [category, setCategory] = useState('all');
-  const [fileName, setFileName] = useState('My Sales Report');
-  const [format, setFormat] = useState('pdf');
+  const { email } = user;
 
-  const handleExport = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    watch,
+    formState: { errors },
+  } = useForm<FormData>({
+    defaultValues: {
+      dateRange: 'last-30-days',
+      category: 'all',
+      fileName: 'My Sales Report',
+      format: 'pdf',
+    },
+    resolver: zodResolver(formSchema),
+  });
 
+  const format = watch('format');
+  const fileName = watch('fileName');
+
+  const generateBlob = () => {
     const data = reportSummary.map((item) => ({
       Product: item.Product,
       'Unit Sold': item.productSold,
@@ -42,94 +68,126 @@ const Generatereports = () => {
     }));
 
     const cleanFileName = fileName.trim().replace(/\s+/g, '_');
-    let fileBlob: Blob | null = null;
+    let blob: Blob;
 
-    if (format === 'csv') {
-      const csvHeader = 'Product,Unit Sold,Revenue,Stock Status\n';
-      const csvRows = data
-        .map((row) =>
-          [
-            row.Product,
-            row['Unit Sold'],
-            row.Revenue,
-            row['Stock Status'],
-          ].join(','),
-        )
-        .join('\n');
+    switch (format) {
+      case 'csv':
+        const header = 'Product,Unit Sold,Revenue,Stock Status\n';
+        const rows = data
+          .map((row) =>
+            [
+              row.Product,
+              row['Unit Sold'],
+              row.Revenue,
+              row['Stock Status'],
+            ].join(','),
+          )
+          .join('\n');
+        blob = new Blob([header + rows], { type: 'text/csv' });
+        break;
 
-      fileBlob = new Blob([csvHeader + csvRows], { type: 'text/csv' });
-    } else if (format === 'xlsx') {
-      const worksheet = XLSX.utils.json_to_sheet(data);
-      const workbook = XLSX.utils.book_new();
-      XLSX.utils.book_append_sheet(workbook, worksheet, 'Report');
-      const buffer = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
-      fileBlob = new Blob([buffer], {
-        type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-      });
-    } else if (format === 'pdf') {
-      const doc = new jsPDF();
-      doc.setFontSize(12);
-      doc.text('Sales Report', 10, 10);
+      case 'xlsx':
+        const worksheet = XLSX.utils.json_to_sheet(data);
+        const workbook = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(workbook, worksheet, 'Report');
+        const buffer = XLSX.write(workbook, {
+          bookType: 'xlsx',
+          type: 'array',
+        });
+        blob = new Blob([buffer], {
+          type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        });
+        break;
 
-      let y = 20;
-      data.forEach((item, index) => {
-        doc.text(
-          `${index + 1}. ${item.Product} | Sold: ${
-            item['Unit Sold']
-          } | Revenue: ${item.Revenue} | Stock: ${item['Stock Status']}`,
-          10,
-          y,
-        );
-        y += 10;
-      });
+      case 'pdf':
+      default:
+        const doc = new jsPDF();
+        doc.setFontSize(12);
+        doc.text('Sales Report', 10, 10);
 
-      fileBlob = doc.output('blob');
+        let y = 20;
+        data.forEach((item, index) => {
+          doc.text(
+            `${index + 1}. ${item.Product} | Sold: ${
+              item['Unit Sold']
+            } | Revenue: ${item.Revenue} | Stock: ${item['Stock Status']}`,
+            10,
+            y,
+          );
+          y += 10;
+        });
+        blob = doc.output('blob');
+        break;
     }
 
-    if (fileBlob && fileInputRef.current && formRef.current) {
-      const file = new File([fileBlob], `${cleanFileName}.${format}`, {
-        type: fileBlob.type,
+    return { blob, cleanFileName };
+  };
+
+  const onSubmit = async (values: FormData) => {
+    const { blob, cleanFileName } = generateBlob();
+
+    if (fileInputRef.current && formRef.current) {
+      const file = new File([blob], `${cleanFileName}.${values.format}`, {
+        type: blob.type,
       });
 
       const dataTransfer = new DataTransfer();
       dataTransfer.items.add(file);
       fileInputRef.current.files = dataTransfer.files;
 
-      emailjs
-        .sendForm(
+      try {
+        await emailjs.sendForm(
           'service_goa35yn',
           'template_jexs67e',
           formRef.current,
           '5D6oo0cwN8cmpmcqm',
-        )
-        .then(
-          () => {
-            console.log('Email sent with attachment');
-            router.push('/report-analytics/generate-report-res');
-          },
-          (error) => {
-            console.error('Error sending email:', error);
-            router.push('/report-analytics/generate-report-failed');
-          },
         );
+        console.log('Email sent with attachment');
+        router.push('/report-analytics/generate-report-res');
+      } catch (error) {
+        console.error('Email error:', error);
+        router.push('/report-analytics/generate-report-failed');
+      }
     }
   };
 
+  const handleDownload = () => {
+    const { blob, cleanFileName } = generateBlob();
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = `${cleanFileName}.${format}`;
+    link.click();
+  };
+
   return (
-    <div className="min-h-screen flex w-full items-center justify-center bg-surface-100 px-8 py-4">
-      <Card className="w-full max-w-lg shadow-md border-none">
+    <div className="min-h-screen flex items-center justify-center px-4 py-6 bg-surface-100">
+      <Card className="w-full max-w-lg border-0 shadow-background">
         <CardHeader>
-          <CardTitle className="text-xl text-surface-600">
-            Export Report
-          </CardTitle>
+          <div className="flex items-center gap-2">
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => router.back()}
+              className="rounded-full focus-visible:outline-none"
+            >
+              <ChevronLeft className="h-5 w-5 text-darkblue" />
+            </Button>
+            <CardTitle className="text-lg text-darkblue">
+              Export Report
+            </CardTitle>
+          </div>
         </CardHeader>
-        <CardContent className="space-y-4">
-          <p className="text-sm text-muted-foreground">
-            Confirm the export of your business report for the selected date
-            range and category.
+
+        <CardContent>
+          <p className="text-sm text-muted-foreground mb-4">
+            Confirm your export settings and send the report to your email.
           </p>
 
-          <form ref={formRef} onSubmit={handleExport} className="space-y-4">
+          <form
+            ref={formRef}
+            onSubmit={handleSubmit(onSubmit)}
+            className="space-y-4"
+          >
             <input type="hidden" name="to_email" value={email} />
             <input type="hidden" name="subject" value={fileName} />
             <input
@@ -137,20 +195,24 @@ const Generatereports = () => {
               name="message"
               value="Please find your report attached."
             />
-            <input
-              type="file"
-              name="my_file"
-              ref={fileInputRef}
-              style={{ display: 'none' }}
-            />
+            <input type="file" name="my_file" ref={fileInputRef} hidden />
 
+            {/* Date Range */}
             <div className="space-y-1">
-              <Label>Date Range</Label>
-              <Select value={dateRange} onValueChange={setDateRange}>
-                <SelectTrigger className="w-full">
+              <Label className="text-surface-500 text-sm">Date Range</Label>
+              <Select
+                onValueChange={(value) => setValue('dateRange', value)}
+                defaultValue="last-30-days"
+              >
+                <SelectTrigger className="w-full text-surface-400 focus-visible:outline-none">
                   <SelectValue placeholder="Last 30 days" />
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent
+                  className="w-full text-surface-500"
+                  position="popper"
+                  side="bottom"
+                  align="start"
+                >
                   <SelectItem value="last-7-days">Last 7 days</SelectItem>
                   <SelectItem value="last-30-days">Last 30 days</SelectItem>
                   <SelectItem value="this-month">This Month</SelectItem>
@@ -159,13 +221,22 @@ const Generatereports = () => {
               </Select>
             </div>
 
+            {/* Category */}
             <div className="space-y-1">
-              <Label>Category</Label>
-              <Select value={category} onValueChange={setCategory}>
-                <SelectTrigger className="w-full">
+              <Label className="text-surface-500">Category</Label>
+              <Select
+                onValueChange={(value) => setValue('category', value)}
+                defaultValue="all"
+              >
+                <SelectTrigger className="w-full text-surface-400 focus-visible:outline-none">
                   <SelectValue placeholder="All" />
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent
+                  className="text-surface-500"
+                  position="popper"
+                  side="bottom"
+                  align="start"
+                >
                   <SelectItem value="all">All</SelectItem>
                   <SelectItem value="sales">Sales</SelectItem>
                   <SelectItem value="inventory">Inventory</SelectItem>
@@ -174,23 +245,42 @@ const Generatereports = () => {
               </Select>
             </div>
 
+            {/* File Name */}
             <div className="space-y-1">
-              <Label htmlFor="fileName">File Name</Label>
+              <Label className="text-surface-500">File Name</Label>
               <Input
-                id="fileName"
-                placeholder="My Sales Report"
-                value={fileName}
-                onChange={(e) => setFileName(e.target.value)}
+                className="focus-visible:outline-none text-surface-400 placeholder:text-surface-400"
+                {...register('fileName')}
+                placeholder="e.g., My Sales Report"
               />
+              {errors.fileName && (
+                <p className="text-xs text-red-500">
+                  {errors.fileName.message}
+                </p>
+              )}
             </div>
 
+            {/* Format */}
             <div className="space-y-1">
-              <Label>Format</Label>
-              <Select value={format} onValueChange={setFormat}>
-                <SelectTrigger className="w-full">
-                  <SelectValue placeholder="PDF" />
+              <Label className="text-surface-500">Format</Label>
+              <Select
+                onValueChange={(value) =>
+                  setValue('format', value as FormData['format'])
+                }
+                defaultValue="pdf"
+              >
+                <SelectTrigger className="w-full focus-visible:outline-none">
+                  <SelectValue
+                    className="text-surface-400 placeholder:text-surface-400"
+                    placeholder="PDF"
+                  />
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent
+                  className="text-surface-500 placeholder:text-surface-400"
+                  position="popper"
+                  side="bottom"
+                  align="start"
+                >
                   <SelectItem value="pdf">PDF</SelectItem>
                   <SelectItem value="csv">CSV</SelectItem>
                   <SelectItem value="xlsx">Excel (XLSX)</SelectItem>
@@ -198,19 +288,21 @@ const Generatereports = () => {
               </Select>
             </div>
 
-            <div className="flex flex-col gap-2 pt-2">
+            {/* Buttons */}
+            <div className="flex flex-col gap-2 pt-4">
               <Button
                 type="submit"
-                className="bg-darkblue hover:bg-lightblue text-sm"
+                className="bg-darkblue hover:bg-lightblue focus-visible:outline-none"
               >
                 Send report to my email
               </Button>
               <Button
-                variant="secondary"
-                onClick={() => router.push('/report-analytics')}
-                className="text-sm"
+                type="button"
+                variant="outline"
+                onClick={handleDownload}
+                className="focus-visible:outline-none"
               >
-                Cancel
+                Download report
               </Button>
             </div>
           </form>
@@ -220,4 +312,4 @@ const Generatereports = () => {
   );
 };
 
-export default Generatereports;
+export default GenerateReports;
