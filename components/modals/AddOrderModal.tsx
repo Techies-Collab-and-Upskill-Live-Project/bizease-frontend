@@ -50,13 +50,14 @@ export default function AddOrderModal({
     addOrder({
       id: uuidv4(),
       name: customer,
+      email: '',
       total,
       date: new Date().toISOString(),
       status: 'Pending',
       lastUpdated: new Date().toISOString(),
       products: [
         {
-          productId: product.id.toString(),
+          productId: String(product.id),
           productName: product.name,
           quantity,
           price: product.price,
