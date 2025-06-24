@@ -268,7 +268,7 @@ const Charts = () => {
       {/* Bar Chart */}
       <div className="space-y-3">
         <h2 className="text-base font-semibold">Top Products by Revenue</h2>
-        <div className="bg-surface-100 rounded-md shadow-sm p-4 overflow-x-auto">
+        <div className="bg-surface-100 rounded-md shadow-sm p-4 mx-auto">
           <div className="relative w-full h-[300px] md:h-[380px]">
             {topProducts.length === 0 ? (
               <p className="text-center text-muted-foreground">

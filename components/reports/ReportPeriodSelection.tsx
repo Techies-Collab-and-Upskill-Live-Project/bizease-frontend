@@ -15,7 +15,7 @@ const HeaderPeriodSelection = () => {
           Report & Analytics
         </h1>
 
-        <div className="flex flex-wrap justify-end items-center gap-2 w-full lg:w-auto">
+        <div className="flex justify-end items-center gap-2 w-full lg:w-auto">
           <Link
             href="/report-analytics/generate-reports"
             className="w-full sm:w-auto"
