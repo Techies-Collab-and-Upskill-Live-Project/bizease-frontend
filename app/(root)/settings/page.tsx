@@ -4,7 +4,7 @@ import { useState } from "react";
 import dynamic from "next/dynamic";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { Settings } from "http2";
+
 import { Options } from "@/components/settings/m-options";
 import Logout from "@/components/settings/logout";
 import TopAvatar from "@/components/navigations/TopAvatar";
