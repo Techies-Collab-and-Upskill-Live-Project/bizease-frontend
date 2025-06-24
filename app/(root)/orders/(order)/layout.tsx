@@ -1,5 +1,4 @@
 import MobileNav from '@/components/navigations/MobileNav';
-import Navbar from '@/components/navigations/SideNavBar';
 
 export default function RootLayout({
   children,

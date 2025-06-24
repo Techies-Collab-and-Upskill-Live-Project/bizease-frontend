@@ -43,17 +43,29 @@ export default function AddOrderPage() {
   const addOrder = useOrderStore((s) => s.addOrder);
   const { inventory, fetchInventoryFromAPI, reduceStock } = useInventoryStore();
   const [previewOpen, setPreviewOpen] = useState(false);
+  const [loadingInventory, setLoadingInventory] = useState(true);
 
   useEffect(() => {
-    fetchInventoryFromAPI();
-  }, [fetchInventoryFromAPI]);
+    const fetch = async () => {
+      try {
+        if (inventory.length === 0) {
+          await fetchInventoryFromAPI();
+        }
+      } catch (err) {
+        toast.error(`Failed to load inventory ${err}`);
+      } finally {
+        setLoadingInventory(false);
+      }
+    };
+
+    fetch();
+  }, [inventory, fetchInventoryFromAPI]);
 
   const {
     register,
     handleSubmit,
     control,
     watch,
-    setValue,
     trigger,
     formState: { errors, isValid },
   } = useForm<OrderFormData>({
@@ -136,10 +148,18 @@ export default function AddOrderPage() {
     router.push(`/orders/add-new-order-success/${newOrder.id}`);
   };
 
+  if (loadingInventory) {
+    return (
+      <main className="flex items-center justify-center min-h-screen text-gray-500">
+        Loading inventory...
+      </main>
+    );
+  }
+
   return (
     <main className="flex items-center justify-center min-h-screen px-4">
       <section className="w-full max-w-lg space-y-6 mx-auto px-4 py-10">
-        <div className="flex-center gap-2 mb-6">
+        <div className="flex items-center gap-2 mb-6">
           <Button
             variant="ghost"
             size="icon"
@@ -178,15 +198,9 @@ export default function AddOrderPage() {
                     {...register(`items.${index}.productId`)}
                     className="border rounded px-2 py-1 text-sm"
                   >
-                    <option value="" className="text-sm text-darkblue">
-                      Select Product
-                    </option>
+                    <option value="">Select Product</option>
                     {inventory.map((product) => (
-                      <option
-                        className="text-lightblue"
-                        key={product.id}
-                        value={product.id}
-                      >
+                      <option key={product.id} value={String(product.id)}>
                         {product.name} (₦{product.price}) — Stock:{' '}
                         {product.stock}
                       </option>
@@ -289,7 +303,7 @@ export default function AddOrderPage() {
             </p>
           </div>
 
-          <DialogFooter className="flex-center w-full gap-10 mb-4">
+          <DialogFooter className="flex justify-center gap-10 mb-4">
             <Button variant="outline" onClick={() => setPreviewOpen(false)}>
               Edit
             </Button>

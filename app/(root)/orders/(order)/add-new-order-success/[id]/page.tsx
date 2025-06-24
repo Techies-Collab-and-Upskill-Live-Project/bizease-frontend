@@ -36,7 +36,7 @@ export default function OrderSuccessPage() {
       <CheckCircle className="text-green-600 w-16 h-16 mb-4" />
       <h1 className="text-2xl font-bold text-darkblue">Order Submitted!</h1>
       <p className="text-muted-foreground text-sm mb-6">
-        Thank you, <span className="font-medium">{order.name}</span>. We've
+        Thank you, <span className="font-medium">{order.name}</span>. We have
         successfully recorded your order.
       </p>
 

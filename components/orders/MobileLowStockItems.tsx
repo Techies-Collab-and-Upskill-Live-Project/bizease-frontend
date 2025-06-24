@@ -2,7 +2,6 @@
 
 import { AlertTriangle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import AnimatedCountUp from '@/components/animations/AnimatedCountUp';
 import { cn } from '@/lib/utils';
 import type { Order } from '@/types';
 

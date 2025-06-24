@@ -1,61 +1,60 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import dynamic from "next/dynamic";
-import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
-import { Settings } from "http2";
-import { Options } from "@/components/settings/m-options";
-import Logout from "@/components/settings/logout";
-import TopAvatar from "@/components/navigations/TopAvatar";
+import { useState } from 'react';
+import dynamic from 'next/dynamic';
+import { cn } from '@/lib/utils';
+import { Button } from '@/components/ui/button';
+import { Options } from '@/components/settings/m-options';
+import Logout from '@/components/settings/logout';
+import TopAvatar from '@/components/navigations/TopAvatar';
 
 const BusinessSettings = dynamic(
-  () => import("@/components/settings/business-content"),
-  { ssr: false }
+  () => import('@/components/settings/business-content'),
+  { ssr: false },
 );
 const PreferenceSettings = dynamic(
-  () => import("@/components/settings/preference-content"),
-  { ssr: false }
+  () => import('@/components/settings/preference-content'),
+  { ssr: false },
 );
 const ProfileSettings = dynamic(
-  () => import("@/components/settings/personal-content"),
-  { ssr: false }
+  () => import('@/components/settings/personal-content'),
+  { ssr: false },
 );
 
 const tabs = [
-  { key: "profile", label: "Personal Information" },
-  { key: "business", label: "Business Information" },
-  { key: "preferences", label: "Preferences" },
+  { key: 'profile', label: 'Personal Information' },
+  { key: 'business', label: 'Business Information' },
+  { key: 'preferences', label: 'Preferences' },
 ];
 
-type TabKey = "profile" | "business" | "preferences";
+type TabKey = 'profile' | 'business' | 'preferences';
 type SettingsType =
-  | "Personal Information"
-  | "Business Information"
-  | "Preferences";
+  | 'Personal Information'
+  | 'Business Information'
+  | 'Preferences';
 
 const labelToKeyMap: Record<string, TabKey> = {
-  "Personal Information": "profile",
-  "Business Information": "business",
-  Preferences: "preferences",
+  'Personal Information': 'profile',
+  'Business Information': 'business',
+  Preferences: 'preferences',
 };
 
 const keyToLabelMap: Record<TabKey, string> = {
-  profile: "Personal Information",
-  business: "Business Information",
-  preferences: "Preferences",
+  profile: 'Personal Information',
+  business: 'Business Information',
+  preferences: 'Preferences',
 };
 
 const SettingsPage = () => {
-  const [activeTab, setActiveTab] = useState<TabKey>("profile");
+  const [activeTab, setActiveTab] = useState<TabKey>('profile');
 
   const renderTabContent = () => {
     switch (activeTab) {
-      case "profile":
+      case 'profile':
         return <ProfileSettings />;
-      case "business":
+      case 'business':
         return <BusinessSettings />;
-      case "preferences":
+      case 'preferences':
         return <PreferenceSettings />;
       default:
         return null;
@@ -87,10 +86,10 @@ const SettingsPage = () => {
             key={tab.key}
             onClick={() => setActiveTab(tab.key as TabKey)}
             className={cn(
-              "rounded-none text-sm md:text-base mx-auto cursor-pointer text-surface-200 font-medium tracking-wide px-2 py-6 transition-all duration-200 border-b-[3px] border-transparent",
+              'rounded-none text-sm md:text-base mx-auto cursor-pointer text-surface-200 font-medium tracking-wide px-2 py-6 transition-all duration-200 border-b-[3px] border-transparent',
               {
-                "border-surface-100": activeTab === tab.key,
-              }
+                'border-surface-100': activeTab === tab.key,
+              },
             )}
           >
             {tab.label}

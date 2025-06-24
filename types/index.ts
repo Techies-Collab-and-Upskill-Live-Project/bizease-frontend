@@ -81,7 +81,7 @@ export type ReportItem = {
 };
 
 export type OrderProduct = {
-  productId: number;
+  productId: string;
   productName: string;
   quantity: number;
   price: number;
