@@ -3,7 +3,7 @@ interface LabelProps {
 }
 
 const CustomLegend = ({ label }: LabelProps) => (
-  <div className="flex flex-col items-center gap-2 text-sm text-gray-700">
+  <div className="flex flex-center items-center text-sm text-gray-700">
     <div
       className={`flex  items-center text-[12px] font-bold  ${
         label === 'Order'
