@@ -26,6 +26,8 @@ const SignUp = () => {
           sizes="fill"
           src="/icon/logo-2.png"
           alt="logo"
+          width={40}
+          height={40}
           className="w-10 h-10"
         />
         <p className="text-2xl font-bold">Bizease</p>

@@ -20,7 +20,7 @@ export default function useLogin() {
   const onSubmit = async (values: z.infer<typeof userLoginSchema>) => {
     try {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL}accounts/login`,
+        `${process.env.NEXT_PUBLIC_BASE_URL}accounts/login`,
         {
           method: "POST",
           headers: {
@@ -38,6 +38,7 @@ export default function useLogin() {
 
       const result = await response.json();
       console.log("Login successful:", result);
+      localStorage.setItem("token", result.data.access);
 
       router.push("/dashboard");
     } catch (error) {

@@ -24,8 +24,9 @@ export default function useSignUp() {
 
   const onSubmit = async (values: z.infer<typeof userSignUpSchema>) => {
     try {
+      console.log("SIGNUP REQUEST TO:", `${process.env.NEXT_PUBLIC_BASE_URL}accounts/signup`);
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL}accounts/signup`,
+        `${process.env.NEXT_PUBLIC_BASE_URL}accounts/signup`,
         {
           method: "POST",
           headers: {
@@ -42,7 +43,9 @@ export default function useSignUp() {
       }
 
       const result = await response.json();
+      
       console.log("Signup successful:", result);
+      
       router.push("/dashboard");
     } catch (error) {
       console.error("Unexpected error during signup:", error);

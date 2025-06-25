@@ -1,23 +1,17 @@
-'use server';
+// REMOVE 'use server'; this is now usable both client/server depending on usage
 
 import { cookies } from 'next/headers';
 import { InventoryItem } from '@/types';
 // import api from '../api';
 
-const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
 
-export const fetchInventory = async () => {
-  try {
-    const cookieStore = await cookies();
-    const token = cookieStore.get('token')?.value;
-
-    if (!token) throw new Error('No token found');
-
-    const res = await fetch(`${BASE_URL}/inventory/`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
+export const fetchInventory = async (token: string) => {
+  const res = await fetch(`${BASE_URL}/inventory/`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
 
     if (!res.ok) {
       const msg = await res.text();
@@ -32,10 +26,10 @@ export const fetchInventory = async () => {
   }
 };
 
-export const addInventoryItem = async (item: Omit<InventoryItem, 'id'>) => {
-  const cookieStore = await cookies();
-  const token = cookieStore.get('token')?.value;
-
+export const addInventoryItem = async (
+  token: string,
+  item: Omit<InventoryItem, 'id'>
+) => {
   const res = await fetch(`${BASE_URL}/inventory/`, {
     method: 'POST',
     headers: {
@@ -51,8 +45,9 @@ export const addInventoryItem = async (item: Omit<InventoryItem, 'id'>) => {
 };
 
 export const updateInventoryItem = async (
+  token: string,
   id: number,
-  data: Partial<InventoryItem>,
+  data: Partial<InventoryItem>
 ) => {
   const cookieStore = await cookies();
   const token = cookieStore.get('token')?.value;
@@ -70,9 +65,7 @@ export const updateInventoryItem = async (
   return res.json();
 };
 
-export const deleteInventoryItem = async (id: number) => {
-  const cookieStore = await cookies();
-  const token = cookieStore.get('token')?.value;
+export const deleteInventoryItem = async (token: string, id: number) => {
   const res = await fetch(`${BASE_URL}/inventory/${id}`, {
     method: 'DELETE',
     headers: {
