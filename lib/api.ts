@@ -2,7 +2,7 @@
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: 'https://adedamola.pythonanywhere.com/v1', // or your updated backend
+  baseURL: 'https://adedamola.pythonanywhere.com', // or your updated backend
   headers: {
     'Content-Type': 'application/json',
   },
