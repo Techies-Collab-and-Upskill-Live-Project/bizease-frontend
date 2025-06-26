@@ -1,26 +1,38 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Button } from '../ui/button';
-import { user } from '@/constants';
 import AddButton from '../shared/AddButton';
 import AddOrderModal from '../modals/AddOrderModal';
+import useCurrentUser from '@/hooks/useCurrentUser';
+import { useRouter } from 'next/navigation';
 
 const UsernameAndButtons = () => {
-  const [showModal, setShowModal] = React.useState(false);
+  const [showModal, setShowModal] = useState(false);
+  const { user, loading, error } = useCurrentUser();
+  const router = useRouter();
+
+  // Optional: redirect if user fetch fails
+  React.useEffect(() => {
+    if (!loading && (error || !user)) {
+      router.push('/log-in');
+    }
+  }, [loading, error, user, router]);
 
   return (
     <div className="flex text-center justify-between">
-      <div className="mb-3">
+      <div className="mb-3 text-left">
         <h1 className="text-xl font-bold">Welcome</h1>
-        <div className="text-sm text-left font-semibold mb-2">{user.name}</div>
+        <div className="text-sm text-left text-surface-500 font-semibold mb-2">
+          {loading ? 'Loading...' : user?.full_name || ''}
+        </div>
       </div>
 
       <div className="flex items-center gap-2 max-md:hidden">
         <>
           <Button
             onClick={() => setShowModal(true)}
-            className=" text-darkblue cursor-pointer border border-lightblue "
+            className="text-darkblue cursor-pointer border border-lightblue"
           >
             Add New Order
           </Button>
