@@ -1,11 +1,11 @@
-"use client";
+'use client';
 
-import React, { useState } from "react";
-import { Button } from "../ui/button";
-import AddButton from "../shared/AddButton";
-import AddOrderModal from "../modals/AddOrderModal";
-import useCurrentUser from "@/hooks/useCurrentUser";
-import { useRouter } from "next/navigation";
+import React, { useState } from 'react';
+import { Button } from '../ui/button';
+import AddButton from '../shared/AddButton';
+import AddOrderModal from '../modals/AddOrderModal';
+import useCurrentUser from '@/hooks/useCurrentUser';
+import { useRouter } from 'next/navigation';
 
 const UsernameAndButtons = () => {
   const [showModal, setShowModal] = useState(false);
@@ -15,16 +15,16 @@ const UsernameAndButtons = () => {
   // Optional: redirect if user fetch fails
   React.useEffect(() => {
     if (!loading && (error || !user)) {
-      router.push("/log-in");
+      router.push('/log-in');
     }
   }, [loading, error, user, router]);
 
   return (
     <div className="flex text-center justify-between">
-      <div className="mb-3">
+      <div className="mb-3 text-left">
         <h1 className="text-xl font-bold">Welcome</h1>
-        <div className="text-sm text-left font-semibold mb-2">
-          {loading ? "Loading..." : user?.full_name || ""}
+        <div className="text-sm text-left text-surface-500 font-semibold mb-2">
+          {loading ? 'Loading...' : user?.full_name || ''}
         </div>
       </div>
 
