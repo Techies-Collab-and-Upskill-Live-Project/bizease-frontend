@@ -24,9 +24,7 @@ export const useInventoryStore = create<InventoryStore>()(
             console.warn('No token found in localStorage');
             return;
           }
-          const fetchInventory = fetchInventoryClient();
-
-          const data = await fetchInventory();
+          const data = await fetchInventoryClient(token);
           set({ inventory: data });
         } catch (error) {
           console.error('Failed to fetch inventory', error);
