@@ -6,6 +6,8 @@ import { Button } from "@/components/ui/button";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import LoadingSpinner from "../spinner";
 import { useBusiness } from "@/hooks/useBusiness";
+import useCurrentUser from "@/hooks/useCurrentUser";
+import { useEffect } from "react";
 
 export default function BusinessSettings() {
   const {
@@ -13,13 +15,29 @@ export default function BusinessSettings() {
       register,
       handleSubmit,
       formState: { errors, isSubmitting },
+      reset,
     },
     avatarPreview,
     handleAvatarChange,
     onSubmit,
   } = useBusiness();
 
-  return isSubmitting ? (
+  const { user, loading } = useCurrentUser();
+
+  useEffect(() => {
+    if (user && !loading) {
+      reset({
+        businessName: user.business_name || "",
+        businessEmail: user.email || "",
+        businessPhone: user.phone || "",
+        businessAddress: user.country || "",
+        businessType: user.business_type || "",
+        currency: user.currency || "",
+      });
+    }
+  }, [user, loading, reset]);
+
+  return isSubmitting || loading ? (
     <LoadingSpinner />
   ) : (
     <form
@@ -31,7 +49,14 @@ export default function BusinessSettings() {
         <Avatar className="w-30 h-30">
           <AvatarImage src={avatarPreview || ""} alt="Avatar" />
           <AvatarFallback className="font-bold text-gray-600 text-base">
-            OG
+            {user?.business_name
+              ? user.business_name
+                  .split(" ")
+                  .map((n) => n[0])
+                  .join("")
+                  .slice(0, 2)
+                  .toUpperCase()
+              : "OG"}
           </AvatarFallback>
         </Avatar>
         <div>
@@ -181,8 +206,6 @@ export default function BusinessSettings() {
           <p className="text-sm text-red-500">{errors.currency.message}</p>
         )}
       </div>
-
-      
 
       {/* Save Changes */}
       <div className="flex justify-center w-full my-2">
