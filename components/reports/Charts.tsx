@@ -12,7 +12,7 @@ import {
   Legend,
 } from 'chart.js';
 
-import { useReportStore, useOrderStore } from '@/lib/store';
+import { useOrderStore } from '@/lib/store';
 import CustomLegend from './CustomLegend';
 import { getLastNDates } from '@/lib/utils';
 import { computeTopProductRevenues } from '@/lib/revenue';
@@ -28,34 +28,28 @@ ChartJS.register(
 );
 
 const Charts = () => {
-  const { period } = useReportStore();
   const { orders } = useOrderStore();
 
-  const periodLength = parseInt(period.replace(/\D/g, ''), 10) || 5;
-  const dateLabels = getLastNDates(periodLength); // e.g. ['Jun 20', 'Jun 21', ..., 'Jun 24']
+  const periodLength = 5;
+  const dateLabels = getLastNDates(periodLength, 'en-US', {
+    weekday: 'short',
+  });
 
-  // Group orders by date (based on period)
+  // Group orders by weekday
   const salesMap: Record<string, number> = {};
-
   for (const label of dateLabels) {
     salesMap[label] = 0;
   }
 
   orders.forEach((order) => {
-    const orderDate = new Date(order.date);
-    const label = orderDate.toLocaleDateString('en-US', {
-      month: 'short',
-      day: 'numeric',
-    });
-
+    const date = new Date(order.date);
+    const label = date.toLocaleDateString('en-US', { weekday: 'short' });
     if (salesMap[label] !== undefined) {
-      // Count number of orders (or replace with total sales e.g., += order.total)
       salesMap[label] += 1;
     }
   });
 
   const topProducts = computeTopProductRevenues(orders, 5);
-
   const colors = [
     'rgba(34,211,238,0.7)',
     'rgba(34,211,238,0.5)',
@@ -69,9 +63,9 @@ const Charts = () => {
     datasets: [
       {
         label: 'Revenue',
-        data: topProducts.map((r) => r),
+        data: topProducts.map((p) => p),
         backgroundColor: topProducts.map((_, i) => colors[i % colors.length]),
-        borderRadius: 2,
+        borderRadius: 4,
       },
     ],
   };
@@ -86,7 +80,7 @@ const Charts = () => {
         backgroundColor: 'rgba(34,211,238,0.2)',
         tension: 0.4,
         fill: true,
-        pointRadius: 4,
+        pointRadius: 3,
       },
     ],
   };
@@ -99,11 +93,8 @@ const Charts = () => {
       y: {
         grid: { color: 'rgba(0, 0, 0, 0.05)' },
         ticks: {
-          callback(tickValue: string | number) {
-            if (typeof tickValue === 'number') {
-              return tickValue;
-            }
-            return tickValue;
+          callback(value: string | number) {
+            return typeof value === 'number' ? value : value;
           },
         },
       },
@@ -115,11 +106,12 @@ const Charts = () => {
   };
 
   return (
-    <div className="w-full px-4 sm:px-6 lg:px-8 space-y-8 mt-6">
+    <div className="w-full max-w-[100vw] px-4 sm:px-6 lg:px-8 mt-6 space-y-4">
       {/* Line Chart */}
       <div className="space-y-3">
-        <h2 className="text-base font-semibold">Chart</h2>
-
+        <h2 className="text-base font-semibold text-muted-foreground">
+          Sales Over Last 6 Days
+        </h2>
         <div className="bg-surface-100 rounded-xl shadow-sm p-6 overflow-hidden">
           <div className="w-full max-w-full h-[280px] md:h-[320px] relative">
             <div className="absolute top-30 -left-6 pr-4">
@@ -139,19 +131,27 @@ const Charts = () => {
 
       {/* Bar Chart */}
       <div className="space-y-3">
-        <h2 className="text-base font-semibold">Top Products by Revenue</h2>
-        <div className="bg-surface-100 rounded-md shadow-sm p-4 mx-auto">
-          <div className="relative w-full h-[300px] md:h-[380px]">
+        <h2 className="text-base font-semibold text-muted-foreground">
+          Top Products by Revenue
+        </h2>
+        <div className="bg-surface-100 rounded-xl shadow-sm p-4 overflow-x-hiden">
+          <div className="w-full h-[280px] md:h-[320px] relative">
             {topProducts.length === 0 ? (
               <p className="text-center text-muted-foreground">
                 No product data available.
               </p>
             ) : (
-              <Bar data={barChartData} options={chartOptions} />
+              <Bar
+                style={{ width: '100%', maxWidth: '100%' }}
+                data={barChartData}
+                options={chartOptions}
+              />
             )}
             <div className="absolute inset-0 bg-cyan-100 opacity-5 pointer-events-none" />
           </div>
-          <CustomLegend label="Product" />
+          <div className="mt-2">
+            <CustomLegend label="Product" />
+          </div>
         </div>
       </div>
     </div>

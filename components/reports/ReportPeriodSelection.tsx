@@ -20,12 +20,12 @@ const HeaderPeriodSelection = () => {
             href="/report-analytics/generate-reports"
             className="w-full sm:w-auto"
           >
-            <Button className="w-full sm:w-auto bg-darkblue hover:bg-lightblue">
+            <Button className="w-full bg-darkblue hover:bg-lightblue">
               Export
             </Button>
           </Link>
           <Select value={filter} onValueChange={setFilter}>
-            <SelectTrigger className="w-full sm:w-[100px] border border-lightblue capitalize">
+            <SelectTrigger className="w-full sm:w-auto border border-lightblue capitalize">
               {filter === 'all' ? 'All time' : filter}
             </SelectTrigger>
             <SelectContent className="border border-lightblue">
