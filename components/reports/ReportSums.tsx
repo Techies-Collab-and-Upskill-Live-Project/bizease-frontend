@@ -65,7 +65,7 @@ const ReportSums = () => {
   const stockChange = 12;
 
   return (
-    <div className="mx-auto px-4 lg:px-8 mt-4 overflow-x-hidden">
+    <div className="w-full mx-auto px-4 lg:px-8 mt-4">
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 auto-rows-fr">
         <MetricCard
           label="Total Revenue"

@@ -15,7 +15,6 @@ export default function RootLayout({
       </div>
       <Footer />
       <MobileNav />
-      
     </section>
   );
 }
