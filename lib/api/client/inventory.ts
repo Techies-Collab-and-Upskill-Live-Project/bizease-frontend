@@ -7,14 +7,20 @@ import {
   fetchInventoryItem as getItem,
 } from '../user';
 
-export const fetchInventoryClient = async () => await fetchInventory();
+export const fetchInventoryClient = async (token: string) =>
+  await fetchInventory(token);
 
-export const addInventoryItemClient = async (item: InventoryItem) =>
-  await addItem(item);
+export const addInventoryItemClient = async (
+  token: string,
+  item: InventoryItem,
+) => await addItem(token, item);
+
 export const updateInventoryItemClient = async (
   id: number,
   data: InventoryItem,
-) => await updateItem(id, data);
-export const deleteInventoryItemClient = async (id: number) =>
-  await deleteItem(id);
+  token: string,
+) => await updateItem(token, id, data);
+
+export const deleteInventoryItemClient = async (token: string, id: number) =>
+  await deleteItem(token, id);
 export const fetchInventoryItemClient = async (id: number) => await getItem(id);
