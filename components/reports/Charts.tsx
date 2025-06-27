@@ -58,18 +58,6 @@ const Charts = () => {
     'rgba(34,211,238,0.4)',
   ];
 
-  // const barChartData = {
-  //   labels: topProducts.map(({ name }) => name),
-  //   datasets: [
-  //     {
-  //       label: 'Revenue',
-  //       data: topProducts.map((p) => p),
-  //       backgroundColor: topProducts.map((_, i) => colors[i % colors.length]),
-  //       borderRadius: 4,
-  //     },
-  //   ],
-  // };
-
   const barChartData = {
     labels: topProducts.map(({ name }) => name),
     datasets: [
