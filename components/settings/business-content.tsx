@@ -8,6 +8,7 @@ import LoadingSpinner from "../spinner";
 import { useBusiness } from "@/hooks/useBusiness";
 import useCurrentUser from "@/hooks/useCurrentUser";
 import { useEffect } from "react";
+import LoadingButton from "../loading-button";
 
 export default function BusinessSettings() {
   const {
@@ -209,13 +210,14 @@ export default function BusinessSettings() {
 
       {/* Save Changes */}
       <div className="flex justify-center w-full my-2">
-        <Button
+        <LoadingButton
           type="submit"
-          className="w-full rounded-sm py-5 md:py-6 cursor-pointer bg-[#06005B]"
+          loading={isSubmitting}
           disabled={isSubmitting}
+          className="rounded-sm bg-[#06005B] hover:bg-blue-900 w-full py-3 text-white"
         >
           Save Changes
-        </Button>
+        </LoadingButton>
       </div>
     </form>
   );

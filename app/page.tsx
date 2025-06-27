@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -23,10 +23,23 @@ const slides = [
 export default function Landing() {
   const router = useRouter();
   const [currentSlide, setCurrentSlide] = useState(0);
+  const [loading, setLoading] = useState(false);
 
   const handleGetStarted = () => {
-    router.push("/about");
+    if (loading) return;
+    setLoading(true);
+    setTimeout(() => {
+      router.push("/about");
+    }, 1000);
   };
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentSlide((prev) => (prev + 1) % slides.length);
+    }, 2000);
+
+    return () => clearInterval(interval);
+  }, []);
 
   const current = slides[currentSlide];
 
@@ -83,12 +96,14 @@ export default function Landing() {
           />
 
           <div className="w-full px-5 md:px-20 lg:w-2/3">
-            <Button
-              onClick={handleGetStarted}
-              className="rounded-lg text-base font-semibold bg-[#06005B] hover:bg-blue-900 w-full py-6 md:py-8"
+            <LoadingButton
+              type="submit"
+              loading={loading}
+              disabled={loading || !agreedToTerms}
+              className="rounded-lg bg-[#06005B] hover:bg-blue-900 w-full py-3 text-white"
             >
-              Get Started
-            </Button>
+              Sign Up
+            </LoadingButton>
           </div>
         </div>
       </div>
