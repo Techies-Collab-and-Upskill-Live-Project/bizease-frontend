@@ -7,7 +7,8 @@ import { Button } from '@/components/ui/button';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { Eye, EyeOff } from 'lucide-react';
 import LoadingSpinner from '../spinner';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import useCurrentUser from '@/hooks/useCurrentUser';
 
 export default function ProfileSettings() {
   const [showPassword, setShowPassword] = useState(false);
@@ -17,26 +18,46 @@ export default function ProfileSettings() {
       register,
       handleSubmit,
       formState: { errors, isSubmitting },
+      reset,
     },
     avatarPreview,
     handleAvatarChange,
     onSubmit,
   } = useProfile();
 
-  return isSubmitting ? (
+  const { user, loading } = useCurrentUser();
+
+  useEffect(() => {
+    if (user && !loading) {
+      reset({
+        fullName: user.full_name || '',
+        email: user.email || '',
+        phone: user.phone || '',
+        password: '', // leave password blank for security
+      });
+    }
+  }, [user, loading, reset]);
+
+  return isSubmitting || loading ? (
     <LoadingSpinner />
   ) : (
     <form
       onSubmit={handleSubmit(onSubmit)}
-    
       className="flex flex-col px-6 space-y-5 max-w-md mx-auto"
     >
       {/* Avatar */}
-      <div className="flex flex-col gap-2  items-center justify-center space-y-3 ">
-        <Avatar className="w-30 h-30  ">
+      <div className="flex flex-col gap-2 items-center justify-center space-y-3">
+        <Avatar className="w-30 h-30">
           <AvatarImage src={avatarPreview || ''} alt="Avatar" />
           <AvatarFallback className="font-bold text-gray-600 text-lg">
-            EA
+            {user?.full_name
+              ? user.full_name
+                  .split(' ')
+                  .map((n) => n[0])
+                  .join('')
+                  .slice(0, 2)
+                  .toUpperCase()
+              : 'U'}
           </AvatarFallback>
         </Avatar>
         <div>
@@ -45,7 +66,7 @@ export default function ProfileSettings() {
             type="file"
             accept="image/*"
             onChange={handleAvatarChange}
-            className="hidden "
+            className="hidden"
           />
           <Label
             htmlFor="avatar"
@@ -57,7 +78,7 @@ export default function ProfileSettings() {
       </div>
 
       {/* Full Name */}
-      <div className="flex flex-col gap-2 ">
+      <div className="flex flex-col gap-2">
         <Label
           htmlFor="fullName"
           className="text-xs text-gray-600 font-semibold"
@@ -76,7 +97,7 @@ export default function ProfileSettings() {
       </div>
 
       {/* Email */}
-      <div className="flex flex-col gap-2 ">
+      <div className="flex flex-col gap-2">
         <Label htmlFor="email" className="text-xs text-gray-600 font-semibold">
           Email Address
         </Label>
@@ -93,7 +114,7 @@ export default function ProfileSettings() {
       </div>
 
       {/* Phone Number */}
-      <div className="flex flex-col gap-2 ">
+      <div className="flex flex-col gap-2">
         <Label htmlFor="phone" className="text-xs text-gray-600 font-semibold">
           Phone Number
         </Label>
