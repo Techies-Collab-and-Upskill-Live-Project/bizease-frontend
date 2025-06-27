@@ -109,12 +109,9 @@ const Charts = () => {
     <div className="w-full max-w-[100vw] px-4 sm:px-6 lg:px-8 mt-6 space-y-4">
       {/* Line Chart */}
       <div className="space-y-3">
-
-        <h2 className="text-base font-semibold">Chart</h2>
-
-
-         
-
+        <h2 className="text-base font-semibold text-muted-foreground">
+          Sales Over Last 6 Days
+        </h2>
         <div className="bg-surface-100 rounded-xl shadow-sm p-6 overflow-hidden">
           <div className="w-full max-w-full h-[280px] md:h-[320px] relative">
             <div className="absolute top-30 -left-6 pr-4">
@@ -124,7 +121,8 @@ const Charts = () => {
               style={{ width: '100%', maxWidth: '100%' }}
               data={lineChartData}
               options={chartOptions}
-            />?
+            />
+            ?
             <div className="absolute -bottom-9 left-0 right-0 p-4">
               <CustomLegend label="Time" />
             </div>

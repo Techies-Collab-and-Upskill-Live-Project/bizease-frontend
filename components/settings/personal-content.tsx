@@ -25,7 +25,7 @@ export default function ProfileSettings() {
     onSubmit,
   } = useProfile();
 
-  const { user, loading, error } = useCurrentUser();
+  const { user, loading } = useCurrentUser();
 
   useEffect(() => {
     if (user && !loading) {
@@ -79,7 +79,10 @@ export default function ProfileSettings() {
 
       {/* Full Name */}
       <div className="flex flex-col gap-2">
-        <Label htmlFor="fullName" className="text-xs text-gray-600 font-semibold">
+        <Label
+          htmlFor="fullName"
+          className="text-xs text-gray-600 font-semibold"
+        >
           Full Name
         </Label>
         <Input
@@ -129,7 +132,10 @@ export default function ProfileSettings() {
 
       {/* Password */}
       <div className="flex flex-col gap-2 relative">
-        <Label htmlFor="password" className="text-xs text-gray-500 font-semibold">
+        <Label
+          htmlFor="password"
+          className="text-xs text-gray-500 font-semibold"
+        >
           Password
         </Label>
         <Input
