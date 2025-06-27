@@ -122,7 +122,6 @@ const Charts = () => {
               data={lineChartData}
               options={chartOptions}
             />
-            ?
             <div className="absolute -bottom-9 left-0 right-0 p-4">
               <CustomLegend label="Time" />
             </div>
