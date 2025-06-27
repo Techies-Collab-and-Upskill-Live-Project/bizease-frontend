@@ -63,9 +63,10 @@ const Charts = () => {
     datasets: [
       {
         label: 'Revenue',
-        data: topProducts.map((p) => p),
+        data: topProducts.map(({ revenue }) => revenue),
         backgroundColor: topProducts.map((_, i) => colors[i % colors.length]),
-        borderRadius: 4,
+        borderRadius: 6,
+        borderSkipped: false,
       },
     ],
   };
@@ -118,11 +119,10 @@ const Charts = () => {
               <CustomLegend label="Order" />
             </div>
             <Line
-              style={{ width: '100%', maxWidth: '100%' }}
+              style={{ width: '98%', maxWidth: '98%' }}
               data={lineChartData}
               options={chartOptions}
             />
-            ?
             <div className="absolute -bottom-9 left-0 right-0 p-4">
               <CustomLegend label="Time" />
             </div>
