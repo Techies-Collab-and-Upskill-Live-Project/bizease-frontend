@@ -36,7 +36,7 @@ const Inventory = () => {
       />
 
       <div className="flex flex-col gap-2 w-full px-6 py-2">
-        <h2 className="font-bold text-lg max-md:hidden">Inventory</h2>
+        <h2 className="font-bold text-lg max-lg:hidden">Inventory</h2>
 
         <TotalInventory />
 

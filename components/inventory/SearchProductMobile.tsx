@@ -20,7 +20,7 @@ const SearchProduct = ({
   setCurrentPage,
 }: SearchProductMobileProps) => {
   return (
-    <div className="hidden max-md:flex items-center text-center justify-between px-6 my-2">
+    <div className="hidden max-lg:flex items-center text-center justify-between px-6 my-2">
       <div className="relative max-md:w-[43%] max-w-md mt-2">
         <Search className="absolute left-2 top-1/2 -translate-y-1/2 text-muted-foreground w-4 h-4" />
         <Input

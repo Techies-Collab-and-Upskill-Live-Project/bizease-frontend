@@ -1,3 +1,5 @@
+'use client';
+
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -41,9 +43,9 @@ export default function InventoryComponent({
   };
 
   const getStockStatusClass = (stock: number) => {
-    if (stock === 0) return 'bg-red-500 font-semibold text-surface-100';
-    if (stock < 5) return 'bg-warning font-semibold';
-    return 'bg-success font-semibold';
+    if (stock === 0) return 'bg-red-500 font-semibold text-white';
+    if (stock < 5) return 'bg-warning font-semibold text-surface-600';
+    return 'bg-green-500 font-semibold text-surface-100';
   };
 
   const filteredProduct = inventoryItems
@@ -67,16 +69,18 @@ export default function InventoryComponent({
   const endIndex = startIndex + itemsPerPage;
   const currentProducts = filteredProduct.slice(startIndex, endIndex);
 
+  const isEmpty = filteredProduct.length === 0;
+
   return (
-    <div className="space-y-4 bg-surface-100 max-md:bg-gray-100 max-md:overflow-hidden py-4 px-5">
-      <div className="flex items-center justify-between mb-4 max-md:hidden">
+    <div className="space-y-4 py-4 px-5 bg-surface-100 max-md:overflow-hidden">
+      <div className="max-lg:hidden lg:flex items-center justify-between mb-4 max-md:flex-col max-md:items-start gap-4">
         <SearchInput
           placeholder="Search inventory..."
           searchTerm={inventorySearch}
           setSearchTerm={setInventorySearch}
           onResetPage={() => setCurrentPage(1)}
         />
-        <div className="flex items-center gap-2 max-md:gap-2">
+        <div className="flex items-center gap-2">
           <FilterSelect
             filterValue={filter}
             className="cursor-pointer"
@@ -88,186 +92,198 @@ export default function InventoryComponent({
               { label: 'In Stock', value: 'in' },
             ]}
           />
-
           <AddButton label="Add New Product" />
         </div>
       </div>
 
-      {/* Desktop View */}
-      <div className="max-md:hidden grid grid-cols-1 gap-4">
-        <div className="px-4 grid grid-cols-7 text-center bg-gray-100 py-3 text-surface-500 font-semibold rounded gap-4 text-sm">
-          <span>Items in Stock</span>
-          <span>Category</span>
-          <span>Stock</span>
-          <span>Price</span>
-          <span>Status</span>
-          <span>Last Updated</span>
-          <span>Actions</span>
+      {isEmpty ? (
+        <div className="w-full flex flex-col items-center justify-center gap-3 text-center text-muted-foreground min-h-[200px]">
+          <div className="text-lg font-semibold text-surface-400">
+            No Product in the Inventory
+          </div>
+          <p className="text-sm">
+            No products found. Try adjusting your filters or add product.
+          </p>
         </div>
+      ) : (
+        <>
+          {/* Desktop View */}
+          <div className="max-lg:hidden grid grid-cols-1 gap-4 ">
+            <div className="px-4 grid grid-cols-7 text-center bg-gray-100 py-3 text-surface-500 font-semibold rounded gap-4 text-sm">
+              <span>Items in Stock</span>
+              <span>Category</span>
+              <span>Stock</span>
+              <span>Price</span>
+              <span>Status</span>
+              <span>Last Updated</span>
+              <span>Actions</span>
+            </div>
 
-        {currentProducts.map(
-          ({
-            id,
-            category,
-            stock,
-            lastUpdated,
-            price,
-            name,
-            stockStatus,
-            statusClass,
-          }) => (
-            <Card key={id} className="p-2 border-0 shadow-accent">
-              <CardContent className="px-0 py-0 text-center grid grid-cols-7 gap-2 text-[12px] text-surface-600">
-                <div className="flex w-fit items-center gap-2 text-left">
-                  <div className="max-h-6 h-5 max-w-6 w-5 flex-1/2 bg-gray-100" />
-                  {name}
-                </div>
-                <div className="flex-center">{category}</div>
-                <div className="flex-center">
-                  {stock} {stock > 1 ? 'Units' : 'Unit'}
-                </div>
-                <div className="flex-center">{formatCurrency(price)}</div>
-                <div
-                  className={cn(
-                    'flex flex-center text-center px-2 py-0 rounded-2xl',
-                    statusClass,
-                  )}
-                >
-                  <span>{stockStatus}</span>
-                </div>
-                <div className="flex-center px-2 ml-2 text-center">
-                  {lastUpdated}
-                </div>
-                <div className="flex items-center justify-center gap-2">
-                  <Link href={`/inventory/edit-product/${id}`}>
-                    <Button
-                      className="bg-darkblue text-surface-200 font-normal cursor-pointer
-                     rounded-lg hover:bg-lightblue py-2 px-4 text-xs"
+            {currentProducts.map(
+              ({
+                id,
+                category,
+                stock,
+                lastUpdated,
+                price,
+                name,
+                stockStatus,
+                statusClass,
+              }) => (
+                <Card key={id} className="p-2 border-0 shadow-accent min-h-40">
+                  <CardContent className="px-0 py-0 text-center grid grid-cols-7 gap-2 text-[12px] text-surface-600">
+                    <div className="flex items-center gap-2 text-left">
+                      <div className="h-5 w-5 bg-gray-200 rounded" />
+                      {name}
+                    </div>
+                    <div className="flex-center">{category}</div>
+                    <div className="flex-center">
+                      {stock} {stock > 1 ? 'Units' : 'Unit'}
+                    </div>
+                    <div className="flex-center">{formatCurrency(price)}</div>
+                    <div
+                      className={cn(
+                        'flex-center px-2 py-1 rounded-xl',
+                        statusClass,
+                      )}
                     >
-                      Restock
-                    </Button>
-                  </Link>
-                  <Button
-                    onClick={() => {
-                      setSelectedProductId(id);
-                      setDeleteModalOpen(true);
-                    }}
-                    variant="ghost"
-                    size="icon"
-                    className="hover:bg-red-100 hover:text-red-600 cursor-pointer p-1"
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-          ),
-        )}
+                      <span>{stockStatus}</span>
+                    </div>
+                    <div className="flex-center">{lastUpdated}</div>
+                    <div className="flex items-center justify-center gap-2">
+                      <Link href={`/inventory/edit-product/${id}`}>
+                        <Button className="bg-darkblue text-surface-100 text-xs py-2 px-4 hover:bg-lightblue">
+                          Restock
+                        </Button>
+                      </Link>
+                      <Button
+                        onClick={() => {
+                          setSelectedProductId(id);
+                          setDeleteModalOpen(true);
+                        }}
+                        variant="ghost"
+                        size="icon"
+                        className="hover:bg-red-100 hover:text-red-600 p-1"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
+              ),
+            )}
+          </div>
 
-        {selectedProduct && (
-          <DeleteConfirmationModal
-            open={deleteModalOpen}
-            onClose={() => {
-              setDeleteModalOpen(false);
-              setSelectedProductId(null);
-            }}
-            onConfirm={() => {
-              deleteInventoryItem(selectedProductId!);
-              setDeleteModalOpen(false);
-              setSelectedProductId(null);
-            }}
-            productName={selectedProduct.name}
-          />
-        )}
-      </div>
-
-      {/* Mobile View */}
-      <div className="md:hidden relative overflow-hidden bg-gray-100 flex flex-col gap-4">
-        {currentProducts.map(({ id, category, stock, price, name }) => (
-          <Card key={id} className="p-4 bg-gray-100">
-            <CardContent className="flex justify-between items-end p-0 gap-4">
-              <div className="flex flex-col gap-1 text-sm">
-                <h3 className="text-[14px] text-gray-600 font-semibold">
-                  {name}
-                </h3>
-                <div className="text-gray-400">{category}</div>
-                <div className="text-[10px] font-bold py-0.5 px-2 rounded-lg bg-warning text-gray-800">
-                  <div className="flex items-center gap-1">
-                    <div className="bg-red-600 h-1.5 w-1.5 rounded-full" />
-                    {stock === 0 ? 'Zero Stock' : `${stock} - Units`}
+          {/* Mobile View */}
+          <div className="lg:hidden flex flex-col gap-4 min-h-50">
+            {currentProducts.map(({ id, category, stock, price, name }) => (
+              <Card key={id} className="p-4 bg-surface-100 rounded-xl">
+                <CardContent className="flex justify-between items-end p-0 gap-4">
+                  <div className="flex flex-col gap-1 text-sm">
+                    <h3 className="text-[14px] text-gray-700 font-semibold">
+                      {name}
+                    </h3>
+                    <div className="text-gray-400">{category}</div>
+                    <div className="text-[11px] font-bold py-0.5 px-2 rounded-lg bg-warning text-gray-800 w-fit">
+                      <div className="flex items-center gap-1">
+                        <div className="bg-red-600 h-1.5 w-1.5 rounded-full" />
+                        {stock === 0
+                          ? 'Zero Stock'
+                          : `${stock} Unit${stock > 1 ? 's' : ''}`}
+                      </div>
+                    </div>
+                    <div className="text-gray-900 text-[16px] font-semibold">
+                      {formatCurrency(price)}
+                    </div>
                   </div>
-                </div>
-                <div className="text-surface-600 text-[16px] font-semibold">
-                  {formatCurrency(price)}
-                </div>
-              </div>
-              <div className="flex flex-col gap-1 items-end">
-                <Link href={`/inventory/edit-product/${id}`}>
-                  <Button className="bg-darkblue font-normal text-surface-100 hover:bg-lightblue whitespace-nowrap text-xs px-3">
-                    Restock
-                  </Button>
-                </Link>
-                <Button
-                  onClick={() => deleteInventoryItem(id)}
-                  variant="ghost"
-                  size="icon"
-                  className="hover:bg-red-100 hover:text-red-600 p-1 max-md:justify-start"
-                >
-                  <Trash2 className="h-4 w-4" />
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-        ))}
+                  <div className="flex flex-col gap-1 items-end">
+                    <Link href={`/inventory/edit-product/${id}`}>
+                      <Button className="bg-darkblue text-surface-100 text-xs px-3 hover:bg-lightblue">
+                        Restock
+                      </Button>
+                    </Link>
+                    <Button
+                      onClick={() => deleteInventoryItem(id)}
+                      variant="ghost"
+                      size="icon"
+                      className="hover:bg-red-100 hover:text-red-600 p-1"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </>
+      )}
 
-        {/* Floating Action Buttons */}
-        <div className="fixed bottom-24 right-4 z-50 flex gap-2">
-          {isOpen && (
-            <Button
-              onClick={handleAddProduct}
-              className="bg-darkblue text-surface-200 hover:bg-lightblue font-normal text-[12px] shadow-lg"
-            >
-              Add New Product
-            </Button>
-          )}
+      {/* Floating Mobile Action Button */}
+      <div className="fixed bottom-24 right-4 z-50 flex gap-2 md:hidden">
+        {isOpen && (
           <Button
-            onClick={() => setIsOpen((prev) => !prev)}
-            variant="outline"
-            className="bg-darkblue hover:text-surface-100 hover:bg-lightblue text-surface-100 shadow-lg"
+            onClick={handleAddProduct}
+            className="bg-darkblue text-white text-xs shadow-lg hover:bg-lightblue"
           >
-            <X />
+            Add New Product
           </Button>
-        </div>
+        )}
+        <Button
+          onClick={() => setIsOpen((prev) => !prev)}
+          variant="outline"
+          className="bg-darkblue text-white shadow-lg hover:bg-lightblue"
+        >
+          <X />
+        </Button>
       </div>
+
+      {/* Delete Modal */}
+      {selectedProduct && (
+        <DeleteConfirmationModal
+          open={deleteModalOpen}
+          onClose={() => {
+            setDeleteModalOpen(false);
+            setSelectedProductId(null);
+          }}
+          onConfirm={() => {
+            deleteInventoryItem(selectedProductId!);
+            setDeleteModalOpen(false);
+            setSelectedProductId(null);
+          }}
+          productName={selectedProduct.name}
+        />
+      )}
 
       {/* Pagination */}
-      <div className="flex items-center justify-between pt-2 mb-2 text-sm">
-        <div className="text-muted-foreground">
-          Showing {startIndex + 1} -{Math.min(endIndex, filteredProduct.length)}
-          of
-          {filteredProduct.length} products
+      {!isEmpty && (
+        <div className="flex items-center justify-between pt-4 text-sm">
+          <div className="text-muted-foreground">
+            Showing {startIndex + 1} -{' '}
+            {Math.min(endIndex, filteredProduct.length)} of{' '}
+            {filteredProduct.length} products
+          </div>
+          <div className="flex gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+              disabled={currentPage === 1}
+            >
+              <ChevronLeft className="w-4 h-4 mr-1" /> Prev
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() =>
+                setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+              }
+              disabled={currentPage === totalPages}
+            >
+              Next <ChevronRight className="w-4 h-4 ml-1" />
+            </Button>
+          </div>
         </div>
-        <div className="flex gap-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-            disabled={currentPage === 1}
-          >
-            <ChevronLeft className="w-4 h-4 mr-1" /> Prev
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() =>
-              setCurrentPage((prev) => Math.min(prev + 1, totalPages))
-            }
-            disabled={currentPage === totalPages}
-          >
-            Next <ChevronRight className="w-4 h-4 ml-1" />
-          </Button>
-        </div>
-      </div>
+      )}
     </div>
   );
 }
