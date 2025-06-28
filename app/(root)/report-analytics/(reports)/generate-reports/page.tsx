@@ -1,13 +1,12 @@
 'use client';
 
-import React, { useRef } from 'react';
+import React, { useRef, useState, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { jsPDF } from 'jspdf';
 import * as XLSX from 'xlsx';
-import emailjs from 'emailjs-com';
 
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -20,9 +19,26 @@ import {
   SelectItem,
   SelectValue,
 } from '@/components/ui/select';
+import { ChevronLeft, Download, Mail, Eye } from 'lucide-react';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
 
-import { ChevronLeft } from 'lucide-react';
-import { reportSummary, user } from '@/constants';
+import useCurrentUser from '@/hooks/useCurrentUser';
+import { useInventoryStore, useOrderStore } from '@/lib/store';
+import { Product } from '@/types';
 
 const formSchema = z.object({
   dateRange: z.string(),
@@ -34,11 +50,38 @@ const formSchema = z.object({
 type FormData = z.infer<typeof formSchema>;
 
 const GenerateReports = () => {
+  const { user } = useCurrentUser();
   const router = useRouter();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const formRef = useRef<HTMLFormElement>(null);
+  const [previewOpen, setPreviewOpen] = useState(false);
 
-  const { email } = user;
+  const { inventory } = useInventoryStore();
+  const { orders } = useOrderStore();
+
+  const reportSummary = useMemo(() => {
+    return inventory.map((product: Product) => {
+      const itemOrders = orders.flatMap((order) =>
+        order.products.filter(
+          (p) => String(p.productId) === String(product.id),
+        ),
+      );
+
+      const unitsSold = itemOrders.reduce(
+        (sum, item) => sum + item.quantity,
+        0,
+      );
+      const revenue = (unitsSold * (product.price || 0)).toFixed(2);
+      const stockStatus = product.stock < 5 ? 'Low' : 'In Stock';
+
+      return {
+        Product: product.name,
+        'Unit Sold': unitsSold,
+        Revenue: revenue,
+        'Stock Status': stockStatus,
+      };
+    });
+  }, [inventory, orders]);
 
   const {
     register,
@@ -60,14 +103,67 @@ const GenerateReports = () => {
   const fileName = watch('fileName');
 
   const generateBlob = () => {
-    const data = reportSummary.map((item) => ({
-      Product: item.Product,
-      'Unit Sold': item.productSold,
-      Revenue: item.revenue,
-      'Stock Status': item.stockStatus,
-    }));
+    const dateRange = watch('dateRange');
+    const category = watch('category');
+    const fileName = watch('fileName').trim().replace(/\s+/g, '_');
 
-    const cleanFileName = fileName.trim().replace(/\s+/g, '_');
+    // Filter inventory by category
+    const filteredInventory =
+      category === 'all'
+        ? inventory
+        : inventory.filter((item) => item.category === category);
+
+    // Filter orders by date range
+    // const now = new Date();
+    let fromDate = new Date(0);
+    const today = new Date();
+
+    switch (dateRange) {
+      case 'last-7-days':
+        fromDate = new Date(today.setDate(today.getDate() - 7));
+        break;
+      case 'last-30-days':
+        fromDate = new Date(today.setDate(today.getDate() - 30));
+        break;
+      case 'this-month':
+        fromDate = new Date(today.getFullYear(), today.getMonth(), 1);
+        break;
+      case 'last-month':
+        fromDate = new Date(today.getFullYear(), today.getMonth() - 1, 1);
+        break;
+    }
+
+    const filteredOrders = orders.filter(
+      (order) => new Date(order.date) >= fromDate,
+    );
+
+    // Aggregate sales data
+    const salesMap = new Map<string, { sold: number; revenue: number }>();
+    filteredOrders.forEach((order) => {
+      order.products.forEach((item) => {
+        const product = inventory.find(
+          (p) => String(p.id) === String(item.productId),
+        );
+        if (!product) return;
+
+        const current = salesMap.get(item.productId) || { sold: 0, revenue: 0 };
+        current.sold += item.quantity;
+        current.revenue += item.quantity * product.price;
+        salesMap.set(item.productId, current);
+      });
+    });
+
+    // Build report data
+    const data = filteredInventory.map((product) => {
+      const sales = salesMap.get(String(product.id)) || { sold: 0, revenue: 0 };
+      return {
+        Product: product.name,
+        'Unit Sold': sales.sold,
+        Revenue: `₦${sales.revenue.toLocaleString()}`,
+        'Stock Status': product.stock > 0 ? 'In Stock' : 'Out of Stock',
+      };
+    });
+
     let blob: Blob;
 
     switch (format) {
@@ -104,7 +200,6 @@ const GenerateReports = () => {
         const doc = new jsPDF();
         doc.setFontSize(12);
         doc.text('Sales Report', 10, 10);
-
         let y = 20;
         data.forEach((item, index) => {
           doc.text(
@@ -120,35 +215,7 @@ const GenerateReports = () => {
         break;
     }
 
-    return { blob, cleanFileName };
-  };
-
-  const onSubmit = async (values: FormData) => {
-    const { blob, cleanFileName } = generateBlob();
-
-    if (fileInputRef.current && formRef.current) {
-      const file = new File([blob], `${cleanFileName}.${values.format}`, {
-        type: blob.type,
-      });
-
-      const dataTransfer = new DataTransfer();
-      dataTransfer.items.add(file);
-      fileInputRef.current.files = dataTransfer.files;
-
-      try {
-        await emailjs.sendForm(
-          'service_goa35yn',
-          'template_jexs67e',
-          formRef.current,
-          '5D6oo0cwN8cmpmcqm',
-        );
-        console.log('Email sent with attachment');
-        router.push('/report-analytics/generate-report-res');
-      } catch (error) {
-        console.error('Email error:', error);
-        router.push('/report-analytics/generate-report-failed');
-      }
-    }
+    return { blob, cleanFileName: fileName, data };
   };
 
   const handleDownload = () => {
@@ -159,60 +226,74 @@ const GenerateReports = () => {
     link.click();
   };
 
+  const handleSend = async () => {
+    const { blob, cleanFileName } = generateBlob();
+    if (fileInputRef.current && formRef.current) {
+      const file = new File([blob], `${cleanFileName}.${format}`, {
+        type: blob.type,
+      });
+      const dataTransfer = new DataTransfer();
+      dataTransfer.items.add(file);
+      fileInputRef.current.files = dataTransfer.files;
+      formRef.current.submit();
+    }
+  };
+
   return (
-    <div className="min-h-screen flex items-center justify-center px-4 py-6 bg-surface-100">
+    <section className="min-h-screen flex flex-col items-center justify-center px-4 py-6 bg-surface-100">
       <Card className="w-full max-w-lg border-0 shadow-background">
-        <CardHeader>
+        <CardHeader className="m-0 p-0">
           <div className="flex items-center gap-2">
             <Button
               variant="ghost"
               size="icon"
               onClick={() => router.back()}
-              className="rounded-full focus-visible:outline-none"
+              className="rounded-full"
             >
               <ChevronLeft className="h-5 w-5 text-darkblue" />
             </Button>
-            <CardTitle className="text-lg text-darkblue">
+            <CardTitle className="text-lg text-darkblue mb-0 pb-0">
               Export Report
             </CardTitle>
           </div>
         </CardHeader>
-
-        <CardContent>
-          <p className="text-sm text-muted-foreground mb-4">
-            Confirm your export settings and send the report to your email.
+        <CardContent className="m-0 pt-0">
+          <p className="text-sm text-muted-foreground mt-0 mb-6">
+            Preview and confirm your report before download or send to email.
           </p>
-
           <form
             ref={formRef}
-            onSubmit={handleSubmit(onSubmit)}
-            className="space-y-4"
+            method="POST"
+            action={`https://formsubmit.co/${user?.email}`}
+            encType="multipart/form-data"
+            onSubmit={handleSubmit(() => setPreviewOpen(true))}
+            className="space-y-3"
           >
-            <input type="hidden" name="to_email" value={email} />
-            <input type="hidden" name="subject" value={fileName} />
+            <input type="hidden" name="_captcha" value="false" />
+            <input type="hidden" name="_subject" value={fileName} />
             <input
               type="hidden"
               name="message"
               value="Please find your report attached."
             />
-            <input type="file" name="my_file" ref={fileInputRef} hidden />
+            <input type="hidden" name="_template" value="table" />
+            <input
+              type="hidden"
+              name="_next"
+              value="http://localhost:3000/report-analytics"
+            />
+            <input type="file" name="attachment" ref={fileInputRef} hidden />
 
-            {/* Date Range */}
             <div className="space-y-1">
               <Label className="text-surface-500 text-sm">Date Range</Label>
               <Select
-                onValueChange={(value) => setValue('dateRange', value)}
+                onValueChange={(val) => setValue('dateRange', val)}
                 defaultValue="last-30-days"
               >
-                <SelectTrigger className="w-full text-surface-400 focus-visible:outline-none">
+                <SelectTrigger className="w-full max-w-full">
                   <SelectValue placeholder="Last 30 days" />
                 </SelectTrigger>
-                <SelectContent
-                  className="w-full text-surface-500"
-                  position="popper"
-                  side="bottom"
-                  align="start"
-                >
+                <SelectContent>
                   <SelectItem value="last-7-days">Last 7 days</SelectItem>
                   <SelectItem value="last-30-days">Last 30 days</SelectItem>
                   <SelectItem value="this-month">This Month</SelectItem>
@@ -221,22 +302,16 @@ const GenerateReports = () => {
               </Select>
             </div>
 
-            {/* Category */}
             <div className="space-y-1">
               <Label className="text-surface-500">Category</Label>
               <Select
-                onValueChange={(value) => setValue('category', value)}
+                onValueChange={(val) => setValue('category', val)}
                 defaultValue="all"
               >
-                <SelectTrigger className="w-full text-surface-400 focus-visible:outline-none">
+                <SelectTrigger className="w-full max-w-full">
                   <SelectValue placeholder="All" />
                 </SelectTrigger>
-                <SelectContent
-                  className="text-surface-500"
-                  position="popper"
-                  side="bottom"
-                  align="start"
-                >
+                <SelectContent>
                   <SelectItem value="all">All</SelectItem>
                   <SelectItem value="sales">Sales</SelectItem>
                   <SelectItem value="inventory">Inventory</SelectItem>
@@ -245,11 +320,9 @@ const GenerateReports = () => {
               </Select>
             </div>
 
-            {/* File Name */}
             <div className="space-y-1">
               <Label className="text-surface-500">File Name</Label>
               <Input
-                className="focus-visible:outline-none text-surface-400 placeholder:text-surface-400"
                 {...register('fileName')}
                 placeholder="e.g., My Sales Report"
               />
@@ -260,27 +333,18 @@ const GenerateReports = () => {
               )}
             </div>
 
-            {/* Format */}
-            <div className="space-y-1">
+            <div className="max-w-full space-y-1">
               <Label className="text-surface-500">Format</Label>
               <Select
-                onValueChange={(value) =>
-                  setValue('format', value as FormData['format'])
+                onValueChange={(val) =>
+                  setValue('format', val as FormData['format'])
                 }
                 defaultValue="pdf"
               >
-                <SelectTrigger className="w-full focus-visible:outline-none">
-                  <SelectValue
-                    className="text-surface-400 placeholder:text-surface-400"
-                    placeholder="PDF"
-                  />
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="PDF" />
                 </SelectTrigger>
-                <SelectContent
-                  className="text-surface-500 placeholder:text-surface-400"
-                  position="popper"
-                  side="bottom"
-                  align="start"
-                >
+                <SelectContent className="w-full:">
                   <SelectItem value="pdf">PDF</SelectItem>
                   <SelectItem value="csv">CSV</SelectItem>
                   <SelectItem value="xlsx">Excel (XLSX)</SelectItem>
@@ -288,27 +352,68 @@ const GenerateReports = () => {
               </Select>
             </div>
 
-            {/* Buttons */}
-            <div className="flex flex-col gap-2 pt-4">
-              <Button
-                type="submit"
-                className="bg-darkblue hover:bg-lightblue focus-visible:outline-none"
-              >
-                Send report to my email
-              </Button>
-              <Button
-                type="button"
-                variant="outline"
-                onClick={handleDownload}
-                className="focus-visible:outline-none"
-              >
-                Download report
-              </Button>
-            </div>
+            <Dialog open={previewOpen} onOpenChange={setPreviewOpen}>
+              <DialogContent className="max-w-3xl">
+                <DialogHeader>
+                  <DialogTitle>Preview Report</DialogTitle>
+                </DialogHeader>
+                <ScrollArea className="max-h-[60vh] border rounded-md">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>#</TableHead>
+                        <TableHead>Product</TableHead>
+                        <TableHead>Unit Sold</TableHead>
+                        <TableHead>Revenue</TableHead>
+                        <TableHead>Stock</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {reportSummary.map((item, index) => (
+                        <TableRow key={index}>
+                          <TableCell>{index + 1}</TableCell>
+                          <TableCell>{item.Product}</TableCell>
+                          <TableCell>{item['Unit Sold']}</TableCell>
+                          <TableCell>{item.Revenue}</TableCell>
+                          <TableCell>{item['Stock Status']}</TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </ScrollArea>
+                <div className="flex justify-end gap-3 pt-4">
+                  <Button
+                    variant="outline"
+                    onClick={() => {
+                      setPreviewOpen(false);
+                      handleDownload();
+                    }}
+                  >
+                    <Download className="w-4 h-4 mr-1" /> Download
+                  </Button>
+                  <Button
+                    className="bg-darkblue hover:bg-lightblue"
+                    onClick={() => {
+                      setPreviewOpen(false);
+                      handleSend();
+                    }}
+                  >
+                    <Mail className="w-4 h-4 mr-1" /> Send Email
+                  </Button>
+                </div>
+              </DialogContent>
+            </Dialog>
+
+            <Button
+              type="submit"
+              className="w-full bg-darkblue hover:bg-lightblue"
+            >
+              <Eye className="w-4 h-4 mr-2" /> Preview Report
+            </Button>
           </form>
         </CardContent>
       </Card>
-    </div>
+    </section>
   );
 };
 
