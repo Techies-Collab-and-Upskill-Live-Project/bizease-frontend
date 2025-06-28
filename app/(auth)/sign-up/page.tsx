@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import React, { useState } from "react";
-import { Button } from "@/components/ui/button";
+import React, { useState } from 'react';
+import { Button } from '@/components/ui/button';
 import {
   Form,
   FormControl,
@@ -9,14 +9,14 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Checkbox } from "@/components/ui/checkbox";
-import useSignUp from "@/hooks/useSignUp";
-import { Eye, EyeOff, Mail } from "lucide-react";
-import Image from "next/image";
-import useLocation from "@/hooks/useLocation";
-import LoadingButton from "@/components/loading-button";
+} from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import { Checkbox } from '@/components/ui/checkbox';
+import useSignUp from '@/hooks/useSignUp';
+import { Eye, EyeOff, Mail } from 'lucide-react';
+import Image from 'next/image';
+import useLocation from '@/hooks/useLocation';
+import LoadingButton from '@/components/loading-button';
 
 const SignUp = () => {
   const { signUpSchema, onSubmit } = useSignUp();
@@ -33,7 +33,19 @@ const SignUp = () => {
     statesLoading,
   } = useLocation();
 
-  const submit = async (data: any) => {
+  interface SignUpFormData {
+    business_name: string;
+    full_name: string;
+    email: string;
+    password: string;
+    country: string;
+    state: string;
+    currency: string;
+    business_type: string;
+    // Add other fields if needed
+  }
+
+  const submit = async (data: SignUpFormData): Promise<void> => {
     if (loading) return;
     setLoading(true);
     try {
@@ -153,7 +165,7 @@ const SignUp = () => {
                   <FormControl>
                     <div className="relative">
                       <Input
-                        type={showPassword ? "text" : "password"}
+                        type={showPassword ? 'text' : 'password'}
                         placeholder="*********"
                         className=" pr-10 text-sm"
                         {...field}
@@ -354,21 +366,21 @@ const SignUp = () => {
             <Image
               width={60}
               height={58}
-              src={"/google.png"}
+              src={'/google.png'}
               alt="google-icon"
               className="w-10 h-10 cursor-pointer"
             />
             <Image
               width={60}
               height={58}
-              src={"/apple.png"}
+              src={'/apple.png'}
               alt="apple-icon"
               className="w-10 h-10 cursor-pointer"
             />
             <Image
               width={60}
               height={58}
-              src={"/microsoft.png"}
+              src={'/microsoft.png'}
               alt="microsoft-icon"
               className="w-10 h-10 cursor-pointer"
             />

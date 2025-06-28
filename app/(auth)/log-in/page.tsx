@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import React, { useState } from "react";
-import { Button } from "@/components/ui/button";
+import React, { useState } from 'react';
+// import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
@@ -9,20 +9,25 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Checkbox } from "@/components/ui/checkbox";
-import useLogin from "@/hooks/useLogin";
-import { Eye, EyeOff, Mail } from "lucide-react";
-import Image from "next/image";
-import LoadingButton from "@/components/loading-button";
+} from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import { Checkbox } from '@/components/ui/checkbox';
+import useLogin from '@/hooks/useLogin';
+import { Eye, EyeOff, Mail } from 'lucide-react';
+import Image from 'next/image';
+import LoadingButton from '@/components/loading-button';
 
 const LogIn = () => {
   const { loginSchema, onSubmit } = useLogin();
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const submit = async (data: any) => {
+  interface LoginFormData {
+    email: string;
+    password: string;
+  }
+
+  const submit = async (data: LoginFormData): Promise<void> => {
     if (loading) return;
     setLoading(true);
     try {
@@ -98,7 +103,7 @@ const LogIn = () => {
                   <FormControl>
                     <div className="relative">
                       <Input
-                        type={showPassword ? "text" : "password"}
+                        type={showPassword ? 'text' : 'password'}
                         placeholder="*********"
                         className=" pr-10 text-sm"
                         {...field}
@@ -139,7 +144,7 @@ const LogIn = () => {
               disabled={loading}
               className=" bg-[#06005B] hover:bg-blue-900 w-full py-3"
             >
-              Log In{" "}
+              Log In{' '}
             </LoadingButton>
 
             {/* Forgot Password */}
@@ -160,21 +165,21 @@ const LogIn = () => {
             <Image
               width={60} // any appropriate size in pixels
               height={58}
-              src={"/google.png"}
+              src={'/google.png'}
               alt=""
               className="w-10 h-10 cursor-pointer"
             />
             <Image
               width={60} // any appropriate size in pixels
               height={58}
-              src={"/apple.png"}
+              src={'/apple.png'}
               alt=""
               className="w-10 h-10 cursor-pointer"
             />
             <Image
               width={60} // any appropriate size in pixels
               height={58}
-              src={"/microsoft.png"}
+              src={'/microsoft.png'}
               alt=""
               className="w-10 h-10 cursor-pointer"
             />
