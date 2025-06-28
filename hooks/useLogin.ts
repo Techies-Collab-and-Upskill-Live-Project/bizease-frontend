@@ -5,6 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { userLoginSchema } from "@/lib/validations/auth";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 export default function useLogin() {
   const router = useRouter();
@@ -40,6 +41,7 @@ export default function useLogin() {
       console.log("Login successful:", result);
       localStorage.setItem("token", result.data.access);
 
+      toast.success("Welcome back!");
       router.push("/dashboard");
     } catch (error) {
       console.error("Unexpected error during login:", error);

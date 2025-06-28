@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Button } from '@/components/ui/button';
+// import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
@@ -15,10 +15,27 @@ import { Checkbox } from '@/components/ui/checkbox';
 import useLogin from '@/hooks/useLogin';
 import { Eye, EyeOff, Mail } from 'lucide-react';
 import Image from 'next/image';
+import LoadingButton from '@/components/loading-button';
 
 const LogIn = () => {
   const { loginSchema, onSubmit } = useLogin();
   const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+  interface LoginFormData {
+    email: string;
+    password: string;
+  }
+
+  const submit = async (data: LoginFormData): Promise<void> => {
+    if (loading) return;
+    setLoading(true);
+    try {
+      await onSubmit(data);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="min-h-screen">
@@ -46,7 +63,7 @@ const LogIn = () => {
 
         <Form {...loginSchema}>
           <form
-            onSubmit={loginSchema.handleSubmit(onSubmit)}
+            onSubmit={loginSchema.handleSubmit(submit)}
             className="space-y-4 md:space-y-6"
           >
             {/* Email */}
@@ -121,12 +138,14 @@ const LogIn = () => {
             </label>
 
             {/* Submit */}
-            <Button
+            <LoadingButton
+              loading={loading}
               type="submit"
-              className="w-full bg-[#06005B] hover:bg-blue-900 cursor-pointer md:py-6 text-xs md:text-sm font-semibold tracking-wide"
+              disabled={loading}
+              className=" bg-[#06005B] hover:bg-blue-900 w-full py-3"
             >
-              Sign In
-            </Button>
+              Log In{' '}
+            </LoadingButton>
 
             {/* Forgot Password */}
             <div className="w-full flex justify-center items-center">

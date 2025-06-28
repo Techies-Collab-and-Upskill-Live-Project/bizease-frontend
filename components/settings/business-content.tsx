@@ -1,13 +1,14 @@
-"use client";
+'use client';
 
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Button } from "@/components/ui/button";
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-import LoadingSpinner from "../spinner";
-import { useBusiness } from "@/hooks/useBusiness";
-import useCurrentUser from "@/hooks/useCurrentUser";
-import { useEffect } from "react";
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+// import { Button } from "@/components/ui/button";
+import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
+import LoadingSpinner from '../spinner';
+import { useBusiness } from '@/hooks/useBusiness';
+import useCurrentUser from '@/hooks/useCurrentUser';
+import { useEffect } from 'react';
+import LoadingButton from '../loading-button';
 
 export default function BusinessSettings() {
   const {
@@ -27,12 +28,12 @@ export default function BusinessSettings() {
   useEffect(() => {
     if (user && !loading) {
       reset({
-        businessName: user.business_name || "",
-        businessEmail: user.email || "",
-        businessPhone: user.phone || "",
-        businessAddress: user.country || "",
-        businessType: user.business_type || "",
-        currency: user.currency || "",
+        businessName: user.business_name || '',
+        businessEmail: user.email || '',
+        businessPhone: user.phone || '',
+        businessAddress: user.country || '',
+        businessType: user.business_type || '',
+        currency: user.currency || '',
       });
     }
   }, [user, loading, reset]);
@@ -47,16 +48,16 @@ export default function BusinessSettings() {
       {/* Avatar */}
       <div className="flex flex-col gap-2 items-center justify-center space-y-2">
         <Avatar className="w-30 h-30">
-          <AvatarImage src={avatarPreview || ""} alt="Avatar" />
+          <AvatarImage src={avatarPreview || ''} alt="Avatar" />
           <AvatarFallback className="font-bold text-gray-600 text-base">
             {user?.business_name
               ? user.business_name
-                  .split(" ")
+                  .split(' ')
                   .map((n) => n[0])
-                  .join("")
+                  .join('')
                   .slice(0, 2)
                   .toUpperCase()
-              : "OG"}
+              : 'OG'}
           </AvatarFallback>
         </Avatar>
         <div>
@@ -86,7 +87,7 @@ export default function BusinessSettings() {
         </Label>
         <Input
           id="businessName"
-          {...register("businessName")}
+          {...register('businessName')}
           className="text-xs tracking-wide md:py-6 shadow-sm"
           placeholder="Jessica Reeves"
         />
@@ -106,7 +107,7 @@ export default function BusinessSettings() {
         <Input
           id="businessEmail"
           type="email"
-          {...register("businessEmail")}
+          {...register('businessEmail')}
           placeholder="jessyreeves@gmail.com"
           className="text-xs tracking-wide md:py-6 shadow-sm"
         />
@@ -126,7 +127,7 @@ export default function BusinessSettings() {
         <Input
           id="businessPhone"
           type="tel"
-          {...register("businessPhone")}
+          {...register('businessPhone')}
           placeholder="+234 906 4473 435"
           className="text-xs tracking-wide md:py-6 shadow-sm"
         />
@@ -146,7 +147,7 @@ export default function BusinessSettings() {
         <Input
           id="businessAddress"
           type="text"
-          {...register("businessAddress")}
+          {...register('businessAddress')}
           className="text-xs tracking-wide md:py-6 shadow-sm"
           placeholder="Address"
         />
@@ -167,7 +168,7 @@ export default function BusinessSettings() {
         </Label>
         <select
           id="businessType"
-          {...register("businessType")}
+          {...register('businessType')}
           className="border-2 border-gray-200 text-xs tracking-wide rounded-sm px-3 py-2 md:py-4 shadow-sm"
         >
           <option value="">Select a type</option>
@@ -192,7 +193,7 @@ export default function BusinessSettings() {
         </Label>
         <select
           id="currency"
-          {...register("currency")}
+          {...register('currency')}
           className="border-2 border-gray-200 text-xs tracking-wide rounded-sm px-3 py-2 md:py-4 shadow-sm"
         >
           <option value="">Select currency</option>
@@ -209,13 +210,14 @@ export default function BusinessSettings() {
 
       {/* Save Changes */}
       <div className="flex justify-center w-full my-2">
-        <Button
+        <LoadingButton
           type="submit"
-          className="w-full rounded-sm py-5 md:py-6 cursor-pointer bg-[#06005B]"
+          loading={isSubmitting}
           disabled={isSubmitting}
+          className="rounded-sm bg-[#06005B] hover:bg-blue-900 w-full py-3 text-white"
         >
           Save Changes
-        </Button>
+        </LoadingButton>
       </div>
     </form>
   );
