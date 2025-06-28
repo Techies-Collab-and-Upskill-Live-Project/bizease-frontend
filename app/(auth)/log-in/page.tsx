@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import React, { useState } from 'react';
-import { Button } from '@/components/ui/button';
+import React, { useState } from "react";
+import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
@@ -9,16 +9,28 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
-import { Checkbox } from '@/components/ui/checkbox';
-import useLogin from '@/hooks/useLogin';
-import { Eye, EyeOff, Mail } from 'lucide-react';
-import Image from 'next/image';
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { Checkbox } from "@/components/ui/checkbox";
+import useLogin from "@/hooks/useLogin";
+import { Eye, EyeOff, Mail } from "lucide-react";
+import Image from "next/image";
+import LoadingButton from "@/components/loading-button";
 
 const LogIn = () => {
   const { loginSchema, onSubmit } = useLogin();
   const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+  const submit = async (data: any) => {
+    if (loading) return;
+    setLoading(true);
+    try {
+      await onSubmit(data);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="min-h-screen">
@@ -46,7 +58,7 @@ const LogIn = () => {
 
         <Form {...loginSchema}>
           <form
-            onSubmit={loginSchema.handleSubmit(onSubmit)}
+            onSubmit={loginSchema.handleSubmit(submit)}
             className="space-y-4 md:space-y-6"
           >
             {/* Email */}
@@ -86,7 +98,7 @@ const LogIn = () => {
                   <FormControl>
                     <div className="relative">
                       <Input
-                        type={showPassword ? 'text' : 'password'}
+                        type={showPassword ? "text" : "password"}
                         placeholder="*********"
                         className=" pr-10 text-sm"
                         {...field}
@@ -121,12 +133,14 @@ const LogIn = () => {
             </label>
 
             {/* Submit */}
-            <Button
+            <LoadingButton
+              loading={loading}
               type="submit"
-              className="w-full bg-[#06005B] hover:bg-blue-900 cursor-pointer md:py-6 text-xs md:text-sm font-semibold tracking-wide"
+              disabled={loading}
+              className=" bg-[#06005B] hover:bg-blue-900 w-full py-3"
             >
-              Sign In
-            </Button>
+              Log In{" "}
+            </LoadingButton>
 
             {/* Forgot Password */}
             <div className="w-full flex justify-center items-center">
@@ -146,21 +160,21 @@ const LogIn = () => {
             <Image
               width={60} // any appropriate size in pixels
               height={58}
-              src={'/google.png'}
+              src={"/google.png"}
               alt=""
               className="w-10 h-10 cursor-pointer"
             />
             <Image
               width={60} // any appropriate size in pixels
               height={58}
-              src={'/apple.png'}
+              src={"/apple.png"}
               alt=""
               className="w-10 h-10 cursor-pointer"
             />
             <Image
               width={60} // any appropriate size in pixels
               height={58}
-              src={'/microsoft.png'}
+              src={"/microsoft.png"}
               alt=""
               className="w-10 h-10 cursor-pointer"
             />
