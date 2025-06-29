@@ -69,15 +69,7 @@ const SignUp = () => {
 
         <Form {...signUpSchema}>
           <form
-<<<<<<< HEAD
-            onSubmit={signUpSchema.handleSubmit(async (data) => {
-              setLoading(true);
-              await onSubmit(data);
-              setLoading(false);
-            })}
-=======
             onSubmit={signUpSchema.handleSubmit(submit)}
->>>>>>> 37c396e509fb6046a5c80af579bb6be64deb8b2d
             className="space-y-5 md:space-y-6"
           >
             {/* organization */}
@@ -344,21 +336,10 @@ const SignUp = () => {
               loading={loading}
               type="submit"
               disabled={loading || !agreedToTerms}
-<<<<<<< HEAD
-              className="w-full bg-[#06005B] hover:bg-blue-900 cursor-pointer py-3 md:py-6 text-xs md:text-sm font-semibold tracking-wide flex justify-center"
-            >
-              {loading ? (
-                <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-              ) : (
-                "Sign Up"
-              )}
-            </Button>
-=======
               className=" bg-[#06005B] hover:bg-blue-900 w-full py-3"
             >
               Sign Up
             </LoadingButton>
->>>>>>> 37c396e509fb6046a5c80af579bb6be64deb8b2d
           </form>
         </Form>
       </div>

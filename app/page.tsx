@@ -1,9 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import LoadingButton from "@/components/loading-button";
 
 const slides = [
   {
@@ -96,28 +96,14 @@ export default function Landing() {
           />
 
           <div className="w-full px-5 md:px-20 lg:w-2/3">
-<<<<<<< HEAD
-            <Button
-              onClick={handleGetStarted}
-              disabled={loading}
-              className="rounded-lg text-base font-semibold bg-[#06005B] hover:bg-blue-900 w-full py-6 md:py-8 flex items-center justify-center gap-2"
-            >
-              {loading ? (
-                <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-              ) : (
-                "Get Started"
-              )}
-            </Button>
-=======
             <LoadingButton
               type="submit"
               loading={loading}
-              disabled={loading || !agreedToTerms}
+              disabled={loading}
               className="rounded-lg bg-[#06005B] hover:bg-blue-900 w-full py-3 text-white"
             >
-              Sign Up
+              Get Started
             </LoadingButton>
->>>>>>> 37c396e509fb6046a5c80af579bb6be64deb8b2d
           </div>
         </div>
       </div>
