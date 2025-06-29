@@ -9,7 +9,7 @@ const SidebarUser = () => {
 
   if (loading) {
     return (
-      <div className="p-4 mt-8">
+      <div className="flex items-center justify-start gap-4 bg-gradient p-4 rounded w-[180px] my-8">
         <p className="text-sm text-gray-400">Loading user...</p>
       </div>
     );
@@ -17,7 +17,7 @@ const SidebarUser = () => {
 
   if (error || !user) {
     return (
-      <div className="p-4 mt-8">
+      <div className="flex items-center justify-start gap-4 bg-gradient p-4 rounded w-[180px] my-8">
         <p className="text-sm text-red-500">Failed to load user</p>
       </div>
     );
