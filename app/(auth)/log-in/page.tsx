@@ -139,7 +139,7 @@ const LogIn = () => {
               disabled={loading}
               className=" bg-[#06005B] hover:bg-blue-900 w-full py-3"
             >
-              Log In{" "}
+              Log In
             </LoadingButton>
 
             {/* Forgot Password */}

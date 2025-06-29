@@ -1,21 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
 import axios from "axios";
 
-export default function handler(request: NextRequest) {
-  const refreshToken = request.cookies.get("refresh_token");
+export async function POST(request: NextRequest) {
+  const body = await request.json();
 
-  if (!refreshToken) {
-    const response = NextResponse.json({ status: 401 });
-    return response;
-  }
-
-  axios
-    .post(`${process.env.NEXT_PUBLIC_BASE_URL}token/refresh`, {
-      refresh_token: refreshToken,
-    })
+  return axios
+    .post(`${process.env.NEXT_PUBLIC_BASE_URL}accounts/signup`, body)
     .then((result) => {
-      const { access, refresh } = result.data.data;
+      const { refresh, access } = result.data.data;
 
+      // setting cookies
       const response = NextResponse.json({ status: 200 });
 
       response.cookies.set("access_token", access, {
@@ -37,8 +31,11 @@ export default function handler(request: NextRequest) {
       return response;
     })
     .catch((error) => {
-      console.error("Error refreshing token:", error);
-      const response = NextResponse.json({ status: 401 });
-      return response;
+      console.error("Error during signup:", error.response.data.detail);
+      const status = error?.response?.status || 500;
+      const message =
+        error?.response?.data?.message || "User exists, please log in";
+
+      return NextResponse.json({ message }, { status });
     });
 }

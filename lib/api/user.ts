@@ -1,5 +1,5 @@
 import { InventoryItem } from "@/types";
-import api from "../api";
+import { axiosInstance } from "../axios";
 
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
 
@@ -63,6 +63,6 @@ export const deleteInventoryItem = async (token: string, id: number) => {
 };
 
 export const fetchInventoryItem = async (id: number) => {
-  const res = await api.get(`/inventory/${id}`);
+  const res = await axiosInstance.get(`/inventory/${id}`);
   return res.data;
 };

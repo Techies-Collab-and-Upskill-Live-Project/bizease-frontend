@@ -100,7 +100,8 @@ export default function Landing() {
               type="submit"
               loading={loading}
               disabled={loading}
-              className="rounded-lg bg-[#06005B] hover:bg-blue-900 w-full py-3 text-white"
+              onClick={handleGetStarted}
+              className="rounded cursor-pointer bg-[#06005B] hover:bg-blue-900 w-full py-6 text-white"
             >
               Get Started
             </LoadingButton>

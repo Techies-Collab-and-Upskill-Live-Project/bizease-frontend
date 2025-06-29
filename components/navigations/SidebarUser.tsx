@@ -1,8 +1,7 @@
-'use client';
+"use client";
 
-import { Tooltip } from '@/components/ui/tooltip';
-
-import useCurrentUser from '@/hooks/useCurrentUser';
+import { Tooltip } from "@/components/ui/tooltip";
+import { useCurrentUser } from "@/hooks/useCurrentUser";
 
 const SidebarUser = () => {
   const { user, loading, error } = useCurrentUser();
@@ -25,9 +24,10 @@ const SidebarUser = () => {
 
   const { full_name, business_type } = user;
   const initials = full_name
-    .split(' ')
+    ?.trim()
+    .split(" ")
     .map((part) => part[0])
-    .join('')
+    .join("")
     .slice(0, 2)
     .toUpperCase();
 
