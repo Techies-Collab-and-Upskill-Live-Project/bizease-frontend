@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import React, { useState } from 'react';
-import { Button } from '@/components/ui/button';
+import React, { useState } from "react";
+import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
@@ -9,16 +9,17 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
-import { Checkbox } from '@/components/ui/checkbox';
-import useLogin from '@/hooks/useLogin';
-import { Eye, EyeOff, Mail } from 'lucide-react';
-import Image from 'next/image';
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { Checkbox } from "@/components/ui/checkbox";
+import useLogin from "@/hooks/useLogin";
+import { Eye, EyeOff, Mail } from "lucide-react";
+import Image from "next/image";
 
 const LogIn = () => {
   const { loginSchema, onSubmit } = useLogin();
   const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   return (
     <div className="min-h-screen">
@@ -46,7 +47,11 @@ const LogIn = () => {
 
         <Form {...loginSchema}>
           <form
-            onSubmit={loginSchema.handleSubmit(onSubmit)}
+            onSubmit={loginSchema.handleSubmit(async (data) => {
+              setLoading(true);
+              await onSubmit(data);
+              setLoading(false);
+            })}
             className="space-y-4 md:space-y-6"
           >
             {/* Email */}
@@ -86,7 +91,7 @@ const LogIn = () => {
                   <FormControl>
                     <div className="relative">
                       <Input
-                        type={showPassword ? 'text' : 'password'}
+                        type={showPassword ? "text" : "password"}
                         placeholder="*********"
                         className=" pr-10 text-sm"
                         {...field}
@@ -123,9 +128,14 @@ const LogIn = () => {
             {/* Submit */}
             <Button
               type="submit"
+              disabled={loading}
               className="w-full bg-[#06005B] hover:bg-blue-900 cursor-pointer md:py-6 text-xs md:text-sm font-semibold tracking-wide"
             >
-              Sign In
+              {loading ? (
+                <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+              ) : (
+                "Sign In"
+              )}
             </Button>
 
             {/* Forgot Password */}
@@ -146,21 +156,21 @@ const LogIn = () => {
             <Image
               width={60} // any appropriate size in pixels
               height={58}
-              src={'/google.png'}
+              src={"/google.png"}
               alt=""
               className="w-10 h-10 cursor-pointer"
             />
             <Image
               width={60} // any appropriate size in pixels
               height={58}
-              src={'/apple.png'}
+              src={"/apple.png"}
               alt=""
               className="w-10 h-10 cursor-pointer"
             />
             <Image
               width={60} // any appropriate size in pixels
               height={58}
-              src={'/microsoft.png'}
+              src={"/microsoft.png"}
               alt=""
               className="w-10 h-10 cursor-pointer"
             />

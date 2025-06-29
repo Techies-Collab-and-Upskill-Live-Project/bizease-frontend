@@ -1,14 +1,27 @@
-import { Button } from '@/components/ui/button';
-import { aboutBiz } from '@/constants';
-import { ChevronLeft } from 'lucide-react';
-import Link from 'next/link';
-import React from 'react';
+"use client";
+
+import { Button } from "@/components/ui/button";
+import { aboutBiz } from "@/constants";
+import { ChevronLeft } from "lucide-react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import React, { useState } from "react";
 
 const AboutPage = () => {
+  const [loading, setLoading] = useState(false);
+  const router = useRouter();
+
+  const handleTryUs = () => {
+    setLoading(true);
+    setTimeout(() => {
+      router.push("/sign-up");
+    }, 800);
+  };
+
   return (
     <section className="min-w-full min-h-screen mb-10">
       <div className="flex justify-start bg-darkblue w-full py-4 px-8">
-        <Link href={'/'} className="p-1 hover:bg-lightblue rounded-full w-fit">
+        <Link href={"/"} className="p-1 hover:bg-lightblue rounded-full w-fit">
           <ChevronLeft className=" h-6 w-6 text-surface-200" />
         </Link>
       </div>
@@ -46,11 +59,17 @@ const AboutPage = () => {
           {aboutBiz.ready}
         </h4>
         <footer className="my-4 flex items-center gap-2 text-sm text-surface-500">
-          <Link href={'/sign-up'}>
-            <Button className="font-normal text-[12px] bg-darkblue text-surface-200 hover:bg-lightblue cursor-pointer">
-              Try BizEase Today
-            </Button>
-          </Link>
+          <Button
+            disabled={loading}
+            onClick={handleTryUs}
+            className="font-normal text-[12px] bg-darkblue text-surface-200 hover:bg-lightblue cursor-pointer"
+          >
+            {loading ? (
+              <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+            ) : (
+              "Try BizEase Today"
+            )}
+          </Button>
           - and take the hassle out of hustle
         </footer>
       </div>

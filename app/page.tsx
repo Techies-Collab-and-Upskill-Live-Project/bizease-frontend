@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -23,9 +23,21 @@ const slides = [
 export default function Landing() {
   const router = useRouter();
   const [currentSlide, setCurrentSlide] = useState(0);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentSlide((prev) => (prev + 1) % slides.length);
+    }, 2000);
+
+    return () => clearInterval(interval);
+  }, []);
 
   const handleGetStarted = () => {
-    router.push("/about");
+    setLoading(true);
+    setTimeout(() => {
+      router.push("/about");
+    }, 800); 
   };
 
   const current = slides[currentSlide];
@@ -45,7 +57,7 @@ export default function Landing() {
             height={300}
             src={current.image}
             alt="Slide image"
-            className="w-72 h-72 md:w-80 md:h-80 object-contain"
+            className="w-72 h-72 md:w-80 md:h-80 object-contain transition-opacity duration-700 ease-in-out"
           />
 
           {/* Carousel Controls */}
@@ -85,9 +97,14 @@ export default function Landing() {
           <div className="w-full px-5 md:px-20 lg:w-2/3">
             <Button
               onClick={handleGetStarted}
-              className="rounded-lg text-base font-semibold bg-[#06005B] hover:bg-blue-900 w-full py-6 md:py-8"
+              disabled={loading}
+              className="rounded-lg text-base font-semibold bg-[#06005B] hover:bg-blue-900 w-full py-6 md:py-8 flex items-center justify-center gap-2"
             >
-              Get Started
+              {loading ? (
+                <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+              ) : (
+                "Get Started"
+              )}
             </Button>
           </div>
         </div>

@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import React, { useState } from 'react';
-import { Button } from '@/components/ui/button';
+import React, { useState } from "react";
+import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
@@ -9,17 +9,18 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
-import { Checkbox } from '@/components/ui/checkbox';
-import useSignUp from '@/hooks/useSignUp';
-import { Eye, EyeOff, Mail } from 'lucide-react';
-import Image from 'next/image';
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { Checkbox } from "@/components/ui/checkbox";
+import useSignUp from "@/hooks/useSignUp";
+import { Eye, EyeOff, Mail } from "lucide-react";
+import Image from "next/image";
 
 const SignUp = () => {
   const { signUpSchema, onSubmit } = useSignUp();
   const [showPassword, setShowPassword] = useState(false);
   const [agreedToTerms, setAgreedToTerms] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   return (
     <div className="min-h-screenbg-gray-100 ">
@@ -47,7 +48,11 @@ const SignUp = () => {
 
         <Form {...signUpSchema}>
           <form
-            onSubmit={signUpSchema.handleSubmit(onSubmit)}
+            onSubmit={signUpSchema.handleSubmit(async (data) => {
+              setLoading(true);
+              await onSubmit(data);
+              setLoading(false);
+            })}
             className="space-y-5 md:space-y-6"
           >
             {/* organization */}
@@ -131,7 +136,7 @@ const SignUp = () => {
                   <FormControl>
                     <div className="relative">
                       <Input
-                        type={showPassword ? 'text' : 'password'}
+                        type={showPassword ? "text" : "password"}
                         placeholder="*********"
                         className=" pr-10 text-sm"
                         {...field}
@@ -298,10 +303,14 @@ const SignUp = () => {
             {/* Submit */}
             <Button
               type="submit"
-              className="w-full bg-[#06005B] hover:bg-blue-900 cursor-pointer py-3 md:py-6 text-xs md:text-sm font-semibold tracking-wide"
-              disabled={!agreedToTerms}
+              disabled={loading || !agreedToTerms}
+              className="w-full bg-[#06005B] hover:bg-blue-900 cursor-pointer py-3 md:py-6 text-xs md:text-sm font-semibold tracking-wide flex justify-center"
             >
-              Sign Up
+              {loading ? (
+                <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+              ) : (
+                "Sign Up"
+              )}
             </Button>
           </form>
         </Form>
@@ -317,21 +326,21 @@ const SignUp = () => {
             <Image
               width={60} // any appropriate size in pixels
               height={58}
-              src={'/google.png'}
+              src={"/google.png"}
               alt="google-icon"
               className="w-10 h-10 cursor-pointer"
             />
             <Image
               width={60} // any appropriate size in pixels
               height={58}
-              src={'/apple.png'}
+              src={"/apple.png"}
               alt="apple-icon"
               className="w-10 h-10 cursor-pointer"
             />
             <Image
               width={60} // any appropriate size in pixels
               height={58}
-              src={'/microsoft.png'}
+              src={"/microsoft.png"}
               alt="microsoft-icon"
               className="w-10 h-10 cursor-pointer"
             />
