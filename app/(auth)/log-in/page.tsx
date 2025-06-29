@@ -15,18 +15,29 @@ import { Checkbox } from "@/components/ui/checkbox";
 import useLogin from "@/hooks/useLogin";
 import { Eye, EyeOff, Mail } from "lucide-react";
 import Image from "next/image";
+import LoadingButton from "@/components/loading-button";
 
 const LogIn = () => {
   const { loginSchema, onSubmit } = useLogin();
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
 
+  const submit = async (data: any) => {
+    if (loading) return;
+    setLoading(true);
+    try {
+      await onSubmit(data);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="min-h-screen">
       {/* Top Section */}
       <div className="flex py-15 md:py-30 items-center justify-center gap-2 bg-gradient-to-b rounded-b-lg from-blue-800 to-blue-600 text-white">
         <Image
-          width={60} // any appropriate size in pixels
+          width={60}
           height={58}
           src="/icon/logo-2.png"
           alt="logo"
@@ -47,11 +58,7 @@ const LogIn = () => {
 
         <Form {...loginSchema}>
           <form
-            onSubmit={loginSchema.handleSubmit(async (data) => {
-              setLoading(true);
-              await onSubmit(data);
-              setLoading(false);
-            })}
+            onSubmit={loginSchema.handleSubmit(submit)}
             className="space-y-4 md:space-y-6"
           >
             {/* Email */}
@@ -126,17 +133,14 @@ const LogIn = () => {
             </label>
 
             {/* Submit */}
-            <Button
+            <LoadingButton
+              loading={loading}
               type="submit"
               disabled={loading}
-              className="w-full bg-[#06005B] hover:bg-blue-900 cursor-pointer md:py-6 text-xs md:text-sm font-semibold tracking-wide"
+              className=" bg-[#06005B] hover:bg-blue-900 w-full py-3"
             >
-              {loading ? (
-                <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-              ) : (
-                "Sign In"
-              )}
-            </Button>
+              Log In{" "}
+            </LoadingButton>
 
             {/* Forgot Password */}
             <div className="w-full flex justify-center items-center">
@@ -154,21 +158,21 @@ const LogIn = () => {
           <p className="text-gray-500 text-sm tracking-wide">-or login with-</p>
           <div className="flex gap-6 items-center justify-center">
             <Image
-              width={60} // any appropriate size in pixels
+              width={60}
               height={58}
               src={"/google.png"}
               alt=""
               className="w-10 h-10 cursor-pointer"
             />
             <Image
-              width={60} // any appropriate size in pixels
+              width={60}
               height={58}
               src={"/apple.png"}
               alt=""
               className="w-10 h-10 cursor-pointer"
             />
             <Image
-              width={60} // any appropriate size in pixels
+              width={60}
               height={58}
               src={"/microsoft.png"}
               alt=""

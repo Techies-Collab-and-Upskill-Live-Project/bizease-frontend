@@ -1,23 +1,23 @@
 "use client";
-
 import { Button } from "@/components/ui/button";
 import { aboutBiz } from "@/constants";
 import { ChevronLeft } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import React, { useState } from "react";
+import React from "react";
 
 const AboutPage = () => {
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = React.useState(false);
   const router = useRouter();
 
-  const handleTryUs = () => {
+  const handleGetStarted = () => {
+    if (loading) return;
     setLoading(true);
     setTimeout(() => {
       router.push("/sign-up");
-    }, 800);
+      setLoading(false);
+    }, 2000);
   };
-
   return (
     <section className="min-w-full min-h-screen mb-10">
       <div className="flex justify-start bg-darkblue w-full py-4 px-8">
@@ -60,8 +60,9 @@ const AboutPage = () => {
         </h4>
         <footer className="my-4 flex items-center gap-2 text-sm text-surface-500">
           <Button
+            onClick={handleGetStarted}
+            type="button"
             disabled={loading}
-            onClick={handleTryUs}
             className="font-normal text-[12px] bg-darkblue text-surface-200 hover:bg-lightblue cursor-pointer"
           >
             {loading ? (

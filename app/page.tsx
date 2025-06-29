@@ -25,6 +25,14 @@ export default function Landing() {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [loading, setLoading] = useState(false);
 
+  const handleGetStarted = () => {
+    if (loading) return;
+    setLoading(true);
+    setTimeout(() => {
+      router.push("/about");
+    }, 1000);
+  };
+
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentSlide((prev) => (prev + 1) % slides.length);
@@ -32,13 +40,6 @@ export default function Landing() {
 
     return () => clearInterval(interval);
   }, []);
-
-  const handleGetStarted = () => {
-    setLoading(true);
-    setTimeout(() => {
-      router.push("/about");
-    }, 800); 
-  };
 
   const current = slides[currentSlide];
 
@@ -95,6 +96,7 @@ export default function Landing() {
           />
 
           <div className="w-full px-5 md:px-20 lg:w-2/3">
+<<<<<<< HEAD
             <Button
               onClick={handleGetStarted}
               disabled={loading}
@@ -106,6 +108,16 @@ export default function Landing() {
                 "Get Started"
               )}
             </Button>
+=======
+            <LoadingButton
+              type="submit"
+              loading={loading}
+              disabled={loading || !agreedToTerms}
+              className="rounded-lg bg-[#06005B] hover:bg-blue-900 w-full py-3 text-white"
+            >
+              Sign Up
+            </LoadingButton>
+>>>>>>> 37c396e509fb6046a5c80af579bb6be64deb8b2d
           </div>
         </div>
       </div>
