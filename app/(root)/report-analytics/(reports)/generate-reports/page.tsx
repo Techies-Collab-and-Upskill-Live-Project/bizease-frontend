@@ -198,7 +198,7 @@ const GenerateReports = () => {
       case 'pdf':
       default:
         const doc = new jsPDF();
-        doc.setFontSize(12);
+        doc.setFontSize(14);
         doc.text('Sales Report', 10, 10);
         let y = 20;
         data.forEach((item, index) => {
@@ -359,23 +359,43 @@ const GenerateReports = () => {
                 </DialogHeader>
                 <ScrollArea className="max-h-[60vh] border rounded-md">
                   <Table>
-                    <TableHeader>
+                    <TableHeader className="bg-gray-100">
                       <TableRow>
-                        <TableHead>#</TableHead>
-                        <TableHead>Product</TableHead>
-                        <TableHead>Unit Sold</TableHead>
-                        <TableHead>Revenue</TableHead>
-                        <TableHead>Stock</TableHead>
+                        <TableHead className="text-darkblue font-semibold">
+                          S/N
+                        </TableHead>
+                        <TableHead className="text-darkblue font-semibold">
+                          Product
+                        </TableHead>
+                        <TableHead className="text-darkblue font-semibold">
+                          Unit Sold
+                        </TableHead>
+                        <TableHead className="text-darkblue font-semibold">
+                          Revenue
+                        </TableHead>
+                        <TableHead className="text-darkblue font-semibold">
+                          Stock Level
+                        </TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
                       {reportSummary.map((item, index) => (
-                        <TableRow key={index}>
-                          <TableCell>{index + 1}</TableCell>
-                          <TableCell>{item.Product}</TableCell>
-                          <TableCell>{item['Unit Sold']}</TableCell>
-                          <TableCell>{item.Revenue}</TableCell>
-                          <TableCell>{item['Stock Status']}</TableCell>
+                        <TableRow className="even:bg-gray-100" key={index}>
+                          <TableCell className="text-lightblue">
+                            {index + 1}
+                          </TableCell>
+                          <TableCell className="text-lightblue">
+                            {item.Product}
+                          </TableCell>
+                          <TableCell className="text-lightblue">
+                            {item['Unit Sold']}
+                          </TableCell>
+                          <TableCell className="text-lightblue">
+                            {item.Revenue}
+                          </TableCell>
+                          <TableCell className="text-center text-lightblue">
+                            {item['Stock Status']}
+                          </TableCell>
                         </TableRow>
                       ))}
                     </TableBody>
