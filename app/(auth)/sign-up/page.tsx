@@ -18,6 +18,17 @@ import Image from "next/image";
 import useLocation from "@/hooks/useLocation";
 import LoadingButton from "@/components/loading-button";
 
+type SignUpFormData = {
+  business_name: string;
+  full_name: string;
+  email: string;
+  password: string;
+  country: string;
+  state: string;
+  currency: string;
+  business_type: string;
+};
+
 const SignUp = () => {
   const { signUpSchema, onSubmit } = useSignUp();
   const [loading, setLoading] = useState(false);
@@ -33,7 +44,7 @@ const SignUp = () => {
     statesLoading,
   } = useLocation();
 
-  const submit = async (data: any) => {
+  const submit = async (data:SignUpFormData) => {
     if (loading) return;
     setLoading(true);
     try {

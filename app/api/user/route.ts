@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 
+interface UserDataResponse {
+  detail?: string;
+}
 export async function GET(req: NextRequest) {
   const accessToken = req.cookies.get("access_token")?.value;
 
@@ -24,15 +27,18 @@ export async function GET(req: NextRequest) {
 
     console.log(response.data);
     return NextResponse.json({ status: 200, data: response.data });
-  } catch (error: any) {
-    console.error("Error fetching user data:", error.message);
+  } catch (error) {
+    const axiosError = error as AxiosError<UserDataResponse>;
+
+    console.error("Error fetching user data:", axiosError.message);
 
     return NextResponse.json(
       {
-        message: error.response?.data?.detail || "Failed to fetch user details",
+        message:
+          axiosError.response?.data?.detail || "Failed to fetch user details",
       },
       {
-        status: error.response?.status || 500,
+        status: axiosError.response?.status || 500,
       }
     );
   }

@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState } from "react";
-import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
@@ -17,12 +16,17 @@ import { Eye, EyeOff, Mail } from "lucide-react";
 import Image from "next/image";
 import LoadingButton from "@/components/loading-button";
 
+interface LoginFormData {
+  email: string;
+  password: string;
+}
+
 const LogIn = () => {
   const { loginSchema, onSubmit } = useLogin();
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const submit = async (data: any) => {
+  const submit = async (data: LoginFormData) => {
     if (loading) return;
     setLoading(true);
     try {
