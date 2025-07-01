@@ -1,9 +1,26 @@
-"use client";
+'use client';
 
-import { getAuthenticatedUser } from "@/lib/services/user";
-import { useEffect, useState } from "react";
+import { getAuthenticatedUser } from '@/lib/services/user';
+import { useEffect, useState } from 'react';
 
 interface User {
+  business_name: string;
+  full_name: string;
+  email: string;
+  business_type: string;
+  country: string;
+  currency: string;
+  state: string;
+  rcv_mail_for_new_orders: boolean;
+  rcv_mail_for_low_stocks: boolean;
+  phone: string;
+  business_phone: string;
+  business_address: string;
+  rcv_mail_notification: boolean;
+  rcv_msg_notification: boolean;
+  default_order_status: string;
+  language: string;
+  low_stock_threshold: number;
   business_name: string;
   full_name: string;
   email: string;
@@ -38,7 +55,7 @@ export function useCurrentUser() {
         setLoading(false);
       })
       .catch((err: any) => {
-        setError(err?.message || "Failed to fetch user");
+        setError(err?.message || 'Failed to fetch user');
         setUser(null);
         setLoading(false);
       });

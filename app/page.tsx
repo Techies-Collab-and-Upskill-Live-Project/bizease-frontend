@@ -1,22 +1,22 @@
-"use client";
+'use client';
 
-import { useEffect, useState } from "react";
-import Image from "next/image";
-import { useRouter } from "next/navigation";
-import LoadingButton from "@/components/loading-button";
+import { useEffect, useState } from 'react';
+import Image from 'next/image';
+import { useRouter } from 'next/navigation';
+import LoadingButton from '@/components/loading-button';
 
 const slides = [
   {
-    text: "Manage your Orders ",
-    highlighted: "Efficiently.",
-    color: "text-[#06005B]",
-    image: "/splash.png",
+    text: 'Manage your Orders ',
+    highlighted: 'Efficiently.',
+    color: 'text-[#06005B]',
+    image: '/splash.png',
   },
   {
-    text: "Keep stock of your ",
-    highlighted: "Inventory.",
-    color: "text-[#FFC400]",
-    image: "/splash-2.png",
+    text: 'Keep stock of your ',
+    highlighted: 'Inventory.',
+    color: 'text-[#FFC400]',
+    image: '/splash-2.png',
   },
 ];
 
@@ -29,7 +29,7 @@ export default function Landing() {
     if (loading) return;
     setLoading(true);
     setTimeout(() => {
-      router.push("/about");
+      router.push('/about');
     }, 1000);
   };
 
@@ -68,7 +68,7 @@ export default function Landing() {
                 key={index}
                 onClick={() => setCurrentSlide(index)}
                 className={`w-3 h-3 rounded-full cursor-pointer transition-all duration-300 ${
-                  currentSlide === index ? "bg-white" : "bg-white/40"
+                  currentSlide === index ? 'bg-white' : 'bg-surface-100/40'
                 }`}
               />
             ))}
@@ -97,6 +97,7 @@ export default function Landing() {
 
           <div className="w-full px-5 md:px-20 lg:w-2/3">
             <LoadingButton
+              onClick={handleGetStarted}
               type="submit"
               loading={loading}
               disabled={loading}
