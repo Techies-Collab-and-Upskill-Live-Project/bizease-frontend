@@ -21,23 +21,6 @@ interface User {
   default_order_status: string;
   language: string;
   low_stock_threshold: number;
-  business_name: string;
-  full_name: string;
-  email: string;
-  business_type: string;
-  country: string;
-  currency: string;
-  state: string;
-  rcv_mail_for_new_orders: boolean;
-  rcv_mail_for_low_stocks: boolean;
-  phone: string;
-  business_phone: string;
-  business_address: string;
-  rcv_mail_notification: boolean;
-  rcv_msg_notification: boolean;
-  default_order_status: string;
-  language: string;
-  low_stock_threshold: number;
 }
 
 export function useCurrentUser() {

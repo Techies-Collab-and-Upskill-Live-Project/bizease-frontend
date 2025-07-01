@@ -4,21 +4,7 @@ import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import LoadingButton from '@/components/loading-button';
-
-const slides = [
-  {
-    text: 'Manage your Orders ',
-    highlighted: 'Efficiently.',
-    color: 'text-[#06005B]',
-    image: '/splash.png',
-  },
-  {
-    text: 'Keep stock of your ',
-    highlighted: 'Inventory.',
-    color: 'text-[#FFC400]',
-    image: '/splash-2.png',
-  },
-];
+import { slides } from '@/constants';
 
 export default function Landing() {
   const router = useRouter();
@@ -101,7 +87,6 @@ export default function Landing() {
               type="submit"
               loading={loading}
               disabled={loading}
-              onClick={handleGetStarted}
               className="rounded cursor-pointer bg-[#06005B] hover:bg-blue-900 w-full py-6 text-white"
             >
               Get Started
