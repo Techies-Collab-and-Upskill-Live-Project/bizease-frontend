@@ -18,7 +18,7 @@ const SearchInput: React.FC<SearchInputProps> = ({
   className = '',
 }) => {
   return (
-    <div className={`relative w-fit max-w-md ${className}`}>
+    <div className={`relative w-fit max-w-fit ${className}`}>
       <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground w-4 h-4" />
       <Input
         type="text"
@@ -28,7 +28,7 @@ const SearchInput: React.FC<SearchInputProps> = ({
           setSearchTerm(e.target.value);
           onResetPage?.();
         }}
-        className="pl-10 border placeholder:italic border-lightblue"
+        className="pl-8 border placeholder:italic max-w-fit border-lightblue"
       />
     </div>
   );
