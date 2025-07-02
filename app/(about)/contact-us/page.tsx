@@ -1,21 +1,21 @@
-'use client';
+"use client";
 
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
-import { cn } from '@/lib/utils';
-import { toast } from 'sonner';
-import Link from 'next/link';
-import { ChevronLeft } from 'lucide-react';
-import emailjs from 'emailjs-com';
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { cn } from "@/lib/utils";
+import { toast } from "sonner";
+import Link from "next/link";
+import { ChevronLeft } from "lucide-react";
+import emailjs from "emailjs-com";
 
 const contactFormSchema = z.object({
-  email: z.string().email('Invalid email address'),
-  message: z.string().min(5, 'Message is required'),
+  email: z.string().email("Invalid email address"),
+  message: z.string().min(5, "Message is required"),
 });
 
 type ContactFormValues = z.infer<typeof contactFormSchema>;
@@ -33,16 +33,16 @@ export default function ContactPage() {
   const onSubmit = async (data: ContactFormValues) => {
     try {
       await emailjs.send(
-        'service_goa35yn',
-        'template_jexs67e',
+        "service_goa35yn",
+        "template_jexs67e",
         {
           email: data.email,
           message: data.message,
         },
-        '5D6oo0cwN8cmpmcqm',
+        "5D6oo0cwN8cmpmcqm"
       );
 
-      toast.success(' Message sent successfully!');
+      toast.success(" Message sent successfully!");
       reset();
     } catch (error) {
       toast.error(` Failed to send message. Try again later, ${error}`);
@@ -78,7 +78,7 @@ export default function ContactPage() {
               id="email"
               type="email"
               placeholder="username@gmail.com"
-              {...register('email')}
+              {...register("email")}
             />
             {errors.email && (
               <p className="text-sm text-red-500">{errors.email.message}</p>
@@ -92,7 +92,7 @@ export default function ContactPage() {
               id="message"
               rows={5}
               placeholder="Type your message here"
-              {...register('message')}
+              {...register("message")}
             />
             {errors.message && (
               <p className="text-sm text-red-500">{errors.message.message}</p>
@@ -103,11 +103,15 @@ export default function ContactPage() {
           <Button
             type="submit"
             className={cn(
-              'w-full bg-blue-900 text-white hover:bg-blue-800 transition',
+              "w-full bg-blue-900 text-white hover:bg-blue-800 transition"
             )}
             disabled={isSubmitting}
           >
-            {isSubmitting ? 'Sending...' : 'Send Message'}
+            {isSubmitting ? (
+              <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+            ) : (
+              "Send Message"
+            )}
           </Button>
         </form>
       </div>

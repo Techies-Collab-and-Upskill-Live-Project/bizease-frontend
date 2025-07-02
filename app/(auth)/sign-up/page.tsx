@@ -18,6 +18,17 @@ import Image from 'next/image';
 import useLocation from '@/hooks/useLocation';
 import LoadingButton from '@/components/loading-button';
 
+type SignUpFormData = {
+  business_name: string;
+  full_name: string;
+  email: string;
+  password: string;
+  country: string;
+  state: string;
+  currency: string;
+  business_type: string;
+};
+
 const SignUp = () => {
   const { signUpSchema, onSubmit } = useSignUp();
   const [loading, setLoading] = useState(false);
@@ -33,19 +44,7 @@ const SignUp = () => {
     statesLoading,
   } = useLocation();
 
-  interface SignUpFormData {
-    business_name: string;
-    full_name: string;
-    email: string;
-    password: string;
-    country: string;
-    state: string;
-    currency: string;
-    business_type: string;
-    // Add other fields if needed
-  }
-
-  const submit = async (data: SignUpFormData): Promise<void> => {
+  const submit = async (data: SignUpFormData) => {
     if (loading) return;
     setLoading(true);
     try {

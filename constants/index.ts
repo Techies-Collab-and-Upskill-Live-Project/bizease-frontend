@@ -390,3 +390,18 @@ export const aboutBiz = {
 };
 
 export const recentOrders = [];
+
+export const slides = [
+  {
+    text: 'Manage your Orders ',
+    highlighted: 'Efficiently.',
+    color: 'text-[#06005B]',
+    image: '/splash.png',
+  },
+  {
+    text: 'Keep stock of your ',
+    highlighted: 'Inventory.',
+    color: 'text-[#FFC400]',
+    image: '/splash-2.png',
+  },
+];

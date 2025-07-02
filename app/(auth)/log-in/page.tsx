@@ -1,7 +1,6 @@
 'use client';
 
 import React, { useState } from 'react';
-// import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
@@ -17,17 +16,17 @@ import { Eye, EyeOff, Mail } from 'lucide-react';
 import Image from 'next/image';
 import LoadingButton from '@/components/loading-button';
 
+interface LoginFormData {
+  email: string;
+  password: string;
+}
+
 const LogIn = () => {
   const { loginSchema, onSubmit } = useLogin();
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  interface LoginFormData {
-    email: string;
-    password: string;
-  }
-
-  const submit = async (data: LoginFormData): Promise<void> => {
+  const submit = async (data: LoginFormData) => {
     if (loading) return;
     setLoading(true);
     try {
@@ -42,7 +41,7 @@ const LogIn = () => {
       {/* Top Section */}
       <div className="flex py-15 md:py-30 items-center justify-center gap-2 bg-gradient-to-b rounded-b-lg from-blue-800 to-blue-600 text-white">
         <Image
-          width={60} // any appropriate size in pixels
+          width={60}
           height={58}
           src="/icon/logo-2.png"
           alt="logo"
@@ -144,7 +143,7 @@ const LogIn = () => {
               disabled={loading}
               className=" bg-[#06005B] hover:bg-blue-900 w-full py-3"
             >
-              Log In{' '}
+              Log In
             </LoadingButton>
 
             {/* Forgot Password */}
@@ -163,21 +162,21 @@ const LogIn = () => {
           <p className="text-gray-500 text-sm tracking-wide">-or login with-</p>
           <div className="flex gap-6 items-center justify-center">
             <Image
-              width={60} // any appropriate size in pixels
+              width={60}
               height={58}
               src={'/google.png'}
               alt=""
               className="w-10 h-10 cursor-pointer"
             />
             <Image
-              width={60} // any appropriate size in pixels
+              width={60}
               height={58}
               src={'/apple.png'}
               alt=""
               className="w-10 h-10 cursor-pointer"
             />
             <Image
-              width={60} // any appropriate size in pixels
+              width={60}
               height={58}
               src={'/microsoft.png'}
               alt=""

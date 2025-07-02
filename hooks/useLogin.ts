@@ -5,6 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { userLoginSchema } from "@/lib/validations/auth";
 import { useRouter } from "next/navigation";
+import { login } from "@/lib/services/auth";
 import { toast } from "sonner";
 
 export default function useLogin() {
@@ -19,33 +20,16 @@ export default function useLogin() {
   });
 
   const onSubmit = async (values: z.infer<typeof userLoginSchema>) => {
-    try {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_BASE_URL}accounts/login`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(values),
-        }
-      );
-
-      if (!response.ok) {
-        const error = await response.json();
-        console.error("Login failed:", error.message || response.statusText);
-        return;
-      }
-
-      const result = await response.json();
-      console.log("Login successful:", result);
-      localStorage.setItem("token", result.data.access);
-
-      toast.success("Welcome back!");
-      router.push("/dashboard");
-    } catch (error) {
-      console.error("Unexpected error during login:", error);
-    }
+    await toast.promise(login(values), {
+      loading: "Logging in...",
+      success: () => {
+        router.push("/dashboard");
+        return "Logged in successfully!";
+      },
+      error: (err) => {
+        return err?.response?.data.message;
+      },
+    });
   };
 
   return { loginSchema, onSubmit };

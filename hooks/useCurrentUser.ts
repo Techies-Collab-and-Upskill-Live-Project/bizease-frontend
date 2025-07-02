@@ -1,5 +1,6 @@
 'use client';
 
+import { getAuthenticatedUser } from '@/lib/services/user';
 import { useEffect, useState } from 'react';
 
 interface User {
@@ -22,47 +23,25 @@ interface User {
   low_stock_threshold: number;
 }
 
-export default function useCurrentUser() {
+export function useCurrentUser() {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const fetchUser = async () => {
-      const token = localStorage.getItem('token');
-      if (!token) {
-        setError('No token found');
+    setLoading(true);
+    setError(null);
+
+    getAuthenticatedUser()
+      .then((res) => {
+        setUser(res.data.data);
         setLoading(false);
-        return;
-      }
-
-      try {
-        const res = await fetch(
-          `${process.env.NEXT_PUBLIC_BASE_URL}accounts/`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          },
-        );
-
-        if (!res.ok) {
-          const errText = await res.text();
-          setError(`Failed to fetch user: ${errText}`);
-          setLoading(false);
-          return;
-        }
-
-        const data = await res.json();
-        setUser(data.data);
-      } catch (err: any) {
-        setError('Unexpected error: ' + err.message);
-      } finally {
+      })
+      .catch((err: any) => {
+        setError(err?.message || 'Failed to fetch user');
+        setUser(null);
         setLoading(false);
-      }
-    };
-
-    fetchUser();
+      });
   }, []);
 
   return { user, loading, error };

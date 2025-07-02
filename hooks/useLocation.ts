@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Country, fetchCountries, fetchStates } from "@/services/location";
+import { Country, fetchCountries, fetchStates } from "@/lib/services/location";
 
 /**
  * Handles:

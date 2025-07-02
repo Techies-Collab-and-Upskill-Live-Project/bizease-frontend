@@ -28,7 +28,7 @@ const SearchInput: React.FC<SearchInputProps> = ({
           setSearchTerm(e.target.value);
           onResetPage?.();
         }}
-        className="pl-8 border placeholder:italic max-w-fit border-lightblue"
+        className="pl-8 border placeholder:italic placeholder:max-md:text-xs w-40 border-lightblue"
       />
     </div>
   );
