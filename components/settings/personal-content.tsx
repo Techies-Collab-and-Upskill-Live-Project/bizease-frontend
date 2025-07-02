@@ -152,15 +152,9 @@ export default function ProfileSettings() {
         </Label>
         <Input
           id="password"
-<<<<<<< HEAD
           type={showPassword ? "text" : "password"}
           {...register("password")}
           className="pr-10 text-xs text-gray-600 tracking-wide md:py-6 shadow-sm"
-=======
-          type={showPassword ? 'text' : 'password'}
-          {...register('password')}
-          className="pr-10 text-xs text-gray-500 tracking-wide md:py-6 shadow-sm"
->>>>>>> d30b70ef6e31d0903ce87d2eeefc0815f45e9ea1
           placeholder="Password"
         />
         <Button
