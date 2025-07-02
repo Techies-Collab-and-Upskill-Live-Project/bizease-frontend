@@ -58,16 +58,16 @@ export default function ProfileSettings() {
       {/* Avatar */}
       <div className="flex flex-col gap-2 items-center justify-center space-y-3">
         <Avatar className="w-30 h-30">
-          <AvatarImage src={avatarPreview || ""} alt="Avatar" />
+          <AvatarImage src={avatarPreview || ''} alt="Avatar" />
           <AvatarFallback className="font-bold text-gray-600 text-lg">
             {user?.full_name
               ? user.full_name
-                  .split(" ")
+                  .split(' ')
                   .map((n) => n[0])
-                  .join("")
+                  .join('')
                   .slice(0, 2)
                   .toUpperCase()
-              : "U"}
+              : 'U'}
           </AvatarFallback>
         </Avatar>
         <div>
@@ -97,7 +97,7 @@ export default function ProfileSettings() {
         </Label>
         <Input
           id="fullName"
-          {...register("fullName")}
+          {...register('fullName')}
           className="text-xs tracking-wide md:py-6 shadow-sm"
           placeholder="Jessica Reeves"
         />
@@ -116,7 +116,7 @@ export default function ProfileSettings() {
         <Input
           id="email"
           type="email"
-          {...register("email")}
+          {...register('email')}
           placeholder="jessyreeves@gmail.com"
           className="text-xs tracking-wide md:py-6 shadow-sm"
         />
@@ -133,7 +133,7 @@ export default function ProfileSettings() {
         <Input
           id="phone"
           type="tel"
-          {...register("phone")}
+          {...register('phone')}
           placeholder="+234 906 4473 435"
           className="text-xs tracking-wide md:py-6 shadow-sm"
         />
@@ -152,9 +152,15 @@ export default function ProfileSettings() {
         </Label>
         <Input
           id="password"
+<<<<<<< HEAD
           type={showPassword ? "text" : "password"}
           {...register("password")}
           className="pr-10 text-xs text-gray-600 tracking-wide md:py-6 shadow-sm"
+=======
+          type={showPassword ? 'text' : 'password'}
+          {...register('password')}
+          className="pr-10 text-xs text-gray-500 tracking-wide md:py-6 shadow-sm"
+>>>>>>> d30b70ef6e31d0903ce87d2eeefc0815f45e9ea1
           placeholder="Password"
         />
         <Button
@@ -185,3 +191,16 @@ export default function ProfileSettings() {
     </form>
   );
 }
+// function useProfile(): {
+//   form: {
+//     register: any;
+//     handleSubmit: any;
+//     formState: { errors: any; isSubmitting: any };
+//     reset: any;
+//   };
+//   avatarPreview: any;
+//   handleAvatarChange: any;
+//   onSubmit: any;
+// } {
+//   throw new Error('Function not implemented.');
+// }

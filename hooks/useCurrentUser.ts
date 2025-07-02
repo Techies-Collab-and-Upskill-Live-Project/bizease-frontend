@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import { getAuthenticatedUser } from "@/lib/services/user";
-import { useEffect, useState } from "react";
+import { getAuthenticatedUser } from '@/lib/services/user';
+import { useEffect, useState } from 'react';
 
 interface User {
   business_name: string;
@@ -38,7 +38,7 @@ export function useCurrentUser() {
         setLoading(false);
       })
       .catch((err: any) => {
-        setError(err?.message || "Failed to fetch user");
+        setError(err?.message || 'Failed to fetch user');
         setUser(null);
         setLoading(false);
       });

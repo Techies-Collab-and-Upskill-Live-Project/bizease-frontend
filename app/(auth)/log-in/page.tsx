@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import React, { useState } from "react";
+import React, { useState } from 'react';
 import {
   Form,
   FormControl,
@@ -8,13 +8,13 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Checkbox } from "@/components/ui/checkbox";
-import useLogin from "@/hooks/useLogin";
-import { Eye, EyeOff, Mail } from "lucide-react";
-import Image from "next/image";
-import LoadingButton from "@/components/loading-button";
+} from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import { Checkbox } from '@/components/ui/checkbox';
+import useLogin from '@/hooks/useLogin';
+import { Eye, EyeOff, Mail } from 'lucide-react';
+import Image from 'next/image';
+import LoadingButton from '@/components/loading-button';
 
 interface LoginFormData {
   email: string;
@@ -102,7 +102,7 @@ const LogIn = () => {
                   <FormControl>
                     <div className="relative">
                       <Input
-                        type={showPassword ? "text" : "password"}
+                        type={showPassword ? 'text' : 'password'}
                         placeholder="*********"
                         className=" pr-10 text-sm"
                         {...field}
@@ -164,21 +164,21 @@ const LogIn = () => {
             <Image
               width={60}
               height={58}
-              src={"/google.png"}
+              src={'/google.png'}
               alt=""
               className="w-10 h-10 cursor-pointer"
             />
             <Image
               width={60}
               height={58}
-              src={"/apple.png"}
+              src={'/apple.png'}
               alt=""
               className="w-10 h-10 cursor-pointer"
             />
             <Image
               width={60}
               height={58}
-              src={"/microsoft.png"}
+              src={'/microsoft.png'}
               alt=""
               className="w-10 h-10 cursor-pointer"
             />

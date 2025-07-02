@@ -20,7 +20,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 
-import { useOrderStore, useInventoryStore } from '@/lib/store';
+import { useOrderStore } from '@/lib/store';
 import { useMediaQuery } from 'usehooks-ts';
 
 import ViewOrderModal from '@/components/modals/OrderModal';
@@ -34,7 +34,6 @@ const OrdersPage = () => {
   const isMobile = useMediaQuery('(max-width: 1020px)');
 
   const orders = useOrderStore((state) => state.orders); // reactive
-  const inventory = useInventoryStore((state) => state.inventory);
 
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
   const [search, setSearch] = useState('');
@@ -49,11 +48,6 @@ const OrdersPage = () => {
   useEffect(() => {
     setCache({});
   }, [orders]);
-
-  const lowStockCount = useMemo(
-    () => inventory.filter(({ stock }) => stock < 5).length,
-    [inventory],
-  );
 
   const filtered = useMemo(() => {
     return orders.filter(({ name, status }) => {
@@ -175,18 +169,19 @@ const OrdersPage = () => {
         {isMobile ? (
           <>
             <div className="p-4 rounded-lg shadow-sm mt-4">
-              <div className="flex items-center gap-2 mb-2">
-                <AlertTriangle className="text-warning" size={20} />
+              <div className="flex-center items-center gap-2 mb-2">
+                <AlertTriangle className="text-warning" size={18} />
                 <h2 className="font-semibold text-surface-500 text-lg">
                   Pending Order Alert
                 </h2>
               </div>
-              <p className="text-sm text-surface-400 font-medium">
-                {lowStockCount} item{lowStockCount !== 1 && 's'} are low in
-                stock
+              <p className="text-center text-sm text-surface-400 font-medium">
+                {totalPending} order{totalPending !== 1 && 's'} are pending,
+                check it up and update.
               </p>
-              <p className="text-xs text-surface-400 mt-1">
-                Items have not been attended to and may be due tomorrow.
+              <p className="text-xs text-center text-surface-400 mt-1">
+                Product{totalPending !== 1 && 's'} have not been attended to and
+                may be due tomorrow.
               </p>
             </div>
 
