@@ -24,7 +24,7 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${roboto.variable} antialiased  `}>
         {children}
-        <Toaster richColors position="top-center" closeButton />
+        <Toaster position="top-center" closeButton />
       </body>
     </html>
   );

@@ -1,6 +1,5 @@
 "use client";
 
-import { useProfile } from "@/hooks/useProfile";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
@@ -9,7 +8,9 @@ import { Eye, EyeOff } from "lucide-react";
 import LoadingSpinner from "../spinner";
 import { useState, useEffect } from "react";
 import { useCurrentUser } from "@/hooks/useCurrentUser";
-
+import { useSettings } from "@/hooks/useSettings";
+import type { FieldErrors } from "react-hook-form";
+import type { ProfileFormValues } from "@/lib/validations/settings";
 
 export default function ProfileSettings() {
   const [showPassword, setShowPassword] = useState(false);
@@ -24,7 +25,8 @@ export default function ProfileSettings() {
     avatarPreview,
     handleAvatarChange,
     onSubmit,
-  } = useProfile();
+  } = useSettings("profile");
+  const profileErrors = errors as FieldErrors<ProfileFormValues>;
 
   const { user, loading } = useCurrentUser();
 
@@ -34,18 +36,25 @@ export default function ProfileSettings() {
         fullName: user.full_name || "",
         email: user.email || "",
         phone: user.phone || "",
-        password: "", // leave password blank for security
+        password: "",
+        type: "profile",
       });
     }
   }, [user, loading, reset]);
 
+ 
   return isSubmitting || loading ? (
     <LoadingSpinner />
   ) : (
     <form
-      onSubmit={handleSubmit(onSubmit)}
+      onSubmit={handleSubmit((data) => {
+        console.log("handleSubmit triggered");
+        onSubmit(data);
+      })}
       className="flex flex-col px-6 space-y-5 max-w-md mx-auto"
     >
+      <input type="hidden" {...register("type")} value="profile" />
+
       {/* Avatar */}
       <div className="flex flex-col gap-2 items-center justify-center space-y-3">
         <Avatar className="w-30 h-30">
@@ -92,8 +101,10 @@ export default function ProfileSettings() {
           className="text-xs tracking-wide md:py-6 shadow-sm"
           placeholder="Jessica Reeves"
         />
-        {errors.fullName && (
-          <p className="text-sm text-red-500">{errors.fullName.message}</p>
+        {profileErrors.fullName && (
+          <p className="text-sm text-red-500">
+            {profileErrors.fullName.message}
+          </p>
         )}
       </div>
 
@@ -109,8 +120,8 @@ export default function ProfileSettings() {
           placeholder="jessyreeves@gmail.com"
           className="text-xs tracking-wide md:py-6 shadow-sm"
         />
-        {errors.email && (
-          <p className="text-sm text-red-500">{errors.email.message}</p>
+        {profileErrors.email && (
+          <p className="text-sm text-red-500">{profileErrors.email.message}</p>
         )}
       </div>
 
@@ -126,8 +137,8 @@ export default function ProfileSettings() {
           placeholder="+234 906 4473 435"
           className="text-xs tracking-wide md:py-6 shadow-sm"
         />
-        {errors.phone && (
-          <p className="text-sm text-red-500">{errors.phone.message}</p>
+        {profileErrors.phone && (
+          <p className="text-sm text-red-500">{profileErrors.phone.message}</p>
         )}
       </div>
 
@@ -135,7 +146,7 @@ export default function ProfileSettings() {
       <div className="flex flex-col gap-2 relative">
         <Label
           htmlFor="password"
-          className="text-xs text-gray-500 font-semibold"
+          className="text-xs text-gray-600 font-semibold"
         >
           Password
         </Label>
@@ -143,7 +154,7 @@ export default function ProfileSettings() {
           id="password"
           type={showPassword ? "text" : "password"}
           {...register("password")}
-          className="pr-10 text-xs text-gray-500 tracking-wide md:py-6 shadow-sm"
+          className="pr-10 text-xs text-gray-600 tracking-wide md:py-6 shadow-sm"
           placeholder="Password"
         />
         <Button
@@ -154,8 +165,10 @@ export default function ProfileSettings() {
         >
           {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
         </Button>
-        {errors.password && (
-          <p className="text-sm text-red-500">{errors.password.message}</p>
+        {profileErrors.password && (
+          <p className="text-sm text-red-500">
+            {profileErrors.password.message}
+          </p>
         )}
       </div>
 
