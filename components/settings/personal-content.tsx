@@ -1,6 +1,5 @@
 'use client';
 
-import { useProfile } from '@/hooks/useProfile';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
@@ -8,7 +7,8 @@ import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { Eye, EyeOff } from 'lucide-react';
 import LoadingSpinner from '../spinner';
 import { useState, useEffect } from 'react';
-import useCurrentUser from '@/hooks/useCurrentUser';
+import { useCurrentUser } from '@/hooks/useCurrentUser';
+import useProfile from '@/hooks/useProfile';
 
 export default function ProfileSettings() {
   const [showPassword, setShowPassword] = useState(false);
@@ -171,3 +171,16 @@ export default function ProfileSettings() {
     </form>
   );
 }
+// function useProfile(): {
+//   form: {
+//     register: any;
+//     handleSubmit: any;
+//     formState: { errors: any; isSubmitting: any };
+//     reset: any;
+//   };
+//   avatarPreview: any;
+//   handleAvatarChange: any;
+//   onSubmit: any;
+// } {
+//   throw new Error('Function not implemented.');
+// }

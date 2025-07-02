@@ -3,7 +3,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { ProfileFormValues, profileSchema } from '@/lib/validations/settings';
 
-export const useProfile = () => {
+const useProfile = () => {
   const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
 
   const form = useForm<ProfileFormValues>({
@@ -32,3 +32,5 @@ export const useProfile = () => {
     onSubmit,
   };
 };
+
+export default useProfile;

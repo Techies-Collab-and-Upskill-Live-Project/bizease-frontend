@@ -20,7 +20,7 @@ export const InventoryHeaderActionsMobile = ({
   setFilter,
 }: InventoryHeaderActionsMobileProps) => {
   return (
-    <div className="flex w-full px-5 justify-between items-center lg:hidden mb-4 mt-6">
+    <div className="flex w-full px-6 justify-between items-center gap-4 lg:hidden mb-3 mt-6">
       <SearchInput
         placeholder="Search inventory..."
         searchTerm={searchTerm}

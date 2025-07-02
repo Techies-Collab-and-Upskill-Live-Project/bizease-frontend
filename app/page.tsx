@@ -1,25 +1,10 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-// import { Button } from "@/components/ui/button";
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import LoadingButton from '@/components/loading-button';
-
-const slides = [
-  {
-    text: 'Manage your Orders ',
-    highlighted: 'Efficiently.',
-    color: 'text-[#06005B]',
-    image: '/splash.png',
-  },
-  {
-    text: 'Keep stock of your ',
-    highlighted: 'Inventory.',
-    color: 'text-[#FFC400]',
-    image: '/splash-2.png',
-  },
-];
+import { slides } from '@/constants';
 
 export default function Landing() {
   const router = useRouter();
@@ -59,7 +44,7 @@ export default function Landing() {
             height={300}
             src={current.image}
             alt="Slide image"
-            className="w-72 h-72 md:w-80 md:h-80 object-contain"
+            className="w-72 h-72 md:w-80 md:h-80 object-contain transition-opacity duration-700 ease-in-out"
           />
 
           {/* Carousel Controls */}
@@ -102,9 +87,9 @@ export default function Landing() {
               type="submit"
               loading={loading}
               disabled={loading}
-              className="rounded-lg bg-[#06005B] hover:bg-blue-900 w-full py-3 text-white"
+              className="rounded cursor-pointer bg-[#06005B] hover:bg-blue-900 w-full py-6 text-white"
             >
-              Sign Up
+              Get Started
             </LoadingButton>
           </div>
         </div>

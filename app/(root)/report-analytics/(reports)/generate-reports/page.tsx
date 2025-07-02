@@ -36,7 +36,7 @@ import {
   TableRow,
 } from '@/components/ui/table';
 
-import useCurrentUser from '@/hooks/useCurrentUser';
+import { useCurrentUser } from '@/hooks/useCurrentUser';
 import { useInventoryStore, useOrderStore } from '@/lib/store';
 import { Product } from '@/types';
 

@@ -2,13 +2,12 @@
 
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-// import { Button } from "@/components/ui/button";
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import LoadingSpinner from '../spinner';
 import { useBusiness } from '@/hooks/useBusiness';
-import useCurrentUser from '@/hooks/useCurrentUser';
 import { useEffect } from 'react';
 import LoadingButton from '../loading-button';
+import { useCurrentUser } from '@/hooks/useCurrentUser';
 
 export default function BusinessSettings() {
   const {
