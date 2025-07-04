@@ -3,7 +3,11 @@
 import React from 'react';
 import Image from 'next/image';
 import { useInventoryStore, useOrderStore } from '@/lib/store';
-import { calculateMostOrderedProduct, formatCurrency } from '@/lib/utils';
+import {
+  calculateMostOrderedProduct,
+  calculatePercentageChange,
+  formatCurrency,
+} from '@/lib/utils';
 
 const MetricCard = ({
   label,
@@ -54,14 +58,6 @@ const ReportSums = () => {
     (acc, item) => acc + item.price * item.stock,
     0,
   );
-
-  const calculatePercentageChange = (
-    current: number,
-    previous: number,
-  ): number => {
-    if (previous === 0) return 100;
-    return ((current - previous) / previous) * 100;
-  };
 
   const previousRevenue = 200000;
   const previousStockValue = 50000;
