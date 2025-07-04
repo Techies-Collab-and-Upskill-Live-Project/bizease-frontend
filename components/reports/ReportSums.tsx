@@ -34,7 +34,7 @@ const MetricCard = ({
             change >= 0 ? 'text-success' : 'text-destructive'
           }`}
         >
-          {Math.abs(change)}%
+          {Math.abs(change).toFixed(1)}%
         </p>
       </div>
     )}
@@ -55,14 +55,31 @@ const ReportSums = () => {
     0,
   );
 
+  const calculatePercentageChange = (
+    current: number,
+    previous: number,
+  ): number => {
+    if (previous === 0) return 100;
+    return ((current - previous) / previous) * 100;
+  };
+
+  const previousRevenue = 200000;
+  const previousStockValue = 50000;
+
+  const revenueChange = calculatePercentageChange(
+    totalRevenue,
+    previousRevenue,
+  );
+  const stockChange = calculatePercentageChange(
+    totalStockValue,
+    previousStockValue,
+  );
+
   const totalProducts = inventoryItems.length;
   const lowStockItems = inventoryItems.filter((item) => item.stock < 5).length;
   const pendingOrders = orders.filter((o) => o.status === 'Pending').length;
 
   const mostOrdered = calculateMostOrderedProduct(orders);
-
-  const revenueChange = 7;
-  const stockChange = 12;
 
   return (
     <div className="w-full mx-auto px-4 lg:px-8 mt-4">
