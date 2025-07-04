@@ -4,6 +4,8 @@ import axios, { AxiosError } from "axios";
 interface UserDataResponse {
   detail?: string;
 }
+
+//GET
 export async function GET(req: NextRequest) {
   const accessToken = req.cookies.get("access_token")?.value;
 
@@ -34,11 +36,52 @@ export async function GET(req: NextRequest) {
 
     return NextResponse.json(
       {
-        message:
-          axiosError.response?.data?.detail || "Failed to fetch user details",
+        message: axiosError.response?.data?.detail,
       },
       {
-        status: axiosError.response?.status || 500,
+        status: axiosError.response?.status,
+      }
+    );
+  }
+}
+
+//PUT
+export async function PUT(req: NextRequest) {
+  const accessToken = req.cookies.get("access_token")?.value;
+
+  if (!accessToken) {
+    return NextResponse.json(
+      { message: "Unauthorized: No access token" },
+      { status: 401 }
+    );
+  }
+
+  try {
+    const data = await req.json();
+
+    // Optionally, validate data here before sending
+
+    const response = await axios.put(
+      `${process.env.NEXT_PUBLIC_BASE_URL}accounts`,
+      data,
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    return NextResponse.json({ status: 200, data: response.data });
+  } catch (error) {
+    const axiosError = error as AxiosError<UserDataResponse>;
+
+    return NextResponse.json(
+      {
+        message: axiosError.response?.data?.detail,
+      },
+      {
+        status: axiosError.response?.status,
       }
     );
   }
