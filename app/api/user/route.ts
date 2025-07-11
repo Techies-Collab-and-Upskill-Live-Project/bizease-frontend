@@ -19,7 +19,7 @@ export async function GET(req: NextRequest) {
 
   try {
     const response = await axios.get(
-      `${process.env.NEXT_PUBLIC_BASE_URL}accounts`,
+      `${process.env.NEXT_PUBLIC_BASE_URL}accounts/`,
       {
         headers: {
           Authorization: `Bearer ${accessToken}`,
