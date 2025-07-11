@@ -6,7 +6,7 @@ export async function POST(request: NextRequest) {
   console.log("Login request body:", body);
 
   return axios
-    .post(`${process.env.NEXT_PUBLIC_BASE_URL}accounts/login`, body)
+    .post(`${process.env.NEXT_PUBLIC_BASE_URL}accounts/login/`, body)
     .then((result) => {
       const { refresh, access } = result.data.data;
 
