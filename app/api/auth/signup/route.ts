@@ -5,7 +5,7 @@ export async function POST(request: NextRequest) {
   const body = await request.json();
 
   return axios
-    .post(`${process.env.NEXT_PUBLIC_BASE_URL}accounts/signup`, body)
+    .post(`${process.env.NEXT_PUBLIC_BASE_URL}accounts/signup/`, body)
     .then((result) => {
       const { refresh, access } = result.data.data;
 
