@@ -62,7 +62,7 @@ export async function PUT(req: NextRequest) {
     // Optionally, validate data here before sending
 
     const response = await axios.put(
-      `${process.env.NEXT_PUBLIC_BASE_URL}accounts`,
+      `${process.env.NEXT_PUBLIC_BASE_URL}accounts/`,
       data,
       {
         headers: {
