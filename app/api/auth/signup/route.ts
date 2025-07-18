@@ -1,41 +1,57 @@
-import { NextRequest, NextResponse } from "next/server";
-import axios from "axios";
+import { NextRequest, NextResponse } from 'next/server';
+import axios from 'axios';
 
 export async function POST(request: NextRequest) {
   const body = await request.json();
 
-  return axios
-    .post(`${process.env.NEXT_PUBLIC_BASE_URL}accounts/signup`, body)
-    .then((result) => {
-      const { refresh, access } = result.data.data;
+  console.log('Received signup request:', body);
 
-      // setting cookies
-      const response = NextResponse.json({ status: 200 });
+  try {
+    const result = await axios.post(
+      `${process.env.NEXT_PUBLIC_BASE_URL}accounts/signup/`,
+      body,
+      {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      },
+    );
 
-      response.cookies.set("access_token", access, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        maxAge: 60 * 60,
-        path: "/",
-        sameSite: "strict",
-      });
+    console.log('Payload:', result.data);
 
-      response.cookies.set("refresh_token", refresh, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        maxAge: 60 * 60 * 24 * 7,
-        path: "/",
-        sameSite: "strict",
-      });
+    const { access, refresh } = result.data.data || result.data;
 
-      return response;
-    })
-    .catch((error) => {
-      console.error("Error during signup:", error.response.data.detail);
-      const status = error?.response?.status || 500;
-      const message =
-        error?.response?.data?.message || "User exists, please log in";
+    const response = NextResponse.json({ status: 200 });
 
-      return NextResponse.json({ message }, { status });
+    response.cookies.set('access_token', access, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      maxAge: 60 * 60,
+      path: '/',
+      sameSite: 'strict',
     });
+
+    response.cookies.set('refresh_token', refresh, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      maxAge: 60 * 60 * 24 * 7,
+      path: '/',
+      sameSite: 'strict',
+    });
+
+    console.log('Signup successful, cookies set');
+
+    return response;
+  } catch (error: any) {
+    const status = error?.response?.status || 500;
+    const message =
+      error?.response?.data?.message ||
+      error?.response?.data?.detail ||
+      JSON.stringify(error?.response?.data) ||
+      'Signup failed';
+
+    console.error('Signup error:', message);
+
+    return NextResponse.json({ error: message }, { status });
+  }
 }
