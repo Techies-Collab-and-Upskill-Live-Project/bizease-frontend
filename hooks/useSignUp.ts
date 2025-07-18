@@ -28,7 +28,8 @@ export default function useSignUp() {
     await toast.promise(signup(values), {
       loading: 'Signing up...',
       success: () => {
-        router.push('/verify-email');
+        router.push(`/verify-email?email=${encodeURIComponent(values.email)}`);
+
         return 'signed up successfully!';
       },
       error: (err) => {

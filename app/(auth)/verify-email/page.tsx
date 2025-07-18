@@ -2,69 +2,65 @@
 
 import { useState } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
-import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import axios from 'axios';
+import { Button } from '@/components/ui/button';
+import { toast } from 'sonner';
 
 export default function VerifyEmailPage() {
   const [otp, setOtp] = useState('');
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
-  const [success, setSuccess] = useState('');
   const searchParams = useSearchParams();
   const router = useRouter();
 
-  const email = searchParams.get('email') ?? '';
+  const email = searchParams.get('email');
 
   const handleVerify = async () => {
+    if (!email) return toast.error('No email found in URL');
+    if (!otp) return toast.error('Please enter the OTP');
+
     setLoading(true);
-    setError('');
+
     try {
-      const res = await axios.post('/api/auth/verify-email', {
-        email,
-        otp,
+      const res = await fetch('/api/auth/verify-email', {
+        method: 'POST',
+        body: JSON.stringify({ email, otp }),
+        headers: { 'Content-Type': 'application/json' },
       });
 
-      setSuccess('Email verified successfully!');
-      setTimeout(() => {
-        router.push('/login');
-      }, 1500);
+      const data = await res.json();
+
+      if (!res.ok) throw new Error(data?.error || 'Verification failed');
+
+      toast.success('Email verified successfully!');
+      router.push('/log-in');
     } catch (err: any) {
-      setError(err?.response?.data?.message || 'Verification failed');
+      toast.error(err.message || 'Something went wrong');
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <section className="flex flex-col items-center justify-center max-w-sm mx-auto mt-20 p-4 border rounded-md shadow">
-      <h2 className="text-xl font-semibold mb-4 text-center">
-        Verify Your Email
-      </h2>
-      <p className="text-sm mb-2 text-muted-foreground">
-        An OTP has been sent to <span className="font-medium">{email}</span>.
-        Enter it below.
+    <div className="min-h-screen flex flex-col items-center justify-center px-4">
+      <h2 className="text-2xl font-semibold mb-4">Verify Your Email</h2>
+      <p className="mb-2 text-center text-sm text-muted-foreground">
+        Enter the OTP sent to{' '}
+        <span className="font-semibold text-darkblue italic">{email}</span>
       </p>
-
       <Input
         type="text"
-        placeholder="Enter 6-digit OTP"
+        placeholder="Enter OTP"
         value={otp}
         onChange={(e) => setOtp(e.target.value)}
-        maxLength={6}
-        className="mb-3"
+        className="max-w-sm my-4"
       />
-
       <Button
         onClick={handleVerify}
-        disabled={loading || otp.length < 6}
-        className="w-full"
+        disabled={loading}
+        className="w-full text-darkblue hover:cursor-pointer hover:text-lightblue "
       >
         {loading ? 'Verifying...' : 'Verify Email'}
       </Button>
-
-      {error && <p className="text-red-500 text-sm mt-3">{error}</p>}
-      {success && <p className="text-green-600 text-sm mt-3">{success}</p>}
-    </section>
+    </div>
   );
 }
