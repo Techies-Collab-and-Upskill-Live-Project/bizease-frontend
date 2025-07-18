@@ -4,6 +4,7 @@ import axios from 'axios';
 export async function POST(request: NextRequest) {
   const body = await request.json();
 
+
   console.log('Received signup request:', body);
 
   try {
@@ -29,6 +30,7 @@ export async function POST(request: NextRequest) {
       maxAge: 60 * 60,
       path: '/',
       sameSite: 'strict',
+  
     });
 
     response.cookies.set('refresh_token', refresh, {
