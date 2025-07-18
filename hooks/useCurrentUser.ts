@@ -1,6 +1,7 @@
 'use client';
 
 import { getAuthenticatedUser } from '@/lib/services/user';
+import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
 interface User {
@@ -24,6 +25,7 @@ interface User {
 }
 
 export function useCurrentUser() {
+  const route = useRouter();
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -40,6 +42,8 @@ export function useCurrentUser() {
       .catch((err: any) => {
         setError(err?.message || 'Failed to fetch user');
         setUser(null);
+
+        route.push('/log-in');
         setLoading(false);
       });
   }, []);

@@ -1,5 +1,5 @@
-import { axiosInstance } from "../axios";
-import { AxiosError } from "axios";
+import { axiosInstance } from '../axios';
+import { AxiosError } from 'axios';
 
 export type UserData = {
   business_name: string;
@@ -23,7 +23,8 @@ export type UserData = {
 
 export const getAuthenticatedUser = async () => {
   try {
-    const response = await axiosInstance.get("/user");
+    const response = await axiosInstance.get('/user');
+    console.log('getAuthenticatedUser response:', response.data);
     return response.data;
   } catch (error: unknown) {
     if (error instanceof AxiosError) {
