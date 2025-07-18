@@ -114,7 +114,7 @@ const SignUp = () => {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className="text-xs md:text-sm font-semibold tracking-wide">
-                    Fullname
+                    Full Name
                   </FormLabel>
                   <FormControl>
                     <Input
