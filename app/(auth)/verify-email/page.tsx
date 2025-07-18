@@ -33,8 +33,12 @@ export default function VerifyEmailPage() {
 
       toast.success('Email verified successfully!');
       router.push('/log-in');
-    } catch (err: any) {
-      toast.error(err.message || 'Something went wrong');
+    } catch (err) {
+      if (err instanceof Error) {
+        toast.error(err.message || 'Something went wrong');
+      } else {
+        toast.error('Something went wrong');
+      }
     } finally {
       setLoading(false);
     }
@@ -45,7 +49,7 @@ export default function VerifyEmailPage() {
       <h2 className="text-2xl font-semibold mb-4">Verify Your Email</h2>
       <p className="mb-2 text-center text-sm text-muted-foreground">
         Enter the OTP sent to{' '}
-        <span className="font-semibold text-darkblue italic">{email}</span>
+        <span className="font-semibold text-lightblue italic">{email}</span>
       </p>
       <Input
         type="text"

@@ -23,7 +23,8 @@ export async function POST(req: NextRequest) {
     }
 
     return NextResponse.json({ message: 'Email verified successfully', data });
-  } catch (err) {
+  } catch (error) {
+    console.error('Error during email verification:', error);
     return NextResponse.json(
       { error: 'Internal Server Error' },
       { status: 500 },

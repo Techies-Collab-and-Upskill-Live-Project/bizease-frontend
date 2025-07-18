@@ -42,16 +42,22 @@ export async function POST(request: NextRequest) {
     console.log('Signup successful, cookies set');
 
     return response;
-  } catch (error: any) {
-    const status = error?.response?.status || 500;
-    const message =
-      error?.response?.data?.message ||
-      error?.response?.data?.detail ||
-      JSON.stringify(error?.response?.data) ||
-      'Signup failed';
+  } catch (error: unknown) {
+    let status = 500;
+    let message = 'Signup failed';
+
+    if (axios.isAxiosError(error)) {
+      status = error.response?.status || 500;
+      message =
+        error.response?.data?.message ||
+        error.response?.data?.detail ||
+        JSON.stringify(error.response?.data) ||
+        'Signup failed';
+    } else {
+      console.error('Non-Axios error:', error);
+    }
 
     console.error('Signup error:', message);
-
     return NextResponse.json({ error: message }, { status });
   }
 }
