@@ -45,6 +45,8 @@ const SignUp = () => {
   } = useLocation();
 
   const submit = async (data: SignUpFormData) => {
+    console.log('SIGNUP PAYLOAD >>>', data);
+
     if (loading) return;
     setLoading(true);
     try {
@@ -112,7 +114,7 @@ const SignUp = () => {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className="text-xs md:text-sm font-semibold tracking-wide">
-                    Fullname
+                    Full Name
                   </FormLabel>
                   <FormControl>
                     <Input
@@ -205,14 +207,17 @@ const SignUp = () => {
                         <select
                           {...field}
                           onChange={(e) => {
-                            field.onChange(e);
-                            setCountryCode(e.target.value); // informs the hook
+                            field.onChange(e.target.value); // this sends full name like "Nigeria"
+                            const selected = countries.find(
+                              (c) => c.name === e.target.value,
+                            );
+                            setCountryCode(selected?.code || '');
                           }}
                           className="w-full border rounded-md px-3 py-2 text-xs"
                         >
                           <option value="">Select Country</option>
                           {countries.map((c) => (
-                            <option key={c.code} value={c.code}>
+                            <option key={c.code} value={c.name}>
                               {c.name}
                             </option>
                           ))}
