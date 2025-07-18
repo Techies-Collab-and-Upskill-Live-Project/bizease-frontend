@@ -1,6 +1,7 @@
 import { z } from "zod";
 
 export const profileSchema = z.object({
+  type: z.literal("profile"),
   fullName: z.string().min(1, "Full name is required"),
   email: z.string().email("Invalid email address"),
   phone: z.string().min(10, "Phone number must be at least 10 digits"),
@@ -9,6 +10,7 @@ export const profileSchema = z.object({
 });
 
 export const businessSchema = z.object({
+  type: z.literal("business"),
   avatar: z.instanceof(File).optional().or(z.any()),
   businessName: z.string().min(1, "Business name is required"),
   businessAddress: z.string().min(1, "Business address is required"),
@@ -29,13 +31,13 @@ export const businessSchema = z.object({
 });
 
 export const preferenceSchema = z.object({
-  new_stocks: z.boolean().default(false).optional(),
-  low_stocks: z.boolean().default(true).optional(),
-  email_notifications: z.boolean().default(true).optional(),
-  message_notifications: z.boolean().default(false).optional(),
-  alert_threshold: z.string(),
-  default_order_status: z.string(),
-
+  type: z.literal("preference"),
+  new_stocks: z.boolean(),
+  low_stocks: z.boolean(),
+  email_notifications: z.boolean(),
+  message_notifications: z.boolean(),
+  alert_threshold: z.coerce.number(),
+  default_order_status: z.string().min(1, "Select a default status"),
   language: z.string(),
 });
 

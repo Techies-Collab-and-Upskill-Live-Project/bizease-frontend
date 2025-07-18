@@ -15,8 +15,8 @@ const AboutPage = () => {
     setLoading(true);
     setTimeout(() => {
       router.push("/sign-up");
-      setLoading(false);
     }, 2000);
+    setLoading(false);
   };
   return (
     <section className="min-w-full min-h-screen mb-10">

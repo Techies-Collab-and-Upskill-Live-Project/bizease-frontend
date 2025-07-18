@@ -1,5 +1,7 @@
+
 import { NextRequest, NextResponse } from 'next/server';
 import axios from 'axios';
+
 
 export async function POST(request: NextRequest) {
   const body = await request.json();
@@ -36,7 +38,9 @@ export async function POST(request: NextRequest) {
       return response;
     })
     .catch((error) => {
-      console.error('Error during login:', error.response.data.detail);
+
+      console.error("Error during login:", error.response?.data.detail);
+
       const status = error?.response?.status || 500;
       const message = error?.response?.data.detail || 'Login failed';
 

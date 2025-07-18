@@ -4,6 +4,8 @@ import axios, { AxiosError } from 'axios';
 interface UserDataResponse {
   detail?: string;
 }
+
+//GET
 export async function GET(req: NextRequest) {
   const accessToken = req.cookies.get('access_token')?.value;
 
