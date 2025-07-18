@@ -15,17 +15,53 @@ import { Checkbox } from '@/components/ui/checkbox';
 import useSignUp from '@/hooks/useSignUp';
 import { Eye, EyeOff, Mail } from 'lucide-react';
 import Image from 'next/image';
+import useLocation from '@/hooks/useLocation';
+import LoadingButton from '@/components/loading-button';
+
+type SignUpFormData = {
+  business_name: string;
+  full_name: string;
+  email: string;
+  password: string;
+  country: string;
+  state: string;
+  currency: string;
+  business_type: string;
+};
 
 const SignUp = () => {
   const { signUpSchema, onSubmit } = useSignUp();
+  const [loading, setLoading] = useState(false);
+
   const [showPassword, setShowPassword] = useState(false);
+  const [agreedToTerms, setAgreedToTerms] = useState(false);
+  const {
+    countries,
+    states,
+    countryCurrencies,
+    setCountryCode,
+    countriesLoading,
+    statesLoading,
+  } = useLocation();
+
+  const submit = async (data: SignUpFormData) => {
+    console.log('SIGNUP PAYLOAD >>>', data);
+
+    if (loading) return;
+    setLoading(true);
+    try {
+      await onSubmit(data);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="min-h-screenbg-gray-100 ">
       {/* Top Section */}
       <div className="flex py-20 md:py-30 items-center justify-center gap-2 bg-gradient-to-b rounded-b-lg from-blue-800 to-blue-600 text-white">
         <Image
-          width={60} // any appropriate size in pixels
+          width={60}
           height={58}
           src="/icon/logo-2.png"
           alt="logo"
@@ -46,13 +82,13 @@ const SignUp = () => {
 
         <Form {...signUpSchema}>
           <form
-            onSubmit={signUpSchema.handleSubmit(onSubmit)}
+            onSubmit={signUpSchema.handleSubmit(submit)}
             className="space-y-5 md:space-y-6"
           >
             {/* organization */}
             <FormField
               control={signUpSchema.control}
-              name="organization"
+              name="business_name"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className="text-xs md:text-sm font-semibold tracking-wide">
@@ -74,11 +110,11 @@ const SignUp = () => {
             {/* username */}
             <FormField
               control={signUpSchema.control}
-              name="username"
+              name="full_name"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className="text-xs md:text-sm font-semibold tracking-wide">
-                    Username
+                    Full Name
                   </FormLabel>
                   <FormControl>
                     <Input
@@ -159,26 +195,36 @@ const SignUp = () => {
                 name="country"
                 render={({ field }) => (
                   <FormItem className="w-1/2">
-                    <FormLabel className="text-xs md:text-sm font-semibold tracking-wide">
+                    <FormLabel className="text-xs md:text-sm font-semibold">
                       Country
                     </FormLabel>
                     <FormControl>
-                      <select
-                        className="w-full border rounded-md px-3 py-2 text-xs"
-                        {...field}
-                      >
-                        <option value="" className="text-gray-500">
-                          Select Country
-                        </option>
-                        <option value="us">United States</option>
-                        <option value="us">Nigeria</option>
-                        <option value="ca">Canada</option>
-                        <option value="uk">United Kingdom</option>
-                        <option value="au">Australia</option>
-                        {/* Add more countries as needed */}
-                      </select>
+                      {countriesLoading ? (
+                        <div className="w-full py-2 text-center text-xs">
+                          Loading…
+                        </div>
+                      ) : (
+                        <select
+                          {...field}
+                          onChange={(e) => {
+                            field.onChange(e.target.value); // this sends full name like "Nigeria"
+                            const selected = countries.find(
+                              (c) => c.name === e.target.value,
+                            );
+                            setCountryCode(selected?.code || '');
+                          }}
+                          className="w-full border rounded-md px-3 py-2 text-xs"
+                        >
+                          <option value="">Select Country</option>
+                          {countries.map((c) => (
+                            <option key={c.code} value={c.name}>
+                              {c.name}
+                            </option>
+                          ))}
+                        </select>
+                      )}
                     </FormControl>
-                    <FormMessage className="text-xs tracking-wide" />
+                    <FormMessage className="text-xs" />
                   </FormItem>
                 )}
               />
@@ -189,25 +235,30 @@ const SignUp = () => {
                 name="state"
                 render={({ field }) => (
                   <FormItem className="w-1/2">
-                    <FormLabel className="text-xs md:text-sm font-semibold tracking-wide">
-                      State/Province
+                    <FormLabel className="text-xs md:text-sm font-semibold">
+                      State / Province
                     </FormLabel>
                     <FormControl>
-                      <select
-                        className="w-full border rounded-md px-3 py-2 text-xs"
-                        {...field}
-                      >
-                        <option value="" className="text-gray-500">
-                          Select State
-                        </option>
-                        <option value="ca">California</option>
-                        <option value="oy">Oyo</option>
-                        <option value="ny">New York</option>
-                        <option value="tx">Texas</option>
-                        {/* Dynamically populate based on country if needed */}
-                      </select>
+                      {statesLoading ? (
+                        <div className="w-full py-2 text-center text-xs">
+                          Loading…
+                        </div>
+                      ) : (
+                        <select
+                          {...field}
+                          disabled={!states.length}
+                          className="w-full border rounded-md px-3 py-2 text-xs"
+                        >
+                          <option value="">Select State</option>
+                          {states.map((s) => (
+                            <option key={s} value={s}>
+                              {s}
+                            </option>
+                          ))}
+                        </select>
+                      )}
                     </FormControl>
-                    <FormMessage className="text-xs tracking-wide" />
+                    <FormMessage className="text-xs" />
                   </FormItem>
                 )}
               />
@@ -219,21 +270,52 @@ const SignUp = () => {
               name="currency"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-xs md:text-sm font-semibold tracking-wide">
+                  <FormLabel className="text-xs md:text-sm font-semibold">
                     Currency
+                  </FormLabel>
+                  <FormControl>
+                    <select
+                      {...field}
+                      disabled={!countryCurrencies.length}
+                      className="w-full border rounded-md px-3 py-2 text-xs"
+                    >
+                      <option value="">Select Currency</option>
+                      {countryCurrencies.map((cur) => (
+                        <option key={cur} value={cur}>
+                          {cur}
+                        </option>
+                      ))}
+                    </select>
+                  </FormControl>
+                  <FormMessage className="text-xs" />
+                </FormItem>
+              )}
+            />
+
+            {/* Business Type */}
+            <FormField
+              control={signUpSchema.control}
+              name="business_type"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-xs md:text-sm font-semibold tracking-wide">
+                    Business Type
                   </FormLabel>
                   <FormControl>
                     <select
                       className="w-full border rounded-md px-3 py-2 text-xs"
                       {...field}
                     >
-                      <option value="" className="text-gray-500">
-                        Select Currency
+                      <option value="">Select Business Type</option>
+                      <option value="Nonprofit">Nonprofit</option>
+                      <option value="Limited partnership">
+                        Limited partnership
                       </option>
-                      <option value="USD">USD - US Dollar</option>
-                      <option value="CAD">CAD - Canadian Dollar</option>
-                      <option value="GBP">GBP - British Pound</option>
-                      <option value="EUR">EUR - Euro</option>
+                      <option value="Joint Venture">Joint venture</option>
+                      <option value="General partnership">
+                        General partnership
+                      </option>
+                      <option value="Other">Other</option>
                     </select>
                   </FormControl>
                   <FormMessage className="text-xs tracking-wide" />
@@ -257,6 +339,8 @@ const SignUp = () => {
                   <Checkbox
                     id="terms"
                     className="bg-white w-4 h-4 border-none flex items-center justify-center"
+                    checked={agreedToTerms}
+                    onCheckedChange={(checked) => setAgreedToTerms(!!checked)}
                   />
                 </div>
                 I agree to the Terms of Service and Privacy Policy.
@@ -264,12 +348,14 @@ const SignUp = () => {
             </div>
 
             {/* Submit */}
-            <Button
+            <LoadingButton
+              loading={loading}
               type="submit"
-              className="w-full bg-[#06005B] hover:bg-blue-900 cursor-pointer py-3 md:py-6 text-xs md:text-sm font-semibold tracking-wide"
+              disabled={loading || !agreedToTerms}
+              className=" bg-[#06005B] hover:bg-blue-900 w-full py-3"
             >
               Sign Up
-            </Button>
+            </LoadingButton>
           </form>
         </Form>
       </div>
@@ -282,21 +368,21 @@ const SignUp = () => {
           </p>
           <div className="flex gap-6 items-center justify-center">
             <Image
-              width={60} // any appropriate size in pixels
+              width={60}
               height={58}
               src={'/google.png'}
               alt="google-icon"
               className="w-10 h-10 cursor-pointer"
             />
             <Image
-              width={60} // any appropriate size in pixels
+              width={60}
               height={58}
               src={'/apple.png'}
               alt="apple-icon"
               className="w-10 h-10 cursor-pointer"
             />
             <Image
-              width={60} // any appropriate size in pixels
+              width={60}
               height={58}
               src={'/microsoft.png'}
               alt="microsoft-icon"

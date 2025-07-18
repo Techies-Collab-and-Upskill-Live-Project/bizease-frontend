@@ -12,7 +12,7 @@ import {
   Legend,
 } from 'chart.js';
 
-import { useReportStore, useOrderStore } from '@/lib/store';
+import { useOrderStore } from '@/lib/store';
 import CustomLegend from './CustomLegend';
 import { getLastNDates } from '@/lib/utils';
 import { computeTopProductRevenues } from '@/lib/revenue';
@@ -28,15 +28,28 @@ ChartJS.register(
 );
 
 const Charts = () => {
-  const { period } = useReportStore();
   const { orders } = useOrderStore();
 
-  const periodLength = parseInt(period.replace(/\D/g, ''), 10) || 5;
-  const dateLabels = getLastNDates(periodLength);
+  const periodLength = 5;
+  const dateLabels = getLastNDates(periodLength, 'en-US', {
+    weekday: 'short',
+  });
 
-  // Get top 5 products by revenue
+  // Group orders by weekday
+  const salesMap: Record<string, number> = {};
+  for (const label of dateLabels) {
+    salesMap[label] = 0;
+  }
+
+  orders.forEach((order) => {
+    const date = new Date(order.date);
+    const label = date.toLocaleDateString('en-US', { weekday: 'short' });
+    if (salesMap[label] !== undefined) {
+      salesMap[label] += 1;
+    }
+  });
+
   const topProducts = computeTopProductRevenues(orders, 5);
-
   const colors = [
     'rgba(34,211,238,0.7)',
     'rgba(34,211,238,0.5)',
@@ -50,9 +63,10 @@ const Charts = () => {
     datasets: [
       {
         label: 'Revenue',
-        data: topProducts.map((revenue) => revenue),
+        data: topProducts.map(({ revenue }) => revenue),
         backgroundColor: topProducts.map((_, i) => colors[i % colors.length]),
-        borderRadius: 2,
+        borderRadius: 6,
+        borderSkipped: false,
       },
     ],
   };
@@ -62,12 +76,12 @@ const Charts = () => {
     datasets: [
       {
         label: 'Sales',
-        data: dateLabels.map(() => Math.floor(Math.random() * 100)), // Replace with actual per-day sales
+        data: dateLabels.map((label) => salesMap[label] || 0),
         borderColor: 'rgba(34,211,238,1)',
         backgroundColor: 'rgba(34,211,238,0.2)',
         tension: 0.4,
         fill: true,
-        pointRadius: 4,
+        pointRadius: 3,
       },
     ],
   };
@@ -80,11 +94,8 @@ const Charts = () => {
       y: {
         grid: { color: 'rgba(0, 0, 0, 0.05)' },
         ticks: {
-          callback(tickValue: string | number) {
-            if (typeof tickValue === 'number') {
-              return `₦${tickValue.toLocaleString()}`;
-            }
-            return tickValue;
+          callback(value: string | number) {
+            return typeof value === 'number' ? value : value;
           },
         },
       },
@@ -96,33 +107,52 @@ const Charts = () => {
   };
 
   return (
-    <div>
-      <div className="w-full px-7 mt-6">
-        <h2 className="text-base font-semibold mb-4">Charts</h2>
-        <div className="flex flex-col md:flex-row bg-surface-100 max-w-6xl mx-auto justify-center items-center gap-4 px-6">
-          <CustomLegend label="Order" />
-          <div className="flex-1 w-full max-md:max-w-lg pr-8 py-6">
-            <div className="h-72">
-              <Line data={lineChartData} options={chartOptions} />
+    <div className="w-full max-w-[100vw] px-4 sm:px-6 lg:px-8 mt-6 space-y-4">
+      {/* Line Chart */}
+      <div className="space-y-3">
+        <h2 className="text-base font-semibold text-muted-foreground">
+          Sales Over Last 6 Days
+        </h2>
+        <div className="bg-surface-100 rounded-xl shadow-sm p-6 overflow-hidden">
+          <div className="w-full max-w-full h-[280px] md:h-[320px] relative">
+            <div className="absolute top-30 -left-6 pr-4">
+              <CustomLegend label="Order" />
             </div>
-            <CustomLegend label="Time" />
+            <Line
+              style={{ width: '98%', maxWidth: '98%' }}
+              data={lineChartData}
+              options={chartOptions}
+            />
+            <div className="absolute -bottom-9 left-0 right-0 p-4">
+              <CustomLegend label="Time" />
+            </div>
           </div>
         </div>
       </div>
 
-      <div className="w-full px-8 mt-4">
-        <div className="flex flex-col w-full max-md:max-w-lg py-6 mx-auto justify-center max-w-6xl px-5 bg-surface-100">
-          <div className="h-72 relative">
+      {/* Bar Chart */}
+      <div className="space-y-3">
+        <h2 className="text-base font-semibold text-muted-foreground">
+          Top Products by Revenue
+        </h2>
+        <div className="bg-surface-100 rounded-xl shadow-sm p-4 overflow-x-hiden">
+          <div className="w-full h-[280px] md:h-[320px] relative">
             {topProducts.length === 0 ? (
               <p className="text-center text-muted-foreground">
                 No product data available.
               </p>
             ) : (
-              <Bar data={barChartData} options={chartOptions} />
+              <Bar
+                style={{ width: '100%', maxWidth: '100%' }}
+                data={barChartData}
+                options={chartOptions}
+              />
             )}
             <div className="absolute inset-0 bg-cyan-100 opacity-5 pointer-events-none" />
           </div>
-          <CustomLegend label="Product" />
+          <div className="mt-2">
+            <CustomLegend label="Product" />
+          </div>
         </div>
       </div>
     </div>

@@ -3,7 +3,11 @@
 import React from 'react';
 import Image from 'next/image';
 import { useInventoryStore, useOrderStore } from '@/lib/store';
-import { calculateMostOrderedProduct, formatCurrency } from '@/lib/utils';
+import {
+  calculateMostOrderedProduct,
+  calculatePercentageChange,
+  formatCurrency,
+} from '@/lib/utils';
 
 const MetricCard = ({
   label,
@@ -14,23 +18,27 @@ const MetricCard = ({
   value: string | number;
   change?: number;
 }) => (
-  <div className="flex flex-col px-3 w-full justify-start bg-gradient py-3 rounded-sm">
-    <p className="text-surface-200 text-[10px]">{label}</p>
-    <p className="font-semibold text-surface-200">{value}</p>
+  <div className="flex flex-col justify-between bg-gradient rounded-md p-2 w-full h-full shadow-sm">
+    <div className="space-y-1">
+      <p className="text-surface-200 text-xs truncate">{label}</p>
+      <p className="font-semibold text-surface-200 text-base truncate">
+        {value}
+      </p>
+    </div>
     {typeof change === 'number' && (
-      <div className="flex gap-1.5 mt-2">
+      <div className="flex items-center gap-1 mt-2">
         <Image
           src={change >= 0 ? '/icon/green.svg' : '/icon/red.svg'}
-          width={6}
-          height={6}
+          width={10}
+          height={10}
           alt="trend"
         />
         <p
-          className={`text-[10px] ${
+          className={`text-xs ${
             change >= 0 ? 'text-success' : 'text-destructive'
           }`}
         >
-          {Math.abs(change)}%
+          {Math.abs(change).toFixed(1)}%
         </p>
       </div>
     )}
@@ -51,44 +59,41 @@ const ReportSums = () => {
     0,
   );
 
+  const previousRevenue = 200000;
+  const previousStockValue = 50000;
+
+  const revenueChange = calculatePercentageChange(
+    totalRevenue,
+    previousRevenue,
+  );
+  const stockChange = calculatePercentageChange(
+    totalStockValue,
+    previousStockValue,
+  );
+
   const totalProducts = inventoryItems.length;
   const lowStockItems = inventoryItems.filter((item) => item.stock < 5).length;
   const pendingOrders = orders.filter((o) => o.status === 'Pending').length;
 
-  // Calculate sales count for each product
   const mostOrdered = calculateMostOrderedProduct(orders);
 
-  // Mock values for revenue and stock changes
-  // In a real application, these would be calculated based on historical data
-  const revenueChange = 7;
-  const stockChange = 12;
-
   return (
-    <div className="flex flex-col w-full mt-3 gap-2">
-      <div className="flex w-full gap-4 px-6 h-20">
+    <div className="w-full mx-auto px-4 lg:px-8 mt-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 auto-rows-fr">
         <MetricCard
           label="Total Revenue"
           value={formatCurrency(totalRevenue)}
           change={revenueChange}
         />
         <MetricCard label="Total Orders" value={totalOrders} />
-      </div>
-
-      <div className="flex w-full gap-4 px-6 h-20">
         <MetricCard
           label="Total Stock Value"
           value={formatCurrency(totalStockValue)}
           change={stockChange}
         />
         <MetricCard label="Total Products" value={totalProducts} />
-      </div>
-
-      <div className="flex w-full gap-4 px-6 h-20">
         <MetricCard label="Low Stock Items" value={lowStockItems} />
         <MetricCard label="Top Selling Product" value={mostOrdered.name} />
-      </div>
-
-      <div className="flex w-1/2 gap-4 pl-6 pr-2 h-20">
         <MetricCard label="Pending Orders" value={pendingOrders} />
       </div>
     </div>

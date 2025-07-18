@@ -1,9 +1,12 @@
+'use client';
+
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { recentOrders as defaultOrders } from '@/constants';
-
 import { InventoryStore, Order, ReportPeriod } from '@/types';
-import { fetchAllInventoryItems } from './api/user.actions';
+import { fetchInventoryClient } from '@/lib/api/client/inventory';
+
+// -------------------- INVENTORY STORE --------------------
 
 export const useInventoryStore = create<InventoryStore>()(
   persist(
@@ -12,12 +15,16 @@ export const useInventoryStore = create<InventoryStore>()(
       searchTerm: '',
 
       setSearchTerm: (term) => set({ searchTerm: term }),
-
       setInventory: (products) => set({ inventory: products }),
 
       fetchInventoryFromAPI: async () => {
         try {
-          const data = await fetchAllInventoryItems();
+          const token = localStorage.getItem('token');
+          if (!token) {
+            console.warn('No token found in localStorage');
+            return;
+          }
+          const data = await fetchInventoryClient(token);
           set({ inventory: data });
         } catch (error) {
           console.error('Failed to fetch inventory', error);
@@ -55,19 +62,24 @@ export const useInventoryStore = create<InventoryStore>()(
       reduceStock: (id, quantity) =>
         set({
           inventory: get().inventory.map((item) =>
-            item.id === id
+            String(item.id) === String(id)
               ? {
                   ...item,
-                  stock_level: Math.max(0, item.stock - quantity),
+                  stock: Math.max(0, item.stock - quantity),
                   last_updated: new Date().toISOString(),
                 }
               : item,
           ),
         }),
     }),
-    { name: 'inventory' },
+    {
+      name: 'inventory-store',
+    },
   ),
 );
+
+// -------------------- ORDER STORE --------------------
+
 interface OrderStore {
   orders: Order[];
   addOrder: (order: Order) => void;
@@ -103,10 +115,12 @@ export const useOrderStore = create<OrderStore>()(
         }),
     }),
     {
-      name: 'order-storage',
+      name: 'order-store',
     },
   ),
 );
+
+// -------------------- REPORT STORE --------------------
 
 interface ReportStoreState {
   period: ReportPeriod;
@@ -123,10 +137,9 @@ export const useReportStore = create<ReportStoreState>()(
     (set, get) => ({
       period: '7d',
       totalRevenue: 0,
-      topProducts: [],
-
       previousRevenue: 0,
       percentageChange: 0,
+      topProducts: [],
 
       setPeriod: (period) => {
         set({ period });
@@ -164,7 +177,7 @@ export const useReportStore = create<ReportStoreState>()(
         const productMap: Record<string, { name: string; revenue: number }> =
           {};
 
-        filteredOrders?.forEach((order) => {
+        filteredOrders.forEach((order) => {
           totalRevenue += order.total;
 
           for (const product of order.products ?? []) {
@@ -187,14 +200,13 @@ export const useReportStore = create<ReportStoreState>()(
       },
     }),
     {
-      name: 'report-settings', // storage key
-      partialize: (state) => ({ period: state.period }), // only persist period
+      name: 'report-store',
+      partialize: (state) => ({ period: state.period }),
     },
   ),
 );
 
-// When orders change, auto-run computeReport.
-
+// Recompute report when orders change
 useOrderStore.subscribe(() => {
   useReportStore.getState().computeReport();
 });

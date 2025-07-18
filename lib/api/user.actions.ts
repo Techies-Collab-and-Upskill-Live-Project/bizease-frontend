@@ -1,40 +1,47 @@
-'use server';
-
 import { InventoryItem } from '@/types';
-import api from '../api';
+import { axiosInstance } from '../axios';
 
-const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
 
-export const fetchAllInventoryItems = async () => {
-  const res = await api.get('/inventory'); // no ID
-  return res.data; // Assuming the API returns an array of inventory items
+export const fetchInventory = async (token: string) => {
+  const res = await fetch(`${BASE_URL}/inventory/`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  if (!res.ok) throw new Error('Failed to fetch inventory');
+  const json = await res.json();
+  return json.data.products;
 };
 
-export const fetchInventoryItemById = async (id: number) => {
-  const res = await api.get(`/inventory/${id}`);
-  if (!res) throw new Error('Failed to fetch inventory item');
-  return res.data; // Assuming the API returns a single inventory item
-};
-
-export const createInventoryItem = async (data: InventoryItem) => {
-  const res = await fetch(`${BASE_URL}/inventory`, {
+export const addInventoryItem = async (
+  token: string,
+  item: Omit<InventoryItem, 'id'>,
+) => {
+  const res = await fetch(`${BASE_URL}/inventory/`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      Authorization: `Bearer ${localStorage.getItem('token')}`,
+      Authorization: `Bearer ${token}`,
     },
     body: JSON.stringify(data),
   });
 
-  if (!res.ok) throw new Error('Failed to create inventory item');
+  if (!res.ok) throw new Error('Failed to add inventory item');
   return res.json();
 };
-export const updateInventoryItem = async (id: number, data: InventoryItem) => {
+
+export const updateInventoryItem = async (
+  token: string,
+  id: number,
+  data: Partial<InventoryItem>,
+) => {
   const res = await fetch(`${BASE_URL}/inventory/${id}`, {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
-      Authorization: `Bearer ${localStorage.getItem('token')}`,
+      Authorization: `Bearer ${token}`,
     },
     body: JSON.stringify(data),
   });
@@ -43,14 +50,19 @@ export const updateInventoryItem = async (id: number, data: InventoryItem) => {
   return res.json();
 };
 
-export const deleteInventoryItem = async (id: number) => {
+export const deleteInventoryItem = async (token: string, id: number) => {
   const res = await fetch(`${BASE_URL}/inventory/${id}`, {
     method: 'DELETE',
     headers: {
-      Authorization: `Bearer ${localStorage.getItem('token')}`,
+      Authorization: `Bearer ${token}`,
     },
   });
 
   if (!res.ok) throw new Error('Failed to delete inventory item');
   return res.json();
+};
+
+export const fetchInventoryItem = async (id: number) => {
+  const res = await axiosInstance.get(`/inventory/${id}`);
+  return res.data;
 };

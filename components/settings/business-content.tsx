@@ -1,11 +1,15 @@
 'use client';
 
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Button } from '@/components/ui/button';
-import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
-import LoadingSpinner from '../spinner';
-import { useBusiness } from '@/hooks/useBusiness';
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import LoadingSpinner from "../spinner";
+import { useEffect } from "react";
+import LoadingButton from "../loading-button";
+import { useCurrentUser } from "@/hooks/useCurrentUser";
+import { useSettings } from "@/hooks/useSettings";
+import type { FieldErrors } from "react-hook-form";
+import type { BusinessFormValues } from "@/lib/validations/settings";
 
 export default function BusinessSettings() {
   const {
@@ -13,25 +17,55 @@ export default function BusinessSettings() {
       register,
       handleSubmit,
       formState: { errors, isSubmitting },
+      reset,
     },
     avatarPreview,
     handleAvatarChange,
     onSubmit,
-  } = useBusiness();
+  } = useSettings("business");
 
-  return isSubmitting ? (
+  const businessErrors = errors as FieldErrors<BusinessFormValues>;
+
+  const { user, loading } = useCurrentUser();
+
+  useEffect(() => {
+    if (user && !loading) {
+      reset({
+        businessName: user.business_name || "",
+        businessEmail: user.email || "",
+        businessPhone: user.business_phone || "",
+        businessAddress: user.business_address || "",
+        businessType: user.business_type || "",
+        currency: user.currency || "",
+        type: "business",
+      });
+    }
+  }, [user, loading, reset]);
+
+  return isSubmitting || loading ? (
     <LoadingSpinner />
   ) : (
     <form
-      onSubmit={handleSubmit(onSubmit)}
-      className="flex flex-col px-6 space-y-5 max-w-md mx-auto "
+      onSubmit={handleSubmit((data) => {
+        console.log("handleSubmit triggered");
+        onSubmit(data);
+      })}
+      className="flex flex-col px-6 space-y-5 max-w-md mx-auto"
     >
+      <input type="hidden" {...register("type")} value="business" />
       {/* Avatar */}
       <div className="flex flex-col gap-2 items-center justify-center space-y-2">
         <Avatar className="w-30 h-30">
           <AvatarImage src={avatarPreview || ''} alt="Avatar" />
           <AvatarFallback className="font-bold text-gray-600 text-base">
-            OG
+            {user?.business_name
+              ? user.business_name
+                  .split(' ')
+                  .map((n) => n[0])
+                  .join('')
+                  .slice(0, 2)
+                  .toUpperCase()
+              : 'OG'}
           </AvatarFallback>
         </Avatar>
         <div>
@@ -65,8 +99,10 @@ export default function BusinessSettings() {
           className="text-xs tracking-wide md:py-6 shadow-sm"
           placeholder="Jessica Reeves"
         />
-        {errors.businessName && (
-          <p className="text-sm text-red-500">{errors.businessName.message}</p>
+        {businessErrors.businessName && (
+          <p className="text-sm text-red-500">
+            {businessErrors.businessName.message}
+          </p>
         )}
       </div>
 
@@ -85,8 +121,10 @@ export default function BusinessSettings() {
           placeholder="jessyreeves@gmail.com"
           className="text-xs tracking-wide md:py-6 shadow-sm"
         />
-        {errors.businessEmail && (
-          <p className="text-sm text-red-500">{errors.businessEmail.message}</p>
+        {businessErrors.businessEmail && (
+          <p className="text-sm text-red-500">
+            {businessErrors.businessEmail.message}
+          </p>
         )}
       </div>
 
@@ -105,8 +143,10 @@ export default function BusinessSettings() {
           placeholder="+234 906 4473 435"
           className="text-xs tracking-wide md:py-6 shadow-sm"
         />
-        {errors.businessPhone && (
-          <p className="text-sm text-red-500">{errors.businessPhone.message}</p>
+        {businessErrors.businessPhone && (
+          <p className="text-sm text-red-500">
+            {businessErrors.businessPhone.message}
+          </p>
         )}
       </div>
 
@@ -125,9 +165,9 @@ export default function BusinessSettings() {
           className="text-xs tracking-wide md:py-6 shadow-sm"
           placeholder="Address"
         />
-        {errors.businessAddress && (
+        {businessErrors.businessAddress && (
           <p className="text-sm text-red-500">
-            {errors.businessAddress.message}
+            {businessErrors.businessAddress.message}
           </p>
         )}
       </div>
@@ -145,15 +185,17 @@ export default function BusinessSettings() {
           {...register('businessType')}
           className="border-2 border-gray-200 text-xs tracking-wide rounded-sm px-3 py-2 md:py-4 shadow-sm"
         >
-          <option value="">Select a type</option>
-          <option value="Retail">Retail</option>
-          <option value="Tech">Tech</option>
-          <option value="Healthcare">Healthcare</option>
-          <option value="Consulting">Consulting</option>
+          <option value="">Select Business Type</option>
+          <option value="Nonprofit">Nonprofit</option>
+          <option value="Limited partnership">Limited partnership</option>
+          <option value="Joint Venture">Joint venture</option>
+          <option value="General partnership">General partnership</option>
           <option value="Other">Other</option>
         </select>
-        {errors.businessType && (
-          <p className="text-sm text-red-500">{errors.businessType.message}</p>
+        {businessErrors.businessType && (
+          <p className="text-sm text-red-500">
+            {businessErrors.businessType.message}
+          </p>
         )}
       </div>
 
@@ -171,26 +213,29 @@ export default function BusinessSettings() {
           className="border-2 border-gray-200 text-xs tracking-wide rounded-sm px-3 py-2 md:py-4 shadow-sm"
         >
           <option value="">Select currency</option>
-          <option value="USD">USD – US Dollar</option>
-          <option value="EUR">EUR – Euro</option>
-          <option value="GBP">GBP – British Pound</option>
-          <option value="NGN">NGN – Nigerian Naira</option>
-          <option value="CAD">CAD – Canadian Dollar</option>
+          <option value="USD">USD </option>
+          <option value="EUR">EUR </option>
+          <option value="GBP">GBP </option>
+          <option value="NGN">NGN </option>
+          <option value="CAD">CAD</option>
         </select>
-        {errors.currency && (
-          <p className="text-sm text-red-500">{errors.currency.message}</p>
+        {businessErrors.currency && (
+          <p className="text-sm text-red-500">
+            {businessErrors.currency.message}
+          </p>
         )}
       </div>
 
       {/* Save Changes */}
       <div className="flex justify-center w-full my-2">
-        <Button
+        <LoadingButton
           type="submit"
-          className="w-full rounded-sm py-5 md:py-6 cursor-pointer bg-[#06005B]"
+          loading={isSubmitting}
           disabled={isSubmitting}
+          className="rounded-sm bg-[#06005B] hover:bg-blue-900 w-full py-3 text-white"
         >
           Save Changes
-        </Button>
+        </LoadingButton>
       </div>
     </form>
   );

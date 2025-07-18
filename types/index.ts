@@ -46,6 +46,7 @@ export interface SearchProductProps {
 }
 export type Order = {
   id: string;
+  email: string;
   name: string;
   products: {
     productId: string;
@@ -110,6 +111,7 @@ export interface InventoryStore {
   removeProduct: (id: number) => void;
   editProduct: (id: number, data: Partial<Product>) => void;
   reduceStock: (id: number, quantity: number) => void;
+  fetchInventoryFromAPI: () => Promise<void>;
 }
 
 export interface InventoryItem {
