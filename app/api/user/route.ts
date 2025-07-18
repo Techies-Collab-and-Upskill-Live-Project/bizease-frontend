@@ -1,28 +1,28 @@
-import { NextRequest, NextResponse } from "next/server";
-import axios, { AxiosError } from "axios";
+import { NextRequest, NextResponse } from 'next/server';
+import axios, { AxiosError } from 'axios';
 
 interface UserDataResponse {
   detail?: string;
 }
 export async function GET(req: NextRequest) {
-  const accessToken = req.cookies.get("access_token")?.value;
+  const accessToken = req.cookies.get('access_token')?.value;
 
   if (!accessToken) {
-    console.log("no token");
+    console.log('no token');
     return NextResponse.json(
-      { message: "Unauthorized: No access token" },
-      { status: 401 }
+      { message: 'Unauthorized: No access token' },
+      { status: 401 },
     );
   }
 
   try {
     const response = await axios.get(
-      `${process.env.NEXT_PUBLIC_BASE_URL}accounts`,
+      `${process.env.NEXT_PUBLIC_BASE_URL}accounts/`,
       {
         headers: {
           Authorization: `Bearer ${accessToken}`,
         },
-      }
+      },
     );
 
     console.log(response.data);
@@ -30,16 +30,16 @@ export async function GET(req: NextRequest) {
   } catch (error) {
     const axiosError = error as AxiosError<UserDataResponse>;
 
-    console.error("Error fetching user data:", axiosError.message);
+    console.error('Error fetching user data:', axiosError.message);
 
     return NextResponse.json(
       {
         message:
-          axiosError.response?.data?.detail || "Failed to fetch user details",
+          axiosError.response?.data?.detail || 'Failed to fetch user details',
       },
       {
         status: axiosError.response?.status || 500,
-      }
+      },
     );
   }
 }
