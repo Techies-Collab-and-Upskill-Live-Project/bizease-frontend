@@ -14,7 +14,7 @@ import AnimatedCountUp from '../animations/AnimatedCountUp';
 import DeleteConfirmationModal from './DeleteModal';
 
 import { toast } from 'sonner';
-import { updateOrder, deleteOrder } from '../../lib/api/inventory'; // your API service
+import { updateOrder, deleteOrder } from '../../lib/api/order'; // your API service
 
 interface Props {
   order: Order | null;

@@ -17,6 +17,7 @@ export interface InventoryData {
 }
 export async function GET(req: NextRequest) {
   const accessToken = req.cookies.get('access_token')?.value;
+  console.log('Access Token:', accessToken);
 
   if (!accessToken) {
     console.log('no token');
@@ -35,6 +36,7 @@ export async function GET(req: NextRequest) {
         },
       },
     );
+    console.log('Raw inventory response:', response.data);
 
     console.log(response.data);
     return NextResponse.json({ status: 200, data: response.data });
