@@ -9,7 +9,7 @@ import MobileButtons from '@/components/dashboard/MobileButton';
 import PendingOrders from '@/components/dashboard/PendingOrders';
 import LowStockItems from '@/components/dashboard/LowStockItems';
 
-import { useOrderStore } from '@/lib/store';
+import { useOrderStore } from '@/lib/store/orders';
 import { calculateMostOrderedProduct } from '@/lib/utils';
 import AnimatedCountUp from '@/components/animations/AnimatedCountUp';
 
@@ -20,7 +20,15 @@ const DashboardPage = () => {
   const totalRevenue = orders.reduce((sum, order) => sum + order.total, 0);
 
   //  Determine top product by frequency across orders
-  const mostOrdered = calculateMostOrderedProduct(orders);
+  const mostOrdered = calculateMostOrderedProduct(
+    orders.map((order) => ({
+      ...order,
+      products: order.products?.map((product) => ({
+        ...product,
+        productName: product.product_name,
+      })),
+    })),
+  );
 
   return (
     <section className="relative min-h-screen h-fit w-full bg-gray-100">

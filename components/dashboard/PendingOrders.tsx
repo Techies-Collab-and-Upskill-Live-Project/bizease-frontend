@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { useOrderStore } from '@/lib/store';
+import { useOrderStore } from '@/lib/store/orders';
 import { formatCurrency } from '@/lib/utils';
 import { Order } from '@/types';
 import OrderModal from '@/components/modals/OrderModal';
@@ -33,11 +33,11 @@ const PendingOrders = () => {
                   <span className="font-semibold text-gray-800">
                     {order.id}
                   </span>
-                  <span className="text-[11px]">{order.lastUpdated}</span>
+                  <span className="text-[11px]">{order.last_updated}</span>
                 </div>
 
                 <div className="text-[14px] font-medium text-gray-700">
-                  {order.name} - <span>{formatCurrency(order.total)}</span>
+                  {order.owwner} - <span>{formatCurrency(order.total)}</span>
                 </div>
 
                 <div className="flex justify-between items-center text-sm">

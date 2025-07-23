@@ -14,7 +14,7 @@ import { Card, CardContent, CardHeader } from '@/components/ui/card';
 
 import { editInventoryformSchema } from '@/lib/validations/editInventoryProduct';
 import { EditInventoryFormData } from '@/types';
-import { useInventoryStore } from '@/lib/store';
+// import { useInventoryStore } from '@/lib/store/inventory';
 
 export default function EditProduct() {
   //  Hooks
@@ -46,7 +46,7 @@ export default function EditProduct() {
       category: product?.category || '',
       stockLevel: product?.stock ?? 0,
       price: product?.price ?? 0,
-      lowStockThreshold: product?.lowStockThreshold ?? 5,
+      lowStockThreshold: product?.low_stock_threshold ?? 5,
       description: product?.description || '',
     }),
     [product],
@@ -64,14 +64,14 @@ export default function EditProduct() {
 
   //  Submit handler: update store and redirect
   const onSubmit = (data: EditInventoryFormData) => {
-    updateProduct(productId, {
+    updateProduct(String(productId), {
       id: productId,
-      name: data.itemName,
-      category: data.category,
-      stock: data.stockLevel,
-      price: data.price,
-      lowStockThreshold: data.lowStockThreshold,
+      product_name: data.itemName,
       description: data.description,
+      category: data.category,
+      stock_level: data.stockLevel,
+      low_stock_threshold: data.lowStockThreshold,
+      price: data.price,
     });
 
     router.push(`/inventory/edit-product-success/${productId}`);

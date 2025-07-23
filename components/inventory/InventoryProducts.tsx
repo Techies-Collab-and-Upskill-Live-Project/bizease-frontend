@@ -8,8 +8,9 @@ import { ChevronLeft, ChevronRight, Trash2, X } from 'lucide-react';
 import Link from 'next/link';
 
 import { SearchProductProps } from '@/types';
-import { useInventoryStore } from '@/lib/store';
 import DeleteConfirmationModal from '../modals/DeleteModal';
+import { useInventory } from '@/hooks/useInventory';
+import { deleteInventoryItem } from '@/lib/services/inventory';
 
 export default function InventoryComponent({
   setCurrentPage,
@@ -17,24 +18,35 @@ export default function InventoryComponent({
   currentPage,
   filter,
 }: SearchProductProps) {
-  const inventoryItems = useInventoryStore((state) => state.inventory);
-  const deleteInventoryItem = useInventoryStore((state) => state.removeProduct);
-  const inventorySearch = useInventoryStore((state) => state.searchTerm);
-
+  const { inventory, loading, error, deleteItem } = useInventory();
+  const [searchTerm, setSearchTerm] = useState('');
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [selectedProductId, setSelectedProductId] = useState<number | null>(
     null,
   );
+
+  console.log('[DEBUG] inventory:', inventory);
+
   const [isOpen, setIsOpen] = useState(false);
   const itemsPerPage = 6;
 
-  const selectedProduct = inventoryItems.find(
-    ({ id }) => id === selectedProductId,
+  // const selectedProduct = inventory.find(({ id }) => id === selectedProductId);
+
+  // const selectedProduct = inventory.find(
+  //   ({ id }) => String(id) === String(selectedProductId),
+  // );
+
+  const selectedProduct = inventory.find(
+    ({ id }) => id === Number(selectedProductId),
   );
 
-  const getStockStatus = (stock: number) => {
-    if (stock === 0) return 'Zero Stock';
-    if (stock <= 5) return 'Low Stock';
+  console.log('[DEBUG] selectedProductId:', selectedProductId);
+
+  console.log('[DEBUG] selectedProduct:', selectedProduct);
+
+  const getStockStatus = (stock_level: number) => {
+    if (stock_level === 0) return 'Zero Stock';
+    if (stock_level <= 5) return 'Low Stock';
     return 'In Stock';
   };
 
@@ -44,20 +56,21 @@ export default function InventoryComponent({
     return 'bg-success font-normal p-0';
   };
 
-  const filteredProduct = inventoryItems
-    .filter(({ name }) =>
-      name.toLowerCase().includes(inventorySearch.toLowerCase()),
-    )
-    .filter(({ stock }) => {
-      if (filter === 'zero') return stock === 0;
-      if (filter === 'low') return stock > 0 && stock <= 5;
-      if (filter === 'in') return stock > 5;
+  const filteredProduct = inventory
+    .filter(({ product_name }) => {
+      if (typeof product_name !== 'string') return false;
+      return product_name.toLowerCase().includes(searchTerm);
+    })
+    .filter(({ stock_level }) => {
+      if (filter === 'zero') return stock_level === 0;
+      if (filter === 'low') return stock_level > 0 && stock_level <= 5;
+      if (filter === 'in') return stock_level > 5;
       return true;
     })
     .map((product) => ({
       ...product,
-      stockStatus: getStockStatus(product.stock),
-      statusClass: getStockStatusClass(product.stock),
+      stockStatus: getStockStatus(product.stock_level),
+      statusClass: getStockStatusClass(product.stock_level),
     }));
 
   const totalPages = Math.ceil(filteredProduct.length / itemsPerPage);
@@ -99,10 +112,10 @@ export default function InventoryComponent({
             ({
               id,
               category,
-              stock,
-              lastUpdated,
+              stock_level,
+              last_updated,
               price,
-              name,
+              product_name,
               stockStatus,
               statusClass,
             }) => (
@@ -110,11 +123,11 @@ export default function InventoryComponent({
                 <CardContent className="px-0 py-0 text-center grid grid-cols-7 gap-2 text-sm text-gray-700">
                   <div className="flex items-center gap-2 text-left">
                     <div className="h-5 w-5 bg-gray-200" />
-                    {name}
+                    {product_name}
                   </div>
                   <div className="flex-center">{category}</div>
                   <div className="flex-center">
-                    {stock} {stock > 1 ? 'Units' : 'Unit'}
+                    {stock_level} {stock_level > 1 ? 'Units' : 'Unit'}
                   </div>
                   <div className="flex-center">{formatCurrency(price)}</div>
                   <div
@@ -122,7 +135,7 @@ export default function InventoryComponent({
                   >
                     {stockStatus}
                   </div>
-                  <div className="flex-center px-2 ml-2">{lastUpdated}</div>
+                  <div className="flex-center px-2 ml-2">{last_updated}</div>
                   <div className="flex items-center justify-center gap-2">
                     <Link href={`/inventory/edit-product/${id}`}>
                       <Button className="bg-darkblue text-surface-100 hover:bg-lightblue text-xs px-4 py-2">
@@ -131,7 +144,7 @@ export default function InventoryComponent({
                     </Link>
                     <Button
                       onClick={() => {
-                        setSelectedProductId(id);
+                        setSelectedProductId(id ?? null);
                         setDeleteModalOpen(true);
                       }}
                       variant="ghost"
@@ -154,12 +167,22 @@ export default function InventoryComponent({
               setDeleteModalOpen(false);
               setSelectedProductId(null);
             }}
-            onConfirm={() => {
-              deleteInventoryItem(selectedProductId!);
-              setDeleteModalOpen(false);
-              setSelectedProductId(null);
+            // onConfirm={() => {
+            //   deleteInventoryItem(String(selectedProductId!));
+            //   setDeleteModalOpen(false);
+            //   setSelectedProductId(null);
+            // }}
+            onConfirm={async () => {
+              try {
+                await deleteItem(String(selectedProductId!));
+              } catch (err) {
+                console.error('Failed to delete item:', err);
+              } finally {
+                setDeleteModalOpen(false);
+                setSelectedProductId(null);
+              }
             }}
-            productName={selectedProduct.name}
+            productName={selectedProduct?.product_name}
           />
         )}
       </div>
@@ -169,46 +192,55 @@ export default function InventoryComponent({
         {currentProducts.length === 0 ? (
           <EmptyState />
         ) : (
-          currentProducts.map(({ id, category, stock, price, name }) => (
-            <Card key={id} className="p-4 bg-gray-100">
-              <CardContent className="flex justify-between items-end p-0 gap-4">
-                <div className="flex flex-col gap-1 text-sm">
-                  <h3 className="text-gray-600 font-semibold text-base">
-                    {name}
-                  </h3>
-                  <div className="text-gray-400">{category}</div>
-                  <div className="text-[10px] font-bold py-0.5 px-2 rounded-lg bg-warning text-gray-800">
-                    <div className="flex-center gap-2">
-                      <div className="bg-red-600 h-1.5 w-1.5 rounded-full" />
-                      {stock === 0
-                        ? 'Zero Stock'
-                        : stock <= 5
-                        ? 'Low Stock'
-                        : `${stock} - Units`}
+          currentProducts.map(
+            ({ id, category, stock_level, price, product_name }) => (
+              <Card key={id} className="p-4 bg-gray-100">
+                <CardContent className="flex justify-between items-end p-0 gap-4">
+                  <div className="flex flex-col gap-1 text-sm">
+                    <h3 className="text-gray-600 font-semibold text-base">
+                      {product_name}
+                    </h3>
+                    <div className="text-gray-400">{category}</div>
+                    <div className="text-[10px] font-bold py-0.5 px-2 rounded-lg bg-warning text-gray-800">
+                      <div className="flex-center gap-2">
+                        <div className="bg-red-600 h-1.5 w-1.5 rounded-full" />
+                        {stock_level === 0
+                          ? 'Zero Stock'
+                          : stock_level <= 5
+                          ? 'Low Stock'
+                          : `${stock_level} - Units`}
+                      </div>
+                    </div>
+                    <div className="text-gray-700 text-lg font-semibold">
+                      {formatCurrency(price)}
                     </div>
                   </div>
-                  <div className="text-gray-700 text-lg font-semibold">
-                    {formatCurrency(price)}
-                  </div>
-                </div>
-                <div className="flex flex-col gap-1 items-end">
-                  <Link href={`/inventory/edit-product/${id}`}>
-                    <Button className="bg-darkblue text-surface-100 hover:bg-lightblue text-xs px-3">
-                      Restock
+                  <div className="flex flex-col gap-1 items-end">
+                    <Link href={`/inventory/edit-product/${id}`}>
+                      <Button className="bg-darkblue text-surface-100 hover:bg-lightblue text-xs px-3">
+                        Restock
+                      </Button>
+                    </Link>
+                    <Button
+                      // onClick={() => deleteInventoryItem(String(id))}
+                      onClick={async () => {
+                        try {
+                          await deleteItem(String(id));
+                        } catch (err) {
+                          console.error('Failed to delete item:', err);
+                        }
+                      }}
+                      variant="ghost"
+                      size="icon"
+                      className="hover:bg-red-100 hover:text-red-600 p-1"
+                    >
+                      <Trash2 className="h-4 w-4" />
                     </Button>
-                  </Link>
-                  <Button
-                    onClick={() => deleteInventoryItem(id)}
-                    variant="ghost"
-                    size="icon"
-                    className="hover:bg-red-100 hover:text-red-600 p-1"
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-          ))
+                  </div>
+                </CardContent>
+              </Card>
+            ),
+          )
         )}
 
         {/* Floating Action Buttons */}

@@ -44,30 +44,30 @@ export interface SearchProductProps {
   searchTerm: string;
   setSearchTerm: (term: string) => void;
 }
-export type Order = {
-  id: string;
-  email: string;
-  name: string;
-  products: {
-    productId: string;
-    productName: string;
-    quantity: number;
-    price: number;
-  }[];
-  status: 'Pending' | 'Delivered' | 'Cancelled';
-  total: number;
-  lastUpdated: string;
-  date: string;
-};
+// export type Order = {
+//   id: string;
+//   email: string;
+//   owwner: string;
+//   products: {
+//     productId: string;
+//     product_name: string;
+//     quantity: number;
+//     price: number;
+//   }[];
+//   status: 'Pending' | 'Delivered' | 'Cancelled';
+//   total: number;
+//   last_updated: string;
+//   date: string;
+// };
 
 export type EditProductProps = {
   editProduct: {
     id: string;
-    itemName: string;
+    product_name: string;
     category: string;
-    stockLevel: number;
+    stock_level: number;
     price: number;
-    lowStockThreshold: number;
+    low_stock_threshold: number;
     description?: string;
   };
 };
@@ -101,21 +101,29 @@ export type Product = {
 
 export type ReportPeriod = '7d' | '30d' | 'thisMonth' | 'all';
 
-export interface InventoryStore {
-  inventory: Product[];
-  searchTerm: string;
-  setSearchTerm: (term: string) => void;
-  setInventory: (products: Product[]) => void;
-  addProduct: (product: Product) => void;
-  updateProduct: (updatedProduct: Product) => void;
-  removeProduct: (id: number) => void;
-  editProduct: (id: number, data: Partial<Product>) => void;
-  reduceStock: (id: number, quantity: number) => void;
-  fetchInventoryFromAPI: () => Promise<void>;
-}
-
-export interface InventoryItem {
+export interface AddInventoryItem {
+  owner: string;
   id?: number;
+  product_name: string;
+  description: string;
+  category: string;
+  stock_level: number;
+  low_stock_threshold: number;
+  price: number;
+  last_updated: string;
+}
+export interface InventoryItem {
+  owner: string;
+  id?: number;
+  product_name: string;
+  description: string;
+  category: string;
+  stock_level: number;
+  low_stock_threshold: number;
+  price: number;
+  last_updated: string;
+}
+export interface PostInventoryItem {
   owner: string;
   product_name: string;
   description: string;
@@ -124,4 +132,56 @@ export interface InventoryItem {
   low_stock_threshold: number;
   price: number;
   last_updated: string;
+}
+
+export interface InventoryStats {
+  total_products: number;
+  total_stock_value: number;
+  totalValue: number;
+  low_stock_count: number;
+}
+
+export interface InventoryStore {
+  inventory: InventoryItem[];
+  stats: InventoryStats | null;
+  loading: boolean;
+  error: string | null;
+  searchTerm: string;
+
+  setSearchTerm: (term: string) => void;
+  setInventory: (products: InventoryItem[]) => void;
+
+  fetchInventoryFromAPI: () => Promise<void>;
+  fetchInventoryStats: () => Promise<void>;
+  addProductToAPI: (product: Partial<InventoryItem>) => Promise<void>;
+  updateProductInAPI: (
+    id: string,
+    data: Partial<InventoryItem>,
+  ) => Promise<void>;
+  deleteProductFromAPI: (id: string) => Promise<void>;
+
+  editProduct: (id: string, data: Partial<InventoryItem>) => void;
+  reduceStock: (id: string, quantity: number) => void;
+}
+
+// types/order.ts
+export type OrderStatus = 'pending' | 'fulfilled' | 'cancelled';
+export interface OrderedProduct {
+  name: string;
+  order_id?: number;
+  quantity: number;
+  price: number;
+  cummulative_price: number;
+}
+
+export interface Order {
+  id?: number;
+  client_name: string;
+  client_email: string;
+  client_phone: string;
+  status: string;
+  order_date: string;
+  delivery_date: string;
+  total_price: number;
+  ordered_products: OrderedProduct[];
 }

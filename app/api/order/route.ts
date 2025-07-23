@@ -1,0 +1,95 @@
+import { NextRequest, NextResponse } from 'next/server';
+import axios, { AxiosError } from 'axios';
+
+export async function GET(req: NextRequest) {
+  const accessToken = req.cookies.get('access_token')?.value;
+
+  if (!accessToken) {
+    return NextResponse.json(
+      { message: 'Unauthorized: No access token' },
+      { status: 401 },
+    );
+  }
+
+  const { searchParams } = new URL(req.url);
+  const page = searchParams.get('page');
+  const status = searchParams.get('status');
+  const order = searchParams.get('order');
+
+  try {
+    const response = await axios.get(
+      `${process.env.NEXT_PUBLIC_BASE_URL}orders/`,
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+        // params: {
+        //   ...(page && { page }),
+        //   ...(status && { status }),
+        //   ...(order && { order }),
+        // },
+      },
+    );
+
+    console.log('Fetched orders:', response.data);
+
+    return NextResponse.json({ status: 200, data: response.data });
+  } catch (error) {
+    const axiosError = error as AxiosError;
+    console.error('Error fetching orders:', axiosError);
+    return NextResponse.json(
+      {
+        message:
+          (axiosError.response?.data as { detail?: string; message?: string })
+            ?.detail ||
+          (axiosError.response?.data as { detail?: string; message?: string })
+            ?.message ||
+          'Failed to fetch orders',
+      },
+      {
+        status: axiosError.response?.status || 500,
+      },
+    );
+  }
+}
+
+export async function POST(req: NextRequest) {
+  const accessToken = req.cookies.get('access_token')?.value;
+
+  if (!accessToken) {
+    return NextResponse.json(
+      { message: 'Unauthorized: No access token' },
+      { status: 401 },
+    );
+  }
+
+  try {
+    const orderPayload = await req.json();
+
+    const response = await axios.post(
+      `${process.env.NEXT_PUBLIC_BASE_URL}orders/`,
+      orderPayload,
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          'Content-Type': 'application/json',
+        },
+      },
+    );
+
+    return NextResponse.json({ status: 200, data: response.data });
+  } catch (error) {
+    const axiosError = error as AxiosError<any>;
+    return NextResponse.json(
+      {
+        message:
+          axiosError.response?.data?.detail ||
+          axiosError.response?.data?.message ||
+          'Failed to create order',
+      },
+      {
+        status: axiosError.response?.status || 500,
+      },
+    );
+  }
+}
