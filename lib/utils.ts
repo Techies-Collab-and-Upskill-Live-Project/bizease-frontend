@@ -8,6 +8,9 @@ export function cn(...inputs: ClassValue[]) {
 // This formats  currency to a string with the appropriate locale and formatting.
 // It uses the Nigerian locale and ensures one decimal place is shown.
 export function formatCurrency(amount: number): string {
+  if (typeof amount !== 'number' || isNaN(amount)) {
+    return '₦0'; // or "N/A" or any default
+  }
   return amount.toLocaleString('en-NG', {
     style: 'currency',
     currency: 'NGN',

@@ -47,7 +47,6 @@ export interface ReportQuery {
 export const getReport = async (params: ReportQuery) => {
   try {
     const res = await axiosInstance.get('/report-analytics/', { params });
-    console.log('service report', res);
 
     if (res.data?.error) {
       console.error('Error fetching report:', res.data.error);

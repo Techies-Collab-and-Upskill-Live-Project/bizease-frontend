@@ -230,3 +230,18 @@ export interface UpdateOrderModalProps {
   onClose: () => void;
   showActions?: boolean;
 }
+
+export type RevenueChartData = {
+  date: string; // e.g., '2025-07-24'
+  revenue: number; // e.g., 250000
+};
+
+export type ReportData = {
+  total_products: number;
+  total_stock_value: number;
+  low_stock_items: number;
+  pending_orders: number;
+  period: string; // e.g., 'last-week' or 'this-month'
+  top_selling_product: string;
+  date_revenue_chart_data: RevenueChartData[];
+};

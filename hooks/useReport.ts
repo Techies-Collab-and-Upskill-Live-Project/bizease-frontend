@@ -17,6 +17,8 @@ export interface BusinessReport {
   product_sales_chart_data: {
     name: string;
     quantity_sold: number;
+    revenue: number;
+    stock_status: string;
   }[];
 }
 
@@ -31,7 +33,6 @@ export function useReport(params: ReportQuery) {
 
     try {
       const reportData = await getReport(params);
-      console.log('hooks report ', reportData);
       setReport(reportData);
     } catch (err: any) {
       setError(err.message || 'Failed to load report');
