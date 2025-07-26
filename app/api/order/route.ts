@@ -11,11 +11,6 @@ export async function GET(req: NextRequest) {
     );
   }
 
-  const { searchParams } = new URL(req.url);
-  const page = searchParams.get('page');
-  const status = searchParams.get('status');
-  const order = searchParams.get('order');
-
   try {
     const response = await axios.get(
       `${process.env.NEXT_PUBLIC_BASE_URL}orders/`,
@@ -23,20 +18,19 @@ export async function GET(req: NextRequest) {
         headers: {
           Authorization: `Bearer ${accessToken}`,
         },
-        // params: {
-        //   ...(page && { page }),
-        //   ...(status && { status }),
-        //   ...(order && { order }),
-        // },
       },
     );
 
-    console.log('Fetched orders:', response.data);
+    console.log('Fetched route orders:', response.data);
 
     return NextResponse.json({ status: 200, data: response.data });
   } catch (error) {
     const axiosError = error as AxiosError;
-    console.error('Error fetching orders:', axiosError);
+    console.error(
+      '[fetchOrders] Error:',
+      axiosError.response?.data || axiosError.message || error,
+    );
+
     return NextResponse.json(
       {
         message:
@@ -46,9 +40,7 @@ export async function GET(req: NextRequest) {
             ?.message ||
           'Failed to fetch orders',
       },
-      {
-        status: axiosError.response?.status || 500,
-      },
+      { status: axiosError.response?.status || 500 },
     );
   }
 }
@@ -76,20 +68,27 @@ export async function POST(req: NextRequest) {
         },
       },
     );
+    console.log('Order created:', response.data);
+    console.log('Order created:', response.data.data);
 
     return NextResponse.json({ status: 200, data: response.data });
   } catch (error) {
-    const axiosError = error as AxiosError<any>;
+    const axiosError = error as AxiosError;
+    console.error(
+      '[createOrder] Error:',
+      axiosError.response?.data || axiosError.message || error,
+    );
+
     return NextResponse.json(
       {
         message:
-          axiosError.response?.data?.detail ||
-          axiosError.response?.data?.message ||
+          (axiosError.response?.data as { detail?: string; message?: string })
+            ?.detail ||
+          (axiosError.response?.data as { detail?: string; message?: string })
+            ?.message ||
           'Failed to create order',
       },
-      {
-        status: axiosError.response?.status || 500,
-      },
+      { status: axiosError.response?.status || 500 },
     );
   }
 }

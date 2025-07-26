@@ -44,21 +44,6 @@ export interface SearchProductProps {
   searchTerm: string;
   setSearchTerm: (term: string) => void;
 }
-// export type Order = {
-//   id: string;
-//   email: string;
-//   owwner: string;
-//   products: {
-//     productId: string;
-//     product_name: string;
-//     quantity: number;
-//     price: number;
-//   }[];
-//   status: 'Pending' | 'Delivered' | 'Cancelled';
-//   total: number;
-//   last_updated: string;
-//   date: string;
-// };
 
 export type EditProductProps = {
   editProduct: {
@@ -78,13 +63,6 @@ export type ReportItem = {
   revenue: number;
   stockStatus: 'In Stock' | 'Low Stock' | 'Out of Stock';
   productSold: number;
-};
-
-export type OrderProduct = {
-  productId: string;
-  productName: string;
-  quantity: number;
-  price: number;
 };
 
 export type Product = {
@@ -110,7 +88,7 @@ export interface AddInventoryItem {
   stock_level: number;
   low_stock_threshold: number;
   price: number;
-  last_updated: string;
+  date_added: string;
 }
 export interface InventoryItem {
   owner: string;
@@ -124,14 +102,13 @@ export interface InventoryItem {
   last_updated: string;
 }
 export interface PostInventoryItem {
-  owner: string;
   product_name: string;
   description: string;
   category: string;
   stock_level: number;
   low_stock_threshold: number;
   price: number;
-  last_updated: string;
+  date_added: string;
 }
 
 export interface InventoryStats {
@@ -164,14 +141,12 @@ export interface InventoryStore {
   reduceStock: (id: string, quantity: number) => void;
 }
 
-// types/order.ts
-export type OrderStatus = 'pending' | 'fulfilled' | 'cancelled';
+export type OrderStatus = 'Pending' | 'Fulfilled' | 'Cancelled';
+
 export interface OrderedProduct {
   name: string;
-  order_id?: number;
   quantity: number;
   price: number;
-  cummulative_price: number;
 }
 
 export interface Order {
@@ -179,9 +154,79 @@ export interface Order {
   client_name: string;
   client_email: string;
   client_phone: string;
-  status: string;
+  status: 'Pending' | 'Delivered' | 'Cancelled';
   order_date: string;
   delivery_date: string;
-  total_price: number;
   ordered_products: OrderedProduct[];
+  total_price?: number;
+}
+
+export type UserData = {
+  business_name: string;
+  full_name: string;
+  email: string;
+  business_type: string;
+  country: string;
+  currency: string;
+  state: string;
+  rcv_mail_for_new_orders: boolean;
+  rcv_mail_for_low_stocks: boolean;
+  phone: string;
+  business_phone: string;
+  business_address: string;
+  rcv_mail_notification: boolean;
+  rcv_msg_notification: boolean;
+  default_order_status: string;
+  language: string;
+  low_stock_threshold: number;
+};
+
+export interface UpdateUser {
+  business_name: string;
+  full_name: string;
+  country: string;
+  currency: string;
+  state: string;
+  rcv_mail_for_new_orders: boolean;
+  rcv_mail_for_low_stocks: boolean;
+  phone: string;
+  business_phone: string;
+  business_address: string;
+  rcv_mail_notification: boolean;
+  rcv_msg_notification: boolean;
+  default_order_status: string;
+  language: string;
+  low_stock_threshold: number;
+}
+
+export interface OrderedProductPayload {
+  name: string;
+  quantity: number;
+  price: number;
+}
+
+export interface OrderPayload {
+  client_name: string;
+  client_email: string;
+  client_phone: string;
+  status: 'Pending' | 'Delivered' | 'Cancelled';
+  order_date: string;
+  delivery_date: string;
+  ordered_products: OrderedProductPayload[];
+}
+
+export interface OrderUpdatePayload {
+  client_name: string;
+  client_email: string;
+  client_phone: string;
+  status: 'Pending' | 'Delivered' | 'Cancelled';
+  order_date: string;
+  delivery_date: string;
+  ordered_products: OrderedProductPayload[];
+}
+
+export interface UpdateOrderModalProps {
+  order: Order | null;
+  onClose: () => void;
+  showActions?: boolean;
 }

@@ -4,11 +4,11 @@ export const getInventory = async () => {
   try {
     const res = await axiosInstance.get('/inventory');
     if (res.data.error) {
-      console.error('Error fetching inventory:', res.data.error);
+      // console.error('Error fetching inventory:', res.data.error);
       throw new Error(res.data.error);
     }
 
-    console.log('Inventory get data successfully:', res.data.data);
+    // console.log('Inventory get data successfully:', res.data.data);
 
     return res.data.data;
   } catch (err: any) {
@@ -41,12 +41,12 @@ export const addInventoryItem = async (data: any) => {
 
 export const updateInventoryItem = async (id: string, data: any) => {
   try {
-    const res = await axiosInstance.put(`/inventory/${id}`, [data]);
+    const res = await axiosInstance.put(`/inventory/${id}`, data);
     if (res.data.error) {
-      console.error('Error updating inventory item:', res.data.error);
+      // console.error('Error updating inventory item:', res.data.error);
       throw new Error(res.data.error);
     }
-    console.log('Inventory item updated successfully:', res.data.data);
+    // console.log('Inventory item updated successfully:', res.data.data);
     return res.data.data;
   } catch (err: any) {
     throw new Error(
@@ -74,7 +74,7 @@ export const deleteInventoryItem = async (
       throw new Error(response.data.error);
     }
 
-    console.log('[deleteInventoryItem] Deleted successfully:', response.data);
+    // console.log('[deleteInventoryItem] Deleted successfully:', response.data);
     return response.data;
   } catch (error: any) {
     const errorMsg =

@@ -74,8 +74,7 @@ export async function POST(req: NextRequest) {
       product_name,
       description,
       low_stock_threshold,
-      owner,
-      last_updated,
+      date_added,
       category,
       stock_level,
       price,
@@ -88,12 +87,11 @@ export async function POST(req: NextRequest) {
       category,
       stock_level,
       price,
-      owner,
       low_stock_threshold,
-      last_updated,
+      date_added,
     };
 
-    console.log('✅ Sending to backend:', validPayload);
+    // console.log('✅ Sending to backend:', validPayload);
 
     const response = await axios.post(
       `${process.env.NEXT_PUBLIC_BASE_URL}inventory/`,
@@ -106,7 +104,7 @@ export async function POST(req: NextRequest) {
       },
     );
 
-    console.log(' Success:', response.data);
+    // console.log(' Success:', response.data);
 
     return NextResponse.json({ status: 200, data: response.data });
   } catch (error) {

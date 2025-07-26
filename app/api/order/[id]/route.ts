@@ -1,0 +1,99 @@
+import { cookies } from 'next/headers';
+import { NextRequest, NextResponse } from 'next/server';
+import { axiosInstance } from '@/lib/axios';
+
+const getAuthToken = async () => {
+  const cookieStore = await cookies();
+  return cookieStore.get('access_token')?.value || null;
+};
+
+export async function PUT(
+  req: NextRequest,
+  { params }: { params: { id: string } },
+) {
+  const id = params.id;
+  if (!id) {
+    return NextResponse.json({ error: 'Item ID is required' }, { status: 400 });
+  }
+
+  const tokenStore = await cookies();
+  const token = tokenStore.get('access_token')?.value;
+
+  if (!token) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+
+  const data = await req.json();
+  console.log('editing data', data);
+
+  try {
+    const res = await axiosInstance.put(
+      `${process.env.NEXT_PUBLIC_BASE_URL}orders/${id}`,
+      data,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      },
+    );
+
+    console.log('Item updated successfully:', res.data);
+
+    return NextResponse.json(res.data);
+  } catch (error: any) {
+    return NextResponse.json(
+      {
+        error:
+          error?.response?.data?.detail ||
+          error?.response?.data ||
+          'Failed to update item',
+      },
+      { status: error?.response?.status || 500 },
+    );
+  }
+}
+
+export async function DELETE(
+  req: NextRequest,
+  { params }: { params: { id: string } },
+) {
+  const { id } = params;
+
+  if (!id) {
+    return NextResponse.json(
+      { error: 'Item ID is required.' },
+      { status: 400 },
+    );
+  }
+
+  const tokenStore = await cookies();
+  const token = tokenStore.get('access_token')?.value;
+
+  if (!token) {
+    return NextResponse.json({ error: 'Unauthorized.' }, { status: 401 });
+  }
+
+  try {
+    const url = `${process.env.NEXT_PUBLIC_BASE_URL}/orders/${id}`;
+
+    await axiosInstance.delete(url, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    console.log(`Order with ID ${id} deleted successfully.`);
+    return NextResponse.json({ success: true });
+  } catch (error: any) {
+    console.error(`Failed to delete order ${id}:`, error);
+
+    const status = error?.response?.status || 500;
+    const message =
+      error?.response?.data?.detail ||
+      error?.response?.data?.message ||
+      error?.message ||
+      'Something went wrong while deleting the item.';
+
+    return NextResponse.json({ error: message }, { status });
+  }
+}

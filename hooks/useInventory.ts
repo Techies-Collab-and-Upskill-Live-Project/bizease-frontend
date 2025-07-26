@@ -59,7 +59,6 @@ export function useInventory() {
     }
   };
 
-  // Delete inventory item
   const deleteItem = async (id: string, token: string) => {
     try {
       await deleteInventoryItem(id, token);
@@ -70,7 +69,6 @@ export function useInventory() {
     }
   };
 
-  // Auto-fetch on mount
   useEffect(() => {
     fetchInventory();
   }, []);

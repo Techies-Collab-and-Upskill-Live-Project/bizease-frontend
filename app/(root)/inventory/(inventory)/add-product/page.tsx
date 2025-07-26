@@ -42,14 +42,13 @@ export default function AddProductPage() {
       stock_level: data.stock_level,
       price: data.price,
       low_stock_threshold: 5, // default
-      owner: 'currentUser', // replace with real owner
-      last_updated: new Date().toISOString(),
+      date_added: new Date().toISOString().split('T')[0],
     };
 
     try {
       console.log('Adding new item:', newProduct);
 
-      const res = await createItem(newProduct); // ✅ await this
+      const res = await createItem(newProduct);
       console.log('API response:', res);
 
       var productId = res?.data?.id;

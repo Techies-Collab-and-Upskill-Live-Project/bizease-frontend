@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -9,20 +9,18 @@ import {
   DialogTitle,
   DialogFooter,
 } from '@/components/ui/dialog';
-import { Order } from '@/types';
+import { Order, UpdateOrderModalProps } from '@/types';
 import AnimatedCountUp from '../animations/AnimatedCountUp';
 import DeleteConfirmationModal from './DeleteModal';
-
 import { toast } from 'sonner';
-import { updateOrder, deleteOrder } from '../../lib/api/order'; // your API service
+import { useOrder } from '@/hooks/useOrder';
 
-interface Props {
-  order: Order | null;
-  onClose: () => void;
-  showActions?: boolean;
-}
-
-const OrderModal = ({ order, onClose, showActions = true }: Props) => {
+const OrderModal = ({
+  order,
+  onClose,
+  showActions = true,
+}: UpdateOrderModalProps) => {
+  const { editOrder, removeOrder } = useOrder();
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [loading, setLoading] = useState(false);
 
@@ -31,10 +29,9 @@ const OrderModal = ({ order, onClose, showActions = true }: Props) => {
   const handleMarkDelivered = async () => {
     try {
       setLoading(true);
-      await updateOrder(String(order.id), {
+      await editOrder(String(order.id), {
         ...order,
         status: 'Delivered',
-        order_date: new Date().toISOString(),
       });
       toast.success('Order marked as delivered');
       onClose();
@@ -48,7 +45,7 @@ const OrderModal = ({ order, onClose, showActions = true }: Props) => {
   const handleDelete = async () => {
     try {
       setLoading(true);
-      await deleteOrder(String(order.id));
+      await removeOrder(String(order.id));
       toast.success('Order deleted');
       onClose();
     } catch (err) {
@@ -66,7 +63,7 @@ const OrderModal = ({ order, onClose, showActions = true }: Props) => {
             <DialogTitle>Order Details</DialogTitle>
           </DialogHeader>
 
-          <div className="space-y-2 text-sm text-gray-600">
+          <div className="space-y-2 text-sm text-gray-600 shadow">
             <p>
               <strong>Order ID:</strong> {order.id}
             </p>
@@ -82,7 +79,7 @@ const OrderModal = ({ order, onClose, showActions = true }: Props) => {
             </p>
             <p>
               <strong>Total:</strong>{' '}
-              <AnimatedCountUp amount={order.total_price} />
+              <AnimatedCountUp amount={order?.total_price ?? 0} />
             </p>
             <p>
               <strong>Last Updated:</strong>{' '}
@@ -123,7 +120,8 @@ const OrderModal = ({ order, onClose, showActions = true }: Props) => {
         open={showDeleteConfirm}
         onClose={() => setShowDeleteConfirm(false)}
         onConfirm={handleDelete}
-        productName={order.client_name}
+        productName={order.ordered_products[0].name}
+        productId={String(order.id)}
       />
     </>
   );

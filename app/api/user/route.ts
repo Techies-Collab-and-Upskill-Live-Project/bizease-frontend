@@ -27,7 +27,7 @@ export async function GET(req: NextRequest) {
       },
     );
 
-    console.log(response.data);
+    // console.log(response.data);
     return NextResponse.json({ status: 200, data: response.data });
   } catch (error) {
     const axiosError = error as AxiosError<UserDataResponse>;
@@ -58,10 +58,13 @@ export async function PUT(req: NextRequest) {
 
   try {
     const data = await req.json();
+    const { email, ...userData } = data;
+
+    // console.log('Updating user data:', userData);
 
     const response = await axios.put(
       `${process.env.NEXT_PUBLIC_BASE_URL}accounts/`,
-      data,
+      userData,
       {
         headers: {
           Authorization: `Bearer ${accessToken}`,
@@ -69,6 +72,7 @@ export async function PUT(req: NextRequest) {
         },
       },
     );
+    console.log('User data updated successfully:', response.data);
 
     return NextResponse.json({ status: 200, data: response.data });
   } catch (error) {

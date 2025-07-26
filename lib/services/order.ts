@@ -1,5 +1,8 @@
+import { OrderPayload } from '@/types';
 import { axiosInstance } from '../axios';
+import { Order } from '@/types';
 
+// GET Orders
 export const getOrders = async ({
   page = 1,
   status = '',
@@ -11,14 +14,9 @@ export const getOrders = async ({
 }) => {
   try {
     const res = await axiosInstance.get('/order', {
-      params: {
-        page,
-        status,
-        order,
-      },
+      // params: { page, status, order },
     });
 
-    console.log('[getOrders] Success:', res.data.data);
     return res.data.data;
   } catch (err: any) {
     console.error(
@@ -29,17 +27,58 @@ export const getOrders = async ({
   }
 };
 
-// POST Order
-export const createOrder = async (orderData: any) => {
+export const createOrder = async (orderData: OrderPayload) => {
   try {
     const res = await axiosInstance.post('/order', orderData);
-    console.log('[createOrder] Success:', res.data.data);
     return res.data.data;
-  } catch (err: any) {
-    console.error(
-      '[createOrder] Error:',
-      err?.response?.data?.message || err.message,
-    );
-    throw new Error(err?.response?.data?.message || 'Failed to create order');
+  } catch (error) {
+    const err = error as any;
+
+    if (err.response) {
+      console.error('[createOrder] API Error:', err.response.data);
+
+      throw err.response.data;
+    } else if (err.request) {
+      console.error('[createOrder] No response received:', err.request);
+    } else {
+      console.error('[createOrder] Unexpected error:', err.message);
+    }
+
+    throw new Error('Failed to create order');
   }
 };
+
+export const getOrderStats = async () => {
+  try {
+    const response = await axiosInstance.get('order/stats/');
+
+    if (!response.data || !response.data.data) {
+      throw new Error('Invalid response structure from order stats API');
+    }
+    return response.data.data;
+  } catch (error) {
+    console.error('[getOrderStats] Failed to fetch order stats', error);
+    throw error;
+  }
+};
+
+export async function updateOrder(id: string, data: OrderPayload) {
+  const response = await axiosInstance.put(`/order/${id}`, data);
+
+  if (!response.data) {
+    throw new Error('Failed to update order');
+  }
+  console.log('response from service call for update', response.data);
+  return response.data;
+}
+
+export async function deleteOrder(id: string) {
+  const response = await axiosInstance.delete(`/order/${id}`);
+
+  if (!response) {
+    throw new Error('Failed to delete order');
+  }
+  console.log('delete from service call for update', response);
+
+  return response;
+}

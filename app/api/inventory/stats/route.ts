@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import axios, { AxiosError } from 'axios';
+import axios from 'axios';
 
 export async function GET(req: NextRequest) {
   const accessToken = req.cookies.get('access_token')?.value;
@@ -14,7 +14,7 @@ export async function GET(req: NextRequest) {
       },
     );
 
-    console.log(response.data);
+    // console.log(response.data);
 
     return NextResponse.json({ status: 200, data: response.data });
   } catch (error: any) {

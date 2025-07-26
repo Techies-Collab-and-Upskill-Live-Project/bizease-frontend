@@ -10,7 +10,6 @@ import Link from 'next/link';
 import { SearchProductProps } from '@/types';
 import DeleteConfirmationModal from '../modals/DeleteModal';
 import { useInventory } from '@/hooks/useInventory';
-import { deleteInventoryItem } from '@/lib/services/inventory';
 
 export default function InventoryComponent({
   setCurrentPage,
@@ -25,24 +24,12 @@ export default function InventoryComponent({
     null,
   );
 
-  console.log('[DEBUG] inventory:', inventory);
-
   const [isOpen, setIsOpen] = useState(false);
   const itemsPerPage = 6;
-
-  // const selectedProduct = inventory.find(({ id }) => id === selectedProductId);
-
-  // const selectedProduct = inventory.find(
-  //   ({ id }) => String(id) === String(selectedProductId),
-  // );
 
   const selectedProduct = inventory.find(
     ({ id }) => id === Number(selectedProductId),
   );
-
-  console.log('[DEBUG] selectedProductId:', selectedProductId);
-
-  console.log('[DEBUG] selectedProduct:', selectedProduct);
 
   const getStockStatus = (stock_level: number) => {
     if (stock_level === 0) return 'Zero Stock';
@@ -57,10 +44,11 @@ export default function InventoryComponent({
   };
 
   const filteredProduct = inventory
-    .filter(({ product_name }) => {
-      if (typeof product_name !== 'string') return false;
-      return product_name.toLowerCase().includes(searchTerm);
-    })
+    .filter(({ product_name }) =>
+      typeof product_name === 'string'
+        ? product_name.toLowerCase().includes(searchTerm.toLowerCase())
+        : false,
+    )
     .filter(({ stock_level }) => {
       if (filter === 'zero') return stock_level === 0;
       if (filter === 'low') return stock_level > 0 && stock_level <= 5;
@@ -144,7 +132,7 @@ export default function InventoryComponent({
                     </Link>
                     <Button
                       onClick={() => {
-                        setSelectedProductId(id ?? null);
+                        setSelectedProductId(id || null);
                         setDeleteModalOpen(true);
                       }}
                       variant="ghost"
@@ -167,14 +155,9 @@ export default function InventoryComponent({
               setDeleteModalOpen(false);
               setSelectedProductId(null);
             }}
-            // onConfirm={() => {
-            //   deleteInventoryItem(String(selectedProductId!));
-            //   setDeleteModalOpen(false);
-            //   setSelectedProductId(null);
-            // }}
             onConfirm={async () => {
               try {
-                await deleteItem(String(selectedProductId!));
+                await deleteItem(String(selectedProductId, token!));
               } catch (err) {
                 console.error('Failed to delete item:', err);
               } finally {
@@ -182,7 +165,7 @@ export default function InventoryComponent({
                 setSelectedProductId(null);
               }
             }}
-            productName={selectedProduct?.product_name}
+            productName={selectedProduct.product_name}
           />
         )}
       </div>
@@ -222,10 +205,9 @@ export default function InventoryComponent({
                       </Button>
                     </Link>
                     <Button
-                      // onClick={() => deleteInventoryItem(String(id))}
                       onClick={async () => {
                         try {
-                          await deleteItem(String(id));
+                          await deleteItem(String(id), token!);
                         } catch (err) {
                           console.error('Failed to delete item:', err);
                         }
@@ -243,7 +225,7 @@ export default function InventoryComponent({
           )
         )}
 
-        {/* Floating Action Buttons */}
+        {/* Floating Add Button */}
         <div className="fixed bottom-24 right-4 z-50 flex gap-2">
           {isOpen && (
             <Button
