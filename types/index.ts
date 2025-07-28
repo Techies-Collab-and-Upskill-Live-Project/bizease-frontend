@@ -264,3 +264,23 @@ export interface ReportSummaryResponse {
     summary: ReportSummaryItem[];
   };
 }
+
+export interface InventorySalesItem {
+  title: string;
+  value: number | string;
+  icon?: string;
+  growthRate?: number;
+  change?: string;
+  name: string;
+  stock_status: string;
+  quantity_sold: number;
+  revenue: number;
+  owner: string;
+  product_name: string;
+  description: string;
+  category: string;
+  stock_level: number;
+  low_stock_threshold: number;
+  price: number;
+  date_added: string;
+}

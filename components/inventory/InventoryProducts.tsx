@@ -17,7 +17,7 @@ export default function InventoryComponent({
   currentPage,
   filter,
 }: SearchProductProps) {
-  const { inventory, loading, error, deleteItem } = useInventory();
+  const { inventory, deleteItem } = useInventory();
   const [searchTerm, setSearchTerm] = useState('');
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [selectedProductId, setSelectedProductId] = useState<number | null>(

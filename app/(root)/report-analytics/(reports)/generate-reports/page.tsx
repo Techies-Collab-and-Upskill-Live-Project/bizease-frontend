@@ -482,8 +482,30 @@ import {
 } from '@/components/ui/table';
 
 import { useCurrentUser } from '@/hooks/useCurrentUser';
-import { useReport } from '@/hooks/useReport';
+// import { useReport } from '@/hooks/useReport';
 import { ChevronLeft, Download, Eye, Mail } from 'lucide-react';
+import { useReportSummary } from '@/hooks/useReportSummary';
+import { useInventory } from '@/hooks/useInventory';
+
+export interface GenerateReport {
+  title: string;
+  value: number | string;
+  icon?: string;
+  growthRate?: number;
+  change?: string;
+  name: string;
+  stock_status: string;
+  quantity_sold: number;
+  revenue: number;
+  owner: string;
+  product_name: string;
+  description: string;
+  category: string;
+  stock_level: number;
+  low_stock_threshold: number;
+  price: number;
+  date_added: string;
+}
 
 const formSchema = z.object({
   dateRange: z.string(),
@@ -495,13 +517,16 @@ const formSchema = z.object({
 type FormData = z.infer<typeof formSchema>;
 
 const GenerateReports = () => {
+  const [category, setCategory] = useState('all');
+  const { inventory } = useInventory();
+
   const router = useRouter();
   const { user } = useCurrentUser();
 
   const [period, setPeriod] = useState<
     'last-week' | 'last-month' | 'last-6-months' | 'last-year'
   >('last-week');
-  const { report, loading } = useReport({ period });
+  const { summaryData } = useReportSummary();
 
   const fileInputRef = useRef<HTMLInputElement>(null);
   const formRef = useRef<HTMLFormElement>(null);
@@ -515,7 +540,7 @@ const GenerateReports = () => {
     formState: { errors },
   } = useForm<FormData>({
     defaultValues: {
-      dateRange: 'last-30-days',
+      dateRange: 'last-week',
       category: 'all',
       fileName: 'My Sales Report',
       format: 'pdf',
@@ -526,32 +551,117 @@ const GenerateReports = () => {
   const format = watch('format');
   const fileName = watch('fileName');
 
-  const generateBlob = () => {
-    if (!report) return { blob: new Blob(), cleanFileName: fileName, data: [] };
+  // const generateBlob = () => {
+  //   if (!summaryData)
+  //     return { blob: new Blob(), cleanFileName: fileName, data: [] };
 
-    const data = report.product_sales_chart_data.map((item) => ({
-      Product: item.name,
-      'Unit Sold': item.quantity_sold,
-      Revenue: `₦${item.revenue.toLocaleString()}`,
-      'Stock Status': item.stock_status,
-    }));
+  //   const data = summaryData?.data.summary?.map(
+  //     ({ name, quantity_sold, stock_status, revenue }) => ({
+  //       Product: name,
+  //       'Unit Sold': quantity_sold,
+  //       Revenue: `₦${revenue.toLocaleString()}`,
+  //       'Stock Status': stock_status,
+  //     }),
+  //   );
+
+  //   let blob: Blob;
+
+  //   switch (format) {
+  //     case 'csv':
+  //       const csvHeader = 'Product,Unit Sold,Revenue,Stock Status\n';
+  //       const csvRows = data
+  //         .map((row) =>
+  //           [
+  //             row.Product,
+  //             row['Unit Sold'],
+  //             row.Revenue,
+  //             row['Stock Status'],
+  //           ].join(','),
+  //         )
+  //         .join('\n');
+  //       blob = new Blob([csvHeader + csvRows], { type: 'text/csv' });
+  //       break;
+
+  //     case 'xlsx':
+  //       const worksheet = XLSX.utils.json_to_sheet(data);
+  //       const workbook = XLSX.utils.book_new();
+  //       XLSX.utils.book_append_sheet(workbook, worksheet, 'Report');
+  //       const buffer = XLSX.write(workbook, {
+  //         bookType: 'xlsx',
+  //         type: 'array',
+  //       });
+  //       blob = new Blob([buffer], {
+  //         type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+  //       });
+  //       break;
+
+  //     case 'pdf':
+  //     default:
+  //       const doc = new jsPDF();
+  //       doc.setFontSize(14);
+  //       doc.text('Sales Report', 10, 10);
+  //       let y = 20;
+  //       data.forEach((item, index) => {
+  //         doc.text(
+  //           `${index + 1}. ${item.Product} | Sold: ${
+  //             item['Unit Sold']
+  //           } | Revenue: ${item.Revenue} | Stock: ${item['Stock Status']}`,
+  //           10,
+  //           y,
+  //         );
+  //         y += 10;
+  //       });
+  //       blob = doc.output('blob');
+  //       break;
+  //   }
+
+  //   return { blob, cleanFileName: fileName.trim().replace(/\s+/g, '_'), data };
+  // };
+
+  const generateBlob = () => {
+    if (!summaryData)
+      return { blob: new Blob(), cleanFileName: fileName, data: [] };
+
+    const selectedCategory = watch('category');
+
+    let data: Record<string, string | number>[] = [];
+
+    summaryData?.data.summary?.forEach((item) => {
+      const base = { Product: item.name };
+
+      const salesFields = {
+        'Unit Sold': item.quantity_sold ?? 0,
+        Revenue: `₦${(item.revenue ?? 0).toLocaleString()}`,
+        'Stock Status': item.stock_status || 'N/A',
+      };
+
+      const inventoryFields = {
+        'Stock Status': item.stock_status || 'N/A',
+        'Low Stock Threshold': item.stock_status ?? 0,
+        Price: `₦${(item.revenue ?? 0).toLocaleString()}`, // If you have actual price use it here
+      };
+
+      if (selectedCategory === 'sales') {
+        data.push({ ...base, ...salesFields });
+      } else if (selectedCategory === 'inventory') {
+        data.push({ ...base, ...inventoryFields });
+      } else {
+        // 'all' includes both sets of fields
+        data.push({
+          ...base,
+          ...salesFields,
+          ...inventoryFields,
+        });
+      }
+    });
 
     let blob: Blob;
 
     switch (format) {
       case 'csv':
-        const csvHeader = 'Product,Unit Sold,Revenue,Stock Status\n';
-        const csvRows = data
-          .map((row) =>
-            [
-              row.Product,
-              row['Unit Sold'],
-              row.Revenue,
-              row['Stock Status'],
-            ].join(','),
-          )
-          .join('\n');
-        blob = new Blob([csvHeader + csvRows], { type: 'text/csv' });
+        const headers = Object.keys(data[0] || {}).join(',') + '\n';
+        const rows = data.map((row) => Object.values(row).join(',')).join('\n');
+        blob = new Blob([headers + rows], { type: 'text/csv' });
         break;
 
       case 'xlsx':
@@ -571,23 +681,24 @@ const GenerateReports = () => {
       default:
         const doc = new jsPDF();
         doc.setFontSize(14);
-        doc.text('Sales Report', 10, 10);
+        doc.text('Report Summary', 10, 10);
         let y = 20;
         data.forEach((item, index) => {
-          doc.text(
-            `${index + 1}. ${item.Product} | Sold: ${
-              item['Unit Sold']
-            } | Revenue: ${item.Revenue} | Stock: ${item['Stock Status']}`,
-            10,
-            y,
-          );
+          const line = Object.entries(item)
+            .map(([key, val]) => `${key}: ${val}`)
+            .join(' | ');
+          doc.text(`${index + 1}. ${line}`, 10, y);
           y += 10;
         });
         blob = doc.output('blob');
         break;
     }
 
-    return { blob, cleanFileName: fileName.trim().replace(/\s+/g, '_'), data };
+    return {
+      blob,
+      cleanFileName: fileName.trim().replace(/\s+/g, '_'),
+      data,
+    };
   };
 
   const handleDownload = () => {
@@ -596,6 +707,7 @@ const GenerateReports = () => {
     link.href = URL.createObjectURL(blob);
     link.download = `${cleanFileName}.${format}`;
     link.click();
+    router.push('/report-analytics');
   };
 
   const handleSend = async () => {
@@ -609,7 +721,22 @@ const GenerateReports = () => {
       fileInputRef.current.files = dataTransfer.files;
       formRef.current.submit();
     }
+    router.push('/report-analytics');
   };
+
+  const selectedCategory = watch('category'); // Get current category selection
+
+  const filteredSummary = summaryData?.data.summary?.filter((item) => {
+    if (selectedCategory === 'sales') {
+      return item.quantity_sold > 0 || item.revenue > 0;
+    }
+
+    if (selectedCategory === 'inventory') {
+      return item.stock_status && item.stock_status !== 'In Stock';
+    }
+
+    return true; // 'all' returns everything
+  });
 
   return (
     <section className="min-h-screen flex flex-col items-center justify-center px-4 py-6 bg-surface-100">
@@ -658,22 +785,30 @@ const GenerateReports = () => {
 
             <div className="space-y-1">
               <Label className="text-surface-500 text-sm">Date Range</Label>
-              <select
+
+              <Select
                 value={period}
-                onChange={(e) => setPeriod(e.target.value as typeof period)}
-                className="mb-4 border border-darkblue p-2 rounded-md text-sm text-darkblue"
+                onValueChange={(value) => setPeriod(value as typeof period)}
               >
-                <option value="last-week">Last Week</option>
-                <option value="last-month">Last Month</option>
-                <option value="last-6-months">Last 6 Months</option>
-                <option value="last-year">Last Year</option>
-              </select>
+                <SelectTrigger className="w-full mb-4 text-sm text-surface-500 border border-surface-200">
+                  <SelectValue placeholder="Select Period" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="last-week">Last Week</SelectItem>
+                  <SelectItem value="last-month">Last Month</SelectItem>
+                  <SelectItem value="last-6-months">Last 6 Months</SelectItem>
+                  <SelectItem value="last-year">Last Year</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
 
             <div className="space-y-1">
               <Label className="text-surface-500">Category</Label>
               <Select
-                onValueChange={(val) => setValue('category', val)}
+                onValueChange={(val) => {
+                  setCategory(val);
+                  setValue('category', val);
+                }}
                 defaultValue="all"
               >
                 <SelectTrigger className="w-full max-w-full">
@@ -683,7 +818,6 @@ const GenerateReports = () => {
                   <SelectItem value="all">All</SelectItem>
                   <SelectItem value="sales">Sales</SelectItem>
                   <SelectItem value="inventory">Inventory</SelectItem>
-                  <SelectItem value="expenses">Expenses</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -721,34 +855,104 @@ const GenerateReports = () => {
             </div>
 
             <Dialog open={previewOpen} onOpenChange={setPreviewOpen}>
-              <DialogContent className="max-w-3xl">
+              <DialogContent className="max-w-6xl">
                 <DialogHeader>
                   <DialogTitle>Preview Report</DialogTitle>
                 </DialogHeader>
-                <ScrollArea className="max-h-[60vh] border rounded-md">
+                <ScrollArea className="max-h-fit border rounded-md">
                   <Table>
-                    <TableHeader className="bg-gray-100">
-                      <TableRow>
-                        <TableHead>S/N</TableHead>
-                        <TableHead>Product</TableHead>
-                        <TableHead>Unit Sold</TableHead>
-                        <TableHead>Revenue</TableHead>
-                        <TableHead>Stock Level</TableHead>
+                    <TableHeader className="bg-surface-200">
+                      <TableRow className="font-medium text-md">
+                        <TableHead>#</TableHead>
+
+                        {category === 'inventory' && (
+                          <>
+                            <TableHead>Product</TableHead>
+                            <TableHead>Stock Level</TableHead>
+                            <TableHead>Price</TableHead>
+                            <TableHead>Stock Status</TableHead>
+                          </>
+                        )}
+
+                        {category === 'sales' && (
+                          <>
+                            <TableHead>Product</TableHead>
+                            <TableHead>Sold</TableHead>
+                            <TableHead>Revenue</TableHead>
+                            <TableHead>Stock Status</TableHead>
+                          </>
+                        )}
+
+                        {category === 'all' && (
+                          <>
+                            <TableHead>Product</TableHead>
+                            <TableHead>Stock Level</TableHead>
+                            <TableHead>Price</TableHead>
+                            <TableHead>Sold</TableHead>
+                            <TableHead>Revenue</TableHead>
+                          </>
+                        )}
                       </TableRow>
                     </TableHeader>
+
                     <TableBody>
-                      {report?.product_sales_chart_data?.map((item, index) => (
+                      {filteredSummary?.map((item, index) => (
                         <TableRow key={index} className="even:bg-gray-100">
                           <TableCell>{index + 1}</TableCell>
-                          <TableCell>{item?.name || 'N/A'}</TableCell>
-                          <TableCell>{item?.quantity_sold ?? 0}</TableCell>
-                          <TableCell>
-                            ₦
-                            {typeof item?.revenue === 'number'
-                              ? item.revenue.toLocaleString()
-                              : '0.00'}
-                          </TableCell>
-                          <TableCell>{item?.stock_status || 'N/A'}</TableCell>
+
+                          {category === 'inventory' && (
+                            <>
+                              <TableCell>{item.name || 'N/A'}</TableCell>
+                              <TableCell>{item.stock_status ?? 0}</TableCell>
+                              <TableCell>
+                                ₦
+                                {typeof item.revenue === 'number'
+                                  ? item.revenue.toLocaleString()
+                                  : '0.00'}
+                              </TableCell>
+                              <TableCell>
+                                {item.stock_status || 'N/A'}
+                              </TableCell>
+                            </>
+                          )}
+
+                          {category === 'sales' && (
+                            <>
+                              <TableCell>{item.name || 'N/A'}</TableCell>
+                              <TableCell>{item.quantity_sold ?? 0}</TableCell>
+                              <TableCell>
+                                ₦
+                                {typeof item.revenue === 'number'
+                                  ? item.revenue.toLocaleString()
+                                  : '0.00'}
+                              </TableCell>
+                              <TableCell>
+                                {item.stock_status || 'N/A'}
+                              </TableCell>
+                            </>
+                          )}
+
+                          {category === 'all' && (
+                            <>
+                              <TableCell>
+                                {item.name || item.name || 'N/A'}
+                              </TableCell>
+                              <TableCell>{item.stock_status ?? 0}</TableCell>
+                              <TableCell>
+                                ₦
+                                {typeof item.revenue === 'number'
+                                  ? item.revenue.toLocaleString()
+                                  : '0.00'}
+                              </TableCell>
+                              <TableCell>{item.quantity_sold ?? 0}</TableCell>
+                              <TableCell>
+                                ₦
+                                {typeof item.revenue === 'number'
+                                  ? item.revenue.toLocaleString()
+                                  : '0.00'}
+                              </TableCell>
+                            </>
+                          )}
                         </TableRow>
                       ))}
                     </TableBody>
@@ -762,7 +966,8 @@ const GenerateReports = () => {
                       handleDownload();
                     }}
                   >
-                    <Download className="w-4 h-4 mr-1" /> Download
+                    <Download className="w-4 h-4 mr-1" />
+                    Download
                   </Button>
                   <Button
                     className="bg-darkblue hover:bg-lightblue"
