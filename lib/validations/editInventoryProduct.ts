@@ -9,7 +9,7 @@ export const editInventoryformSchema = z.object({
   price: z
     .number({ invalid_type_error: 'Must be a number' })
     .min(0, 'Price must be non-negative'),
-  low_stock_threshhold: z
+  low_stock_threshold: z
     .number({ invalid_type_error: 'Must be a number' })
     .min(0, 'Threshold must be non-negative'),
   description: z.string().optional(),

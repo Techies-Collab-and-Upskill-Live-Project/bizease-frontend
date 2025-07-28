@@ -44,9 +44,26 @@ export function useInventory() {
   };
 
   // Update existing inventory item
+  // const updateItem = async (id: string, updates: Partial<InventoryItem>) => {
+  //   try {
+  //     const updatedItem = await updateInventoryItem(id, updates);
+  //     setInventory((prev) =>
+  //       prev.map((item) =>
+  //         String(item.id) === id ? { ...item, ...updatedItem } : item,
+  //       ),
+  //     );
+  //     return updatedItem;
+  //   } catch (err: any) {
+  //     console.error('Update item failed:', err);
+  //     throw new Error(err?.response?.data?.message || 'Error updating item');
+  //   }
+  // };
+
   const updateItem = async (id: string, updates: Partial<InventoryItem>) => {
     try {
-      const updatedItem = await updateInventoryItem(id, updates);
+      console.log('Successfully updated'); // add this
+
+      const updatedItem = await updateInventoryItem(id, updates); // calls API route
       setInventory((prev) =>
         prev.map((item) =>
           String(item.id) === id ? { ...item, ...updatedItem } : item,
@@ -55,7 +72,7 @@ export function useInventory() {
       return updatedItem;
     } catch (err: any) {
       console.error('Update item failed:', err);
-      throw new Error(err?.response?.data?.message || 'Error updating item');
+      throw new Error(err?.message || 'Error updating item');
     }
   };
 

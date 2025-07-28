@@ -15,7 +15,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { addInventoryformSchema } from '@/lib/validations/addnewInventory';
-import { AddInventoryFormData, AddInventoryItem } from '@/types';
+import { AddInventoryFormData } from '@/types';
 import { useInventory } from '@/hooks/useInventory';
 
 export default function AddProductPage() {
@@ -46,13 +46,12 @@ export default function AddProductPage() {
     };
 
     try {
-      console.log('Adding new item:', newProduct);
-
       const res = await createItem(newProduct);
       console.log('API response:', res);
 
       var productId = res?.data?.id;
       console.log('Product ID:', productId);
+
       if (!productId) throw new Error('No product ID returned from API');
 
       router.push(`/inventory/add-product-success/${productId}`);

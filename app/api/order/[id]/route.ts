@@ -2,10 +2,10 @@ import { cookies } from 'next/headers';
 import { NextRequest, NextResponse } from 'next/server';
 import { axiosInstance } from '@/lib/axios';
 
-const getAuthToken = async () => {
-  const cookieStore = await cookies();
-  return cookieStore.get('access_token')?.value || null;
-};
+// const getAuthToken = async () => {
+//   const cookieStore = await cookies();
+//   return cookieStore.get('access_token')?.value || null;
+// };
 
 export async function PUT(
   req: NextRequest,

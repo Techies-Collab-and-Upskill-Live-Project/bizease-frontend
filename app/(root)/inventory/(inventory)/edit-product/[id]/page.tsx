@@ -14,70 +14,62 @@ import { Card, CardContent, CardHeader } from '@/components/ui/card';
 
 import { editInventoryformSchema } from '@/lib/validations/editInventoryProduct';
 import { EditInventoryFormData } from '@/types';
-// import { useInventoryStore } from '@/lib/store/inventory';
+import { useInventory } from '@/hooks/useInventory';
 
 export default function EditProduct() {
-  //  Hooks
   const router = useRouter();
   const params = useParams();
   const productId = Number(params.id);
 
-  //  Zustand store: get inventory list and update function
-  const inventory = useInventoryStore((state) => state.inventory);
-  const updateProduct = useInventoryStore((state) => state.editProduct);
+  const { inventory, updateItem } = useInventory();
 
-  //  Find current product by ID (memoized for performance)
   const product = useMemo(
     () => inventory.find((item) => item.id === productId),
     [inventory, productId],
   );
 
-  //  Redirect to fallback page if product doesn't exist
-  useEffect(() => {
-    if (!product) {
-      router.push('/inventory/edit-product-failed');
-    }
-  }, [product, router]);
-
-  //  Default form values from product (memoized)
-  const defaultValues = useMemo(
-    () => ({
-      itemName: product?.name || '',
-      category: product?.category || '',
-      stockLevel: product?.stock ?? 0,
-      price: product?.price ?? 0,
-      lowStockThreshold: product?.low_stock_threshold ?? 5,
-      description: product?.description || '',
-    }),
-    [product],
-  );
-
-  //  React Hook Form setup with Zod validation
   const {
     register,
     handleSubmit,
+    reset,
     formState: { errors },
   } = useForm<EditInventoryFormData>({
     resolver: zodResolver(editInventoryformSchema),
-    defaultValues,
+    defaultValues: {
+      product_name: '',
+      category: '',
+      stock_level: 0,
+      price: 0,
+      low_stock_threshold: 5,
+      description: '',
+    },
   });
 
-  //  Submit handler: update store and redirect
-  const onSubmit = (data: EditInventoryFormData) => {
-    updateProduct(String(productId), {
-      id: productId,
-      product_name: data.itemName,
-      description: data.description,
-      category: data.category,
-      stock_level: data.stockLevel,
-      low_stock_threshold: data.lowStockThreshold,
-      price: data.price,
-    });
+  useEffect(() => {
+    if (product) {
+      reset({
+        product_name: product.product_name,
+        category: product.category,
+        stock_level: product.stock_level,
+        price: product.price,
+        low_stock_threshold: product.low_stock_threshold,
+        description: product.description,
+      });
+    }
+  }, [product, reset]);
 
-    router.push(`/inventory/edit-product-success/${productId}`);
+  const onSubmit = async (data: EditInventoryFormData) => {
+    console.log('Submitting form values:', data);
+
+    try {
+      await updateItem(String(productId), data);
+      router.push(`/inventory/edit-product-success/${productId}`);
+    } catch (err) {
+      console.error('Update failed:', err);
+      alert('Error updating product. Please try again.');
+    }
   };
 
-  //  Form UI
   return (
     <section className="flex flex-col items-center justify-center h-screen w-full">
       <Card className="w-full border-0">
@@ -88,22 +80,21 @@ export default function EditProduct() {
             </Button>
             <h2 className="text-2xl max-md:text-md text-surface-400 font-semibold">
               Edit Product:
-              <span className="text-blue-600"> {product?.name} </span>
+              <span className="text-blue-600"> {product?.product_name} </span>
             </h2>
           </div>
         </CardHeader>
 
         <CardContent className="w-full mx-auto max-w-md md:max-w-lg space-y-1">
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-2">
-            {/*  Input Fields */}
             {[
-              { label: 'Item Name', name: 'itemName' },
+              { label: 'Item Name', name: 'product_name' },
               { label: 'Category', name: 'category' },
-              { label: 'Stock Level', name: 'stockLevel', type: 'number' },
+              { label: 'Stock Level', name: 'stock_level', type: 'number' },
               { label: 'Price', name: 'price', type: 'number' },
               {
                 label: 'Low Stock Threshold',
-                name: 'lowStockThreshold',
+                name: 'low_stock_threshold',
                 type: 'number',
               },
             ].map(({ label, name, type }) => (
@@ -124,7 +115,6 @@ export default function EditProduct() {
               </div>
             ))}
 
-            {/* Description */}
             <div>
               <Label className="text-surface-400 mb-1">Description</Label>
               <Textarea
@@ -138,7 +128,6 @@ export default function EditProduct() {
               )}
             </div>
 
-            {/* Action Buttons */}
             <div className="flex flex-col items-center gap-3 pt-4">
               <Button
                 type="submit"

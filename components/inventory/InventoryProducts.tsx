@@ -10,6 +10,7 @@ import Link from 'next/link';
 import { SearchProductProps } from '@/types';
 import DeleteConfirmationModal from '../modals/DeleteModal';
 import { useInventory } from '@/hooks/useInventory';
+import { string } from 'zod';
 
 export default function InventoryComponent({
   setCurrentPage,
@@ -150,6 +151,7 @@ export default function InventoryComponent({
 
         {selectedProduct && (
           <DeleteConfirmationModal
+            productId={selectedProduct.id?.toString()}
             open={deleteModalOpen}
             onClose={() => {
               setDeleteModalOpen(false);
@@ -157,7 +159,7 @@ export default function InventoryComponent({
             }}
             onConfirm={async () => {
               try {
-                await deleteItem(String(selectedProductId, token!));
+                await deleteItem(String(selectedProductId));
               } catch (err) {
                 console.error('Failed to delete item:', err);
               } finally {
@@ -207,7 +209,7 @@ export default function InventoryComponent({
                     <Button
                       onClick={async () => {
                         try {
-                          await deleteItem(String(id), token!);
+                          await deleteItem(String(id));
                         } catch (err) {
                           console.error('Failed to delete item:', err);
                         }

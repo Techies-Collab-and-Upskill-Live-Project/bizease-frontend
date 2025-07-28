@@ -1,3 +1,4 @@
+import { InventoryItem } from '@/types';
 import { axiosInstance } from '../axios';
 
 export const getInventory = async () => {
@@ -39,16 +40,34 @@ export const addInventoryItem = async (data: any) => {
   }
 };
 
-export const updateInventoryItem = async (id: string, data: any) => {
+// export const updateInventoryItem = async (id: string, data: InventoryItem) => {
+//   try {
+//     const res = await axiosInstance.put(`/inventory/${id}`, data);
+//     if (res.data.error) {
+//       console.error('Error updating inventory item:', res.data.error);
+//       throw new Error(res.data.error);
+//     }
+//     console.log('Inventory item updated successfully:', res.data.data);
+//     return res.data.data;
+//   } catch (err: any) {
+//     throw new Error(
+//       err?.response?.data?.error || 'Failed to update inventory item',
+//     );
+//   }
+// };
+
+// lib/services/inventory.ts
+
+export const updateInventoryItem = async (
+  id: string,
+  data: Partial<InventoryItem>,
+) => {
   try {
     const res = await axiosInstance.put(`/inventory/${id}`, data);
-    if (res.data.error) {
-      // console.error('Error updating inventory item:', res.data.error);
-      throw new Error(res.data.error);
-    }
-    // console.log('Inventory item updated successfully:', res.data.data);
+    console.log(res, 'from services');
     return res.data.data;
   } catch (err: any) {
+    console.error('API error:', err?.response?.data || err);
     throw new Error(
       err?.response?.data?.error || 'Failed to update inventory item',
     );
