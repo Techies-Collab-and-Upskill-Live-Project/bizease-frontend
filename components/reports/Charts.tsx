@@ -35,8 +35,8 @@ const Charts = () => {
   if (!report) return <p className="text-center text-muted">No report data.</p>;
 
   const lineChartData = {
-    labels: report.date_revenue_chart_data.map(
-      (d) => format(new Date(d.date), 'EEE'), // 'Mon', 'Tue', etc.
+    labels: report.date_revenue_chart_data.map((d) =>
+      format(new Date(d.date), 'EEE'),
     ),
     datasets: [
       {

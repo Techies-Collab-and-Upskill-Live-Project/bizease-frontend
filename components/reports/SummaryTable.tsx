@@ -1,32 +1,25 @@
 'use client';
 
 import React from 'react';
-import { formatCurrency } from '@/lib/utils';
+// import { formatCurrency } from '@/lib/utils';
 import { useReport } from '@/hooks/useReport';
-import { Button } from '../ui/button';
-import Link from 'next/link';
+import { useReportSummary } from '@/hooks/useReportSummary';
 
 const SummaryTable = () => {
   const { report, loading, error } = useReport({ period: 'last-week' });
+  const { summaryData } = useReportSummary();
 
   const productSales = report?.product_sales_chart_data ?? [];
 
-  console.log(productSales);
-  console.log('report page', report);
+  const summary = summaryData?.data.summary ?? [];
+
+  console.log('report-summaryData page', summaryData?.data.summary);
 
   return (
     <div className="w-full min-h-36 px-4 lg:px-8 mt-6">
       <h2 className="text-sm text-surface-500 font-semibold mb-3">
         Recent Sales Summary
       </h2>
-      {/* <Link
-        href="/report-analytics/generate-reports"
-        className="w-full sm:w-auto"
-      >
-        <Button className="w-full bg-darkblue hover:bg-lightblue">
-          Export
-        </Button>
-      </Link> */}
 
       <div className="overflow-x-auto rounded-md border shadow-sm">
         {loading ? (
@@ -50,16 +43,22 @@ const SummaryTable = () => {
               </tr>
             </thead>
             <tbody className="bg-blue-50 text-left">
-              {productSales.map((item, index) => (
-                <tr key={index} className="text-[11px] text-gray-800">
-                  <td className="p-3 font-medium whitespace-nowrap">
-                    {item.name}
-                  </td>
-                  <td className="p-3">{item?.quantity_sold}</td>
-                  <td className="p-3">{formatCurrency(item?.revenue)}</td>
-                  <td className="p-3">{item?.stock_status ?? 'In Stock'}</td>
-                </tr>
-              ))}
+              {summary.map(
+                ({ name, quantity_sold, revenue, stock_status }, index) => (
+                  <tr key={index} className="text-[11px] text-gray-800">
+                    <td className="p-3 font-medium whitespace-nowrap">
+                      {name}
+                    </td>
+                    <td className="p-3">{quantity_sold}</td>
+                    <td className="p-3">
+                      {typeof revenue === 'number'
+                        ? revenue.toLocaleString()
+                        : revenue}
+                    </td>
+                    <td className="p-3">{stock_status ?? 'In Stock'}</td>
+                  </tr>
+                ),
+              )}
             </tbody>
           </table>
         ) : (

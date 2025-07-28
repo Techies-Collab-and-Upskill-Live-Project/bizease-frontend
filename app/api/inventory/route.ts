@@ -15,6 +15,7 @@ export interface InventoryData {
   data: InventoryItem[];
   message: string;
 }
+
 export async function GET(req: NextRequest) {
   const accessToken = req.cookies.get('access_token')?.value;
   console.log('Access Token:', accessToken);

@@ -7,6 +7,8 @@ import { ReportQuery } from '@/lib/services/report';
 import { formatCurrency, calculatePercentageChange } from '@/lib/utils';
 import { useOrder } from '@/hooks/useOrder';
 import { ReportData } from '@/types';
+import Link from 'next/link';
+import { Button } from '../ui/button';
 
 const MetricCard = ({
   label,
@@ -73,18 +75,32 @@ const ReportSums = () => {
   }
 
   return (
-    <div className="w-full mx-auto px-4 lg:px-8 mt-4">
-      <div className="flex justify-end mb-4">
-        <select
-          value={period}
-          onChange={(e) => setPeriod(e.target.value as ReportQuery['period'])}
-          className="border border-muted p-2 rounded-md text-sm"
-        >
-          <option value="last-week">Last Week</option>
-          <option value="last-month">Last Month</option>
-          <option value="last-6-months">Last 6 Months</option>
-          <option value="last-year">Last Year</option>
-        </select>
+    <section className="w-full mx-auto px-4 lg:px-8 mt-4">
+      <div className="flex justify-between max-lg:justify-end">
+        <h1 className="text-lg font-bold text-darkblue hidden lg:block">
+          Report & Analytics
+        </h1>
+        <div className="flex gap-2">
+          <Link
+            href="/report-analytics/generate-reports"
+            className="w-full sm:w-auto"
+          >
+            <Button className="w-full bg-darkblue hover:bg-lightblue">
+              Export
+            </Button>
+          </Link>
+
+          <select
+            value={period}
+            onChange={(e) => setPeriod(e.target.value as ReportQuery['period'])}
+            className=" mb-4 border border-darkblue p-2 rounded-md text-sm text-darkblue"
+          >
+            <option value="last-week">Last Week</option>
+            <option value="last-month">Last Month</option>
+            <option value="last-6-months">Last 6 Months</option>
+            <option value="last-year">Last Year</option>
+          </select>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 auto-rows-fr">
@@ -115,7 +131,7 @@ const ReportSums = () => {
           value={report?.pending_orders ?? 0}
         />
       </div>
-    </div>
+    </section>
   );
 };
 

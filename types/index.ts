@@ -245,3 +245,22 @@ export type ReportData = {
   top_selling_product: string;
   date_revenue_chart_data: RevenueChartData[];
 };
+
+export interface ReportSummaryItem {
+  title: string;
+  value: number | string;
+  icon?: string;
+  growthRate?: number;
+  change?: string;
+  name: string;
+  stock_status: string;
+  quantity_sold: number;
+  revenue: number;
+}
+
+export interface ReportSummaryResponse {
+  data: {
+    period: string;
+    summary: ReportSummaryItem[];
+  };
+}
