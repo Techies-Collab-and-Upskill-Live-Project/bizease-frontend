@@ -74,16 +74,38 @@ export const updateInventoryItem = async (
   }
 };
 
-export const deleteInventoryItem = async (
-  id: string,
-  token: string,
-): Promise<any> => {
+// export const deleteInventoryItem = async (id: string): Promise<any> => {
+//   try {
+//     const response = await axiosInstance.delete(`/inventory/${id}`, {
+//       headers: {
+//         Authorization: `Bearer ${token}`,
+//       },
+//     });
+
+//     if (response.data?.error) {
+//       console.error(
+//         '[deleteInventoryItem] Backend error:',
+//         response.data.error,
+//       );
+//       throw new Error(response.data.error);
+//     }
+
+//     // console.log('[deleteInventoryItem] Deleted successfully:', response.data);
+//     return response.data;
+//   } catch (error: any) {
+//     const errorMsg =
+//       error?.response?.data?.error ||
+//       error.message ||
+//       'Failed to delete inventory item';
+//     console.error('[deleteInventoryItem] Error:', errorMsg);
+//     throw new Error(errorMsg);
+//   }
+// };
+
+export const deleteInventoryItem = async (id: string): Promise<any> => {
   try {
-    const response = await axiosInstance.delete(`/inventory/${id}`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
+    // Call the internal API route instead of the external one
+    const response = await axiosInstance.delete(`/inventory/${id}`);
 
     if (response.data?.error) {
       console.error(
@@ -93,12 +115,11 @@ export const deleteInventoryItem = async (
       throw new Error(response.data.error);
     }
 
-    // console.log('[deleteInventoryItem] Deleted successfully:', response.data);
     return response.data;
   } catch (error: any) {
     const errorMsg =
       error?.response?.data?.error ||
-      error.message ||
+      error?.message ||
       'Failed to delete inventory item';
     console.error('[deleteInventoryItem] Error:', errorMsg);
     throw new Error(errorMsg);

@@ -76,13 +76,17 @@ export function useInventory() {
     }
   };
 
-  const deleteItem = async (id: string, token: string) => {
+  const deleteItem = async (id: string) => {
     try {
-      await deleteInventoryItem(id, token);
-      setInventory((prev) => prev.filter((item) => String(item.id) !== id));
-    } catch (err: any) {
-      console.error('Delete item failed:', err);
-      throw new Error(err?.response?.data?.message || 'Error deleting item');
+      await deleteInventoryItem(id);
+
+      setInventory((prev: InventoryItem[]) =>
+        prev.filter((item) => String(item.id) !== id),
+      );
+    } catch (error: unknown) {
+      const err = error as Error;
+      console.error('Delete item failed:', err.message);
+      throw new Error(err.message || 'Error deleting item');
     }
   };
 

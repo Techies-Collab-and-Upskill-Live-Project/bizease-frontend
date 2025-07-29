@@ -28,9 +28,9 @@ export default function InventoryComponent({
   const [isOpen, setIsOpen] = useState(false);
   const itemsPerPage = 6;
 
-  const selectedProduct = inventory.find(
-    ({ id }) => id === Number(selectedProductId),
-  );
+  const selectedProduct = inventory.find(({ id }) => id === selectedProductId);
+
+  console.log(selectedProduct, 'is the deleting product id');
 
   const getStockStatus = (stock_level: number) => {
     if (stock_level === 0) return 'Zero Stock';
