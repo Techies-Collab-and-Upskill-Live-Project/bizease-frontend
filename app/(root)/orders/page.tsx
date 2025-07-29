@@ -69,14 +69,10 @@ const OrdersPage = () => {
   }, [filtered, page, search, filter, cache]);
 
   const totalPages = Math.max(1, Math.ceil(filtered.length / perPage));
-  // const totalRevenue =
-  //   stats?.total_revenue ||
-  //   filtered.reduce((acc, { total_price = 0 }) => acc + total_price, 0);
+
   const totalPending =
     stats?.pending_orders ??
     filtered.filter(({ status }) => status.toLowerCase() === 'pending').length;
-
-  // const FrontEndId = Date.now().toString();
 
   return (
     <section className="bg-gray-100 pb-5">

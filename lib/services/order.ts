@@ -1,6 +1,7 @@
 import { OrderPayload } from '@/types';
 import { axiosInstance } from '../axios';
 import { Order } from '@/types';
+import { toast } from 'sonner';
 
 // GET Orders
 export const getOrders = async ({
@@ -73,12 +74,16 @@ export async function updateOrder(id: string, data: OrderPayload) {
 }
 
 export async function deleteOrder(id: string) {
-  const response = await axiosInstance.delete(`/order/${id}`);
+  try {
+    const response = await axiosInstance.delete(`/order/${id}`);
 
-  if (!response) {
-    throw new Error('Failed to delete order');
+    toast.success('Order deleted successfully');
+    return response;
+  } catch (error: any) {
+    const backendMessage =
+      error?.response?.data?.detail || 'Failed to delete order';
+    toast.error(backendMessage);
+    console.error('Delete order error:', backendMessage);
+    throw new Error(backendMessage);
   }
-  console.log('delete from service call for update', response);
-
-  return response;
 }

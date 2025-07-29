@@ -74,13 +74,14 @@ export async function DELETE(
   }
 
   try {
-    const url = `${process.env.NEXT_PUBLIC_BASE_URL}/orders/${id}`;
-
-    await axiosInstance.delete(url, {
-      headers: {
-        Authorization: `Bearer ${token}`,
+    await axiosInstance.delete(
+      `${process.env.NEXT_PUBLIC_BASE_URL}/orders/${id}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       },
-    });
+    );
 
     console.log(`Order with ID ${id} deleted successfully.`);
     return NextResponse.json({ success: true });

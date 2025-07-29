@@ -56,7 +56,6 @@ export function useOrder() {
   const editOrder = async (id: string, updatedData: OrderUpdatePayload) => {
     try {
       const updated = await updateOrder(id, updatedData);
-      console.log('hooking data', updated);
 
       setOrders((prev) =>
         prev.map((order) => (String(order.id) === id ? updated : order)),

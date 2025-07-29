@@ -46,10 +46,8 @@ const OrderModal = ({
     try {
       setLoading(true);
       await removeOrder(String(order.id));
-      toast.success('Order deleted');
       onClose();
     } catch (err) {
-      toast.error('Failed to delete order');
     } finally {
       setLoading(false);
     }
