@@ -3,7 +3,6 @@ import { axiosInstance } from '../axios';
 import { Order } from '@/types';
 import { toast } from 'sonner';
 
-// GET Orders
 export const getOrders = async ({
   page = 1,
   status = '',
