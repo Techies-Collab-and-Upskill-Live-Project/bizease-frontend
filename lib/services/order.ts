@@ -1,6 +1,5 @@
 import { OrderPayload } from '@/types';
 import { axiosInstance } from '../axios';
-import { Order } from '@/types';
 import { toast } from 'sonner';
 
 export const getOrders = async ({
