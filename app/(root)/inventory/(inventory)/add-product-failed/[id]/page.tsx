@@ -5,12 +5,15 @@ import { Button } from '@/components/ui/button';
 import Image from 'next/image';
 import Link from 'next/link';
 import React from 'react';
-import { inventoryItems } from '@/constants';
+import { useInventory } from '@/hooks/useInventory';
 
 const AddFailurePage = () => {
   const params = useParams();
   const id = Number(params.id);
-  const product = inventoryItems.find((item) => item.id === id);
+  const { inventory } = useInventory();
+
+  const product = inventory.find((item) => item.id === id);
+  console.log('Product:', product);
 
   return (
     <section className="flex-center h-screen w-full bg-surface-100 px-4">
@@ -19,7 +22,7 @@ const AddFailurePage = () => {
           width={60}
           height={60}
           alt="Failure Icon"
-          src="/icon/failure.svg" // Make sure you have a failure icon at this path
+          src="/icon/failure.svg"
         />
         <div className="text-center">
           <h1 className="text-2xl font-bold text-red-600">
@@ -27,7 +30,7 @@ const AddFailurePage = () => {
           </h1>
           <p className="text-sm text-red-500 mt-2">
             {product
-              ? `Failed to add "${product.name}". Please try again.`
+              ? `Failed to add "${product.product_name}". Please try again.`
               : 'Product could not be added. Please try again.'}
           </p>
         </div>

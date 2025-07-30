@@ -5,8 +5,8 @@ interface LabelProps {
 const CustomLegend = ({ label }: LabelProps) => (
   <div className="flex flex-center items-center text-sm text-gray-700">
     <div
-      className={`flex  items-center text-[12px] font-bold  ${
-        label === 'Order'
+      className={`flex  items-center text-[12px] font-bold mr-6 ${
+        label === 'Revenue'
           ? 'rotate-[-90deg] origin-ceter'
           : 'mt-4 text-[12px] font-bold '
       }`}

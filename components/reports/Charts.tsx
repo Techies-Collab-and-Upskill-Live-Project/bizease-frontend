@@ -12,10 +12,9 @@ import {
   Legend,
 } from 'chart.js';
 
-import { useOrderStore } from '@/lib/store';
 import CustomLegend from './CustomLegend';
-import { getLastNDates } from '@/lib/utils';
-import { computeTopProductRevenues } from '@/lib/revenue';
+import { useReport } from '@/hooks/useReport';
+import { format } from 'date-fns'; // for consistent date labels
 
 ChartJS.register(
   CategoryScale,
@@ -28,28 +27,30 @@ ChartJS.register(
 );
 
 const Charts = () => {
-  const { orders } = useOrderStore();
+  const { report, loading, error } = useReport({ period: 'last-week' });
 
-  const periodLength = 5;
-  const dateLabels = getLastNDates(periodLength, 'en-US', {
-    weekday: 'short',
-  });
+  if (loading)
+    return <p className="text-center text-muted">Loading charts...</p>;
+  if (error) return <p className="text-center text-destructive">{error}</p>;
+  if (!report) return <p className="text-center text-muted">No report data.</p>;
 
-  // Group orders by weekday
-  const salesMap: Record<string, number> = {};
-  for (const label of dateLabels) {
-    salesMap[label] = 0;
-  }
+  const lineChartData = {
+    labels: report.date_revenue_chart_data.map((d) =>
+      format(new Date(d.date), 'EEE'),
+    ),
+    datasets: [
+      {
+        label: 'Revenue',
+        data: report.date_revenue_chart_data.map((d) => d.revenue),
+        borderColor: 'rgba(34,211,238,1)',
+        backgroundColor: 'rgba(34,211,238,0.2)',
+        tension: 0.4,
+        fill: true,
+        pointRadius: 3,
+      },
+    ],
+  };
 
-  orders.forEach((order) => {
-    const date = new Date(order.date);
-    const label = date.toLocaleDateString('en-US', { weekday: 'short' });
-    if (salesMap[label] !== undefined) {
-      salesMap[label] += 1;
-    }
-  });
-
-  const topProducts = computeTopProductRevenues(orders, 5);
   const colors = [
     'rgba(34,211,238,0.7)',
     'rgba(34,211,238,0.5)',
@@ -59,29 +60,17 @@ const Charts = () => {
   ];
 
   const barChartData = {
-    labels: topProducts.map(({ name }) => name),
+    labels: report.product_sales_chart_data.map((p) => p.name),
     datasets: [
       {
-        label: 'Revenue',
-        data: topProducts.map(({ revenue }) => revenue),
-        backgroundColor: topProducts.map((_, i) => colors[i % colors.length]),
+        label: 'Units Sold',
+        data: report.product_sales_chart_data.map((p) => p.quantity_sold),
+        backgroundColor: colors.slice(
+          0,
+          report.product_sales_chart_data.length,
+        ),
         borderRadius: 6,
         borderSkipped: false,
-      },
-    ],
-  };
-
-  const lineChartData = {
-    labels: dateLabels,
-    datasets: [
-      {
-        label: 'Sales',
-        data: dateLabels.map((label) => salesMap[label] || 0),
-        borderColor: 'rgba(34,211,238,1)',
-        backgroundColor: 'rgba(34,211,238,0.2)',
-        tension: 0.4,
-        fill: true,
-        pointRadius: 3,
       },
     ],
   };
@@ -111,12 +100,12 @@ const Charts = () => {
       {/* Line Chart */}
       <div className="space-y-3">
         <h2 className="text-base font-semibold text-muted-foreground">
-          Sales Over Last 6 Days
+          Revenue Over Time
         </h2>
         <div className="bg-surface-100 rounded-xl shadow-sm p-6 overflow-hidden">
           <div className="w-full max-w-full h-[280px] md:h-[320px] relative">
             <div className="absolute top-30 -left-6 pr-4">
-              <CustomLegend label="Order" />
+              <CustomLegend label="Revenue" />
             </div>
             <Line
               style={{ width: '98%', maxWidth: '98%' }}
@@ -133,13 +122,13 @@ const Charts = () => {
       {/* Bar Chart */}
       <div className="space-y-3">
         <h2 className="text-base font-semibold text-muted-foreground">
-          Top Products by Revenue
+          Top Products by Quantity Sold
         </h2>
-        <div className="bg-surface-100 rounded-xl shadow-sm p-4 overflow-x-hiden">
+        <div className="bg-surface-100 rounded-xl shadow-sm p-4 overflow-x-hidden">
           <div className="w-full h-[280px] md:h-[320px] relative">
-            {topProducts.length === 0 ? (
+            {report.product_sales_chart_data.length === 0 ? (
               <p className="text-center text-muted-foreground">
-                No product data available.
+                No product sales data available.
               </p>
             ) : (
               <Bar

@@ -2,7 +2,7 @@
 
 import SearchInput from '../shared/SearchInput';
 import FilterSelect from '../shared/FilterButton';
-import AddButton from '../shared/AddButton';
+import AddButton from '../shared/InventoryAddButton';
 
 interface InventoryHeaderActionsProps {
   searchTerm: string;

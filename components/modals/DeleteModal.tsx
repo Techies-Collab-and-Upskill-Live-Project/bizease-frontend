@@ -15,6 +15,7 @@ interface DeleteConfirmationModalProps {
   onClose: () => void;
   onConfirm: () => void;
   productName: string;
+  productId?: string;
 }
 
 export default function DeleteConfirmationModal({
@@ -22,7 +23,12 @@ export default function DeleteConfirmationModal({
   onClose,
   onConfirm,
   productName,
+  productId,
 }: DeleteConfirmationModalProps) {
+  // const { editOrder, removeOrder } = useOrder();
+
+  console.log('deleting', productId, productName);
+
   return (
     <Dialog open={open} onOpenChange={onClose}>
       <DialogContent className="w-full h-fit p-6 text-center">
@@ -33,7 +39,8 @@ export default function DeleteConfirmationModal({
         </DialogHeader>
         <div>
           <p className="text-gray-700 my-1">
-            Are you sure you want to delete <strong>{productName}</strong>?
+            Are you sure you want to delete <strong>{productName}</strong>? Are
+            you sure you want to delete <strong>Order ID:{productId}</strong>?
           </p>
           <p className="text-md text-red-500 mb-6">
             This action cannot be undone.

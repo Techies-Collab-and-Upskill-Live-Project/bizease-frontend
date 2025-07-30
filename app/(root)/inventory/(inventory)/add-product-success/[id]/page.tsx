@@ -6,11 +6,11 @@ import Image from 'next/image';
 import Link from 'next/link';
 import React from 'react';
 
-import { useInventoryStore } from '@/lib/store';
+import { useInventory } from '@/hooks/useInventory';
 
 const AddSuccessPage = () => {
   const params = useParams();
-  const inventory = useInventoryStore((state) => state.inventory);
+  const { inventory } = useInventory();
 
   const id = Number(params.id);
   const product = inventory.find((item) => item.id === id);
@@ -28,7 +28,7 @@ const AddSuccessPage = () => {
           <h1 className="text-2xl font-bold text-darkblue">Product Added!</h1>
           <p className="text-sm text-darkblue mt-2">
             {product
-              ? `Product "${product.name}" was added successfully.`
+              ? `Product "${product.product_name}" was added successfully.`
               : 'Product was added successfully.'}
           </p>
         </div>

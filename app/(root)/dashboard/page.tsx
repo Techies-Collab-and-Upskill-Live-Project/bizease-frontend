@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import Image from 'next/image';
 
 import TopAvatar from '@/components/navigations/TopAvatar';
@@ -8,19 +8,23 @@ import UsernameAndButtons from '@/components/dashboard/UsernameAndAddbutton';
 import MobileButtons from '@/components/dashboard/MobileButton';
 import PendingOrders from '@/components/dashboard/PendingOrders';
 import LowStockItems from '@/components/dashboard/LowStockItems';
-
-import { useOrderStore } from '@/lib/store';
-import { calculateMostOrderedProduct } from '@/lib/utils';
 import AnimatedCountUp from '@/components/animations/AnimatedCountUp';
+import { useDashboard } from '@/hooks/useDashboard';
+import { useReport } from '@/hooks/useReport';
+import { ReportQuery } from '@/lib/services/report';
 
 const DashboardPage = () => {
-  const orders = useOrderStore((state) => state.orders);
+  const [period] = useState<ReportQuery['period']>('last-week');
 
-  //  Calculate total revenue from order totals
-  const totalRevenue = orders.reduce((sum, order) => sum + order.total, 0);
+  const { dashboardStats, loading, error } = useDashboard();
+  const { report } = useReport({ period });
 
-  //  Determine top product by frequency across orders
-  const mostOrdered = calculateMostOrderedProduct(orders);
+  const revenue = dashboardStats?.revenue ?? 0;
+  const topProduct = dashboardStats?.top_Selling_product ?? 'Not available';
+  const revenueChangeImage =
+    report?.revenue_change !== undefined && report.revenue_change >= 0
+      ? '/icon/green.svg'
+      : '/icon/red.svg';
 
   return (
     <section className="relative min-h-screen h-fit w-full bg-gray-100">
@@ -34,36 +38,57 @@ const DashboardPage = () => {
       <div className="py-3 px-8 overflow-auto">
         <UsernameAndButtons />
 
-        {/* Revenue and Top Product Cards */}
-        <div className="flex gap-4 mb-6">
-          <div className="flex-1/2 flex-col bg-gradient px-4 py-2 rounded-sm">
-            <p className="text-surface-200 text-[10px]">Revenue</p>
-            <p className="text-surface-200 text-sm font-semibold">
-              <AnimatedCountUp amount={totalRevenue} />
-            </p>
-            <div className="flex gap-1.5 mt-2">
-              <Image
-                src={'/icon/green.svg'}
-                width={6}
-                height={6}
-                alt="highlight-up"
-              />
-              <p className="text-success text-[10px]">+6.93%</p>
+        {loading ? (
+          <p className="text-muted-foreground text-sm mt-10">
+            Loading dashboard...
+          </p>
+        ) : error ? (
+          <p className="text-red-500 text-sm mt-10">{error}</p>
+        ) : (
+          <>
+            {/* Revenue and Top Product Cards */}
+            <div className="flex gap-4 mb-6">
+              <div className="flex-1/2 flex-col bg-gradient px-4 py-2 rounded-sm">
+                <p className="text-surface-200 text-[10px]">Revenue</p>
+                <p className="text-surface-200 text-sm font-semibold">
+                  <AnimatedCountUp amount={revenue} />
+                </p>
+                <div className="flex gap-1.5 mt-2">
+                  {
+                    <Image
+                      src={revenueChangeImage}
+                      width={6}
+                      height={6}
+                      alt="highlight-up"
+                    />
+                  }
+                  <p
+                    className={`text-[10px] ${
+                      report?.revenue_change !== undefined &&
+                      report.revenue_change < 0
+                        ? 'text-destructive'
+                        : 'text-success'
+                    }`}
+                  >
+                    {report?.revenue_change ?? 0} %
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex-1/2 bg-gradient px-4 py-2 rounded-sm">
+                <p className="text-surface-200 text-[10px]">Top Product</p>
+                <p className="text-surface-200 text-sm">{topProduct}</p>
+              </div>
             </div>
-          </div>
 
-          <div className="flex-1/2 bg-gradient px-4 py-2 rounded-sm">
-            <p className="text-surface-200 text-[10px]">Top Product</p>
-            <p className="text-surface-200 text-sm">{mostOrdered.name}</p>
-          </div>
-        </div>
-
-        <div className="mb-6">
-          <div className="space-y-5">
-            <PendingOrders />
-            <LowStockItems />
-          </div>
-        </div>
+            <div className="mb-6">
+              <div className="space-y-5">
+                <PendingOrders />
+                <LowStockItems />
+              </div>
+            </div>
+          </>
+        )}
       </div>
     </section>
   );

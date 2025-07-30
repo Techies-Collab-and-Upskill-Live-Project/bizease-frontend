@@ -11,18 +11,18 @@ interface PendingOrdersMobileProps {
   onViewDetails: (order: Order) => void;
 }
 
-const PendingOrdersMobile: React.FC<PendingOrdersMobileProps> = ({
+const PendingOrdersMobile = ({
   lowStockCount,
   pendingOrders,
   onViewDetails,
-}) => {
+}: PendingOrdersMobileProps) => {
   return (
     <section className="space-y-4 sm:hidden">
       {/* Low stock alert card */}
-      <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 shadow-sm">
+      <div className="bg-warning-bg border border-yellow-100 rounded-lg p-4 shadow-sm">
         <div className="flex items-center gap-2 mb-2">
-          <AlertTriangle className="text-yellow-600" size={20} />
-          <h2 className="text-sm font-semibold text-yellow-700">
+          <AlertTriangle className="text-warning" size={20} />
+          <h2 className="text-sm font-semibold text-warning">
             Pending Order Alert
           </h2>
         </div>
@@ -40,9 +40,9 @@ const PendingOrdersMobile: React.FC<PendingOrdersMobileProps> = ({
         >
           <div className="flex justify-between font-semibold text-darkblue">
             <span>Ord - {order.id}</span>
-            <span>{order.date}</span>
+            <span>{order.order_date}</span>
           </div>
-          <p className="text-gray-700">{order.name}</p>
+          <p className="text-gray-700">{order.client_name}</p>
           <div className="flex justify-between items-center">
             <span
               className={cn(
