@@ -43,7 +43,7 @@ export function useCurrentUser() {
   };
 
   useEffect(() => {
-    fetchUser(); // initial load
+    fetchUser();
   }, []);
 
   return { user, loading, error, refetchUser: fetchUser };
