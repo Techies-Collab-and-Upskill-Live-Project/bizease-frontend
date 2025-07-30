@@ -19,7 +19,7 @@ import { AddInventoryFormData } from '@/types';
 import { useInventory } from '@/hooks/useInventory';
 
 export default function AddProductPage() {
-  const { inventory, loading, error, createItem } = useInventory();
+  const { createItem } = useInventory();
 
   const router = useRouter();
 
@@ -47,17 +47,15 @@ export default function AddProductPage() {
 
     try {
       const res = await createItem(newProduct);
-      console.log('API response:', res);
 
-      var productId = res?.data?.id;
-      console.log('Product ID:', productId);
+      const productId = res?.data?.id;
 
       if (!productId) throw new Error('No product ID returned from API');
 
       router.push(`/inventory/add-product-success/${productId}`);
+      router.push(`/inventory/add-product-failed/${productId}`);
     } catch (error) {
       console.error('Failed to add item:', error);
-      router.push(`/inventory/add-product-failed/${productId}`);
     }
   };
 

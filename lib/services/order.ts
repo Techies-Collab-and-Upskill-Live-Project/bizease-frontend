@@ -1,28 +1,23 @@
-import { OrderPayload } from '@/types';
+import { DeleteOrderResponse, OrderPayload } from '@/types';
 import { axiosInstance } from '../axios';
 import { toast } from 'sonner';
+import axios, { AxiosError } from 'axios';
 
-export const getOrders = async ({
-  page = 1,
-  status = '',
-  order = '',
-}: {
-  page?: number;
-  status?: string;
-  order?: string;
-}) => {
+export const getOrders = async () => {
   try {
-    const res = await axiosInstance.get('/order', {
-      // params: { page, status, order },
-    });
+    const res = await axiosInstance.get('/order');
 
     return res.data.data;
-  } catch (err: any) {
-    console.error(
-      '[getOrders] Error:',
-      err?.response?.data?.message || err.message,
-    );
-    throw new Error(err?.response?.data?.message || 'Failed to fetch orders');
+  } catch (error) {
+    const axiosError = error as AxiosError<DeleteOrderResponse>;
+
+    const backendMessage =
+      axiosError?.response?.data?.detail || 'Failed to delete order';
+
+    toast.error(backendMessage);
+    console.error('Delete order error:', backendMessage);
+
+    throw new Error(backendMessage);
   }
 };
 
@@ -30,17 +25,20 @@ export const createOrder = async (orderData: OrderPayload) => {
   try {
     const res = await axiosInstance.post('/order', orderData);
     return res.data.data;
-  } catch (error) {
-    const err = error as any;
-
-    if (err.response) {
-      console.error('[createOrder] API Error:', err.response.data);
-
-      throw err.response.data;
-    } else if (err.request) {
-      console.error('[createOrder] No response received:', err.request);
+  } catch (error: unknown) {
+    if (axios.isAxiosError(error)) {
+      if (error.response) {
+        console.error('[createOrder] API Error:', error.response.data);
+        throw error.response.data; // or customize this
+      } else if (error.request) {
+        console.error('[createOrder] No response received:', error.request);
+      } else {
+        console.error('[createOrder] Axios error message:', error.message);
+      }
+    } else if (error instanceof Error) {
+      console.error('[createOrder] Unexpected error:', error.message);
     } else {
-      console.error('[createOrder] Unexpected error:', err.message);
+      console.error('[createOrder] Unknown error:', error);
     }
 
     throw new Error('Failed to create order');
@@ -56,19 +54,37 @@ export const getOrderStats = async () => {
     }
     return response.data.data;
   } catch (error) {
-    console.error('[getOrderStats] Failed to fetch order stats', error);
-    throw error;
+    const axiosError = error as AxiosError<DeleteOrderResponse>;
+
+    const backendMessage =
+      axiosError?.response?.data?.detail || 'Failed to delete order';
+
+    toast.error(backendMessage);
+    console.error('Delete order error:', backendMessage);
+
+    throw new Error(backendMessage);
   }
 };
 
 export async function updateOrder(id: string, data: OrderPayload) {
-  const response = await axiosInstance.put(`/order/${id}`, data);
+  try {
+    const response = await axiosInstance.put(`/order/${id}`, data);
 
-  if (!response.data) {
-    throw new Error('Failed to update order');
+    if (!response.data) {
+      throw new Error('Failed to update order');
+    }
+    return response.data;
+  } catch (error) {
+    const axiosError = error as AxiosError<DeleteOrderResponse>;
+
+    const backendMessage =
+      axiosError?.response?.data?.detail || 'Failed to delete order';
+
+    toast.error(backendMessage);
+    console.error('Delete order error:', backendMessage);
+
+    throw new Error(backendMessage);
   }
-  console.log('response from service call for update', response.data);
-  return response.data;
 }
 
 export async function deleteOrder(id: string) {
@@ -77,11 +93,15 @@ export async function deleteOrder(id: string) {
 
     toast.success('Order deleted successfully');
     return response;
-  } catch (error: any) {
+  } catch (error) {
+    const axiosError = error as AxiosError<DeleteOrderResponse>;
+
     const backendMessage =
-      error?.response?.data?.detail || 'Failed to delete order';
+      axiosError?.response?.data?.detail || 'Failed to delete order';
+
     toast.error(backendMessage);
     console.error('Delete order error:', backendMessage);
+
     throw new Error(backendMessage);
   }
 }

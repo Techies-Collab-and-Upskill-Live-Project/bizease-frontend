@@ -13,8 +13,6 @@ const SummaryTable = () => {
 
   const summary = summaryData?.data.summary ?? [];
 
-  console.log('report-summaryData page', summaryData?.data.summary);
-
   return (
     <div className="w-full min-h-36 px-4 lg:px-8 mt-6">
       <h2 className="text-sm text-surface-500 font-semibold mb-3">

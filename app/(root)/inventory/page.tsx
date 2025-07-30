@@ -6,7 +6,6 @@ import { useState } from 'react';
 import InventoryComponent from '@/components/inventory/InventoryProducts';
 import TotalInventory from '@/components/inventory/TotalInventory';
 import TopAvatar from '@/components/navigations/TopAvatar';
-import { useInventory } from '@/hooks/useInventory';
 
 const Inventory = () => {
   const router = useRouter();

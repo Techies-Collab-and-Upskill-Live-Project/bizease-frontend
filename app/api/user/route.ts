@@ -58,13 +58,11 @@ export async function PUT(req: NextRequest) {
 
   try {
     const data = await req.json();
-    const { email, ...userData } = data;
-
-    // console.log('Updating user data:', userData);
+    // const { email, ...userData } = data;
 
     const response = await axios.put(
       `${process.env.NEXT_PUBLIC_BASE_URL}accounts/`,
-      userData,
+      data,
       {
         headers: {
           Authorization: `Bearer ${accessToken}`,

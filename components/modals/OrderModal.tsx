@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -9,7 +9,7 @@ import {
   DialogTitle,
   DialogFooter,
 } from '@/components/ui/dialog';
-import { Order, UpdateOrderModalProps } from '@/types';
+import { UpdateOrderModalProps } from '@/types';
 import AnimatedCountUp from '../animations/AnimatedCountUp';
 import DeleteConfirmationModal from './DeleteModal';
 import { toast } from 'sonner';
@@ -35,8 +35,10 @@ const OrderModal = ({
       });
       toast.success('Order marked as delivered');
       onClose();
-    } catch (err) {
-      toast.error('Failed to update order');
+    } catch (err: unknown) {
+      const errorMessage =
+        err instanceof Error ? err.message : 'Failed to update order';
+      toast.error(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -47,7 +49,10 @@ const OrderModal = ({
       setLoading(true);
       await removeOrder(String(order.id));
       onClose();
-    } catch (err) {
+    } catch (err: unknown) {
+      const errorMessage =
+        err instanceof Error ? err.message : 'Failed to update order';
+      toast.error(errorMessage);
     } finally {
       setLoading(false);
     }

@@ -16,6 +16,9 @@ import { editInventoryformSchema } from '@/lib/validations/editInventoryProduct'
 import { EditInventoryFormData } from '@/types';
 import { useInventory } from '@/hooks/useInventory';
 
+import { isAxiosError } from 'axios';
+import { toast } from 'sonner';
+
 export default function EditProduct() {
   const router = useRouter();
   const params = useParams();
@@ -57,23 +60,28 @@ export default function EditProduct() {
       });
     }
   }, [product, reset]);
-
   const onSubmit = async (data: EditInventoryFormData) => {
-    console.log('Submitting form values:', data);
-
     try {
       await updateItem(String(productId), data);
       router.push(`/inventory/edit-product-success/${productId}`);
-    } catch (err) {
-      console.error('Update failed:', err);
-      alert('Error updating product. Please try again.');
+    } catch (err: unknown) {
+      let errorMessage = 'Error updating product. Please try again.';
+
+      if (isAxiosError(err)) {
+        errorMessage = err.response?.data?.detail || err.message;
+      } else if (err instanceof Error) {
+        errorMessage = err.message;
+      }
+
+      toast.error(errorMessage);
+      console.error('Update item failed:', errorMessage);
     }
   };
 
   return (
     <section className="flex flex-col items-center justify-center h-screen w-full">
       <Card className="w-full border-0">
-        <CardHeader>
+        <CardHeader className="flex-center">
           <div className="flex items-center gap-2">
             <Button variant="ghost" size="icon" onClick={() => router.back()}>
               <ChevronLeft className="w-5 h-5 text-surface-500" />

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import axios, { AxiosError } from 'axios';
+import { DashboardDataResponse } from '@/types';
 
 export async function GET(req: NextRequest) {
   const accessToken = req.cookies.get('access_token')?.value;
@@ -25,22 +26,15 @@ export async function GET(req: NextRequest) {
 
     return NextResponse.json({ status: 200, data: response.data });
   } catch (error) {
-    const axiosError = error as AxiosError;
-    console.error(
-      '[fetchOrderStats] Error:',
-      axiosError.response?.data || axiosError.message || error,
-    );
+    const axiosError = error as AxiosError<DashboardDataResponse>;
+    const errorMessage =
+      axiosError.response?.data?.detail || 'Failed to add inventory item';
 
     return NextResponse.json(
+      { message: errorMessage },
       {
-        message:
-          (axiosError.response?.data as { detail?: string; message?: string })
-            ?.detail ||
-          (axiosError.response?.data as { detail?: string; message?: string })
-            ?.message ||
-          'Failed to fetch order stats',
+        status: axiosError.response?.status || 500,
       },
-      { status: axiosError.response?.status || 500 },
     );
   }
 }

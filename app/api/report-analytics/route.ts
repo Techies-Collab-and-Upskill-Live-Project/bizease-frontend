@@ -19,6 +19,14 @@ export interface ReportAnalyticsData {
   }[];
 }
 
+type ApiErrorResponse = {
+  detail?: string;
+  message?: string;
+};
+type ReportAnalyticsParams =
+  | { period: string; start_date?: undefined; end_date?: undefined }
+  | { start_date: string; end_date: string; period?: undefined };
+
 export async function GET(req: NextRequest) {
   const accessToken = req.cookies.get('access_token')?.value;
   console.log('Access Token:', accessToken);
@@ -36,7 +44,6 @@ export async function GET(req: NextRequest) {
     const start_date = searchParams.get('start_date');
     const end_date = searchParams.get('end_date');
 
-    // Validation: either period OR both start_date & end_date
     if (period && (start_date || end_date)) {
       return NextResponse.json(
         {
@@ -54,11 +61,20 @@ export async function GET(req: NextRequest) {
       );
     }
 
-    const params: any = {};
-    if (period) params.period = period;
-    if (start_date && end_date) {
-      params.start_date = start_date;
-      params.end_date = end_date;
+    let params: ReportAnalyticsParams;
+
+    if (period) {
+      params = { period };
+    } else if (start_date && end_date) {
+      params = { start_date, end_date };
+    } else {
+      return NextResponse.json(
+        {
+          message:
+            'Invalid query: Either period or both start_date and end_date must be provided',
+        },
+        { status: 400 },
+      );
     }
 
     const response = await axios.get(
@@ -76,7 +92,8 @@ export async function GET(req: NextRequest) {
 
     return NextResponse.json({ status: 200, data: response.data.data });
   } catch (error) {
-    const axiosError = error as AxiosError<any>;
+    const axiosError = error as AxiosError<ApiErrorResponse>;
+
     const message =
       axiosError.response?.data?.detail ||
       axiosError.response?.data?.message ||

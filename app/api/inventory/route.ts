@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import axios, { AxiosError } from 'axios';
+import { AddInventoryItemResponse } from '@/types';
 
 export interface InventoryItem {
   owner: string;
@@ -92,8 +93,6 @@ export async function POST(req: NextRequest) {
       date_added,
     };
 
-    // console.log('✅ Sending to backend:', validPayload);
-
     const response = await axios.post(
       `${process.env.NEXT_PUBLIC_BASE_URL}inventory/`,
       validPayload,
@@ -105,15 +104,11 @@ export async function POST(req: NextRequest) {
       },
     );
 
-    // console.log(' Success:', response.data);
-
     return NextResponse.json({ status: 200, data: response.data });
   } catch (error) {
-    const axiosError = error as AxiosError<any>;
+    const axiosError = error as AxiosError<AddInventoryItemResponse>;
     const errorMessage =
-      axiosError.response?.data?.detail ||
-      axiosError.response?.data?.message ||
-      'Failed to add inventory item';
+      axiosError.response?.data?.detail || 'Failed to add inventory item';
 
     return NextResponse.json(
       { message: errorMessage },

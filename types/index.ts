@@ -77,7 +77,7 @@ export type Product = {
   description?: string;
 };
 
-export type ReportPeriod = '7d' | '30d' | 'thisMonth' | 'all';
+// export type ReportPeriod = '7d' | '30d' | 'thisMonth' | 'all';
 
 export interface AddInventoryItem {
   owner: string;
@@ -90,6 +90,7 @@ export interface AddInventoryItem {
   price: number;
   date_added: string;
 }
+
 export interface InventoryItem {
   owner: string;
   id?: number;
@@ -101,6 +102,12 @@ export interface InventoryItem {
   price: number;
   last_updated: string;
 }
+
+export type DeleteInventoryResponse = {
+  success: boolean;
+  message: string;
+  deletedItem?: InventoryItem;
+};
 export interface PostInventoryItem {
   product_name: string;
   description: string;
@@ -283,4 +290,124 @@ export interface InventorySalesItem {
   low_stock_threshold: number;
   price: number;
   date_added: string;
+}
+
+export interface DeleteOrderResponse {
+  detail?: string;
+  message?: string;
+}
+// types/inventoryResponses.ts
+
+export interface InventorySuccessResponse {
+  detail: 'New Item added to inventory';
+}
+
+export interface InventoryValidationErrorResponse {
+  detail: {
+    [field: string]: string[]; // e.g. "product_name": ["This field is required"]
+  };
+}
+
+export interface InventoryUnauthorizedResponse {
+  detail: 'Authentication credentials were not provided.';
+}
+
+export interface InventoryServerErrorResponse {
+  detail: 'Something went wrong while trying to process your request';
+}
+
+export type AddInventoryItemResponse =
+  | InventorySuccessResponse
+  | InventoryValidationErrorResponse
+  | InventoryUnauthorizedResponse
+  | InventoryServerErrorResponse;
+
+export interface DashboardSuccessResponse {
+  total_orders: number;
+  total_revenue: number;
+  pending_orders: number;
+}
+
+export interface DashboardUnauthorizedResponse {
+  detail: 'Authentication credentials were not provided.';
+}
+
+export interface DashboardServerErrorResponse {
+  detail: 'Something went wrong while trying to process your request';
+}
+
+export type DashboardDataResponse =
+  | DashboardUnauthorizedResponse
+  | DashboardServerErrorResponse;
+
+// Success response (200)
+export interface GeneralReportSummaryResponse {
+  data: {
+    period: string; // e.g., "All time", "Last week", etc.
+    summary: {
+      name: string;
+      revenue: number;
+      quantity_sold: number;
+      stock_status: 'in stock' | 'low stock' | 'out of stock' | string;
+    }[];
+  };
+}
+
+// 400 - Invalid query parameters
+export interface InvalidQueryParamsResponse {
+  detail: string; // e.g., "Invalid GET parameters. Only 'period' or a combination of 'start_date' and 'end_date' is allowed"
+}
+
+// 401 - Unauthorized
+export interface UnauthorizedResponse {
+  detail: string; // e.g., "Authentication credentials were not provided."
+}
+
+// 500 - Server error
+export interface ServerErrorResponse {
+  detail: string; // e.g., "Something went wrong while trying to process your request"
+}
+
+// Valid values for period
+export type ReportPeriod =
+  | 'last-week'
+  | 'last-month'
+  | 'last-6-months'
+  | 'last-year';
+
+// Query parameters can be either period or a custom date range
+export type GeneralReportQuery =
+  | { period: ReportPeriod; start_date?: never; end_date?: never }
+  | { period?: never; start_date: string; end_date: string };
+
+export interface DateRevenueChartData {
+  date: string;
+  revenue: number;
+}
+
+export interface ProductSalesChartData {
+  name: string;
+  quantity_sold: number;
+}
+
+export interface GeneralReportData {
+  period: string;
+  top_selling_product: string;
+  low_stock_items: number;
+  pending_orders: number;
+  total_products: number;
+  total_stock_value: string;
+  stock_value_change: number;
+  total_revenue: number;
+  revenue_change: number;
+  date_revenue_chart_data: DateRevenueChartData[];
+  product_sales_chart_data: ProductSalesChartData[];
+}
+
+export interface GeneralReportResponse {
+  data: GeneralReportData;
+}
+
+export interface ErrorResponse {
+  detail: string;
 }

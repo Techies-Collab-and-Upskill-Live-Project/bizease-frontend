@@ -16,12 +16,16 @@ const PendingOrders = () => {
   const pendingOrders = orders.filter((order) => order.status === 'Pending');
   const visibleOrders = showAll ? pendingOrders : pendingOrders.slice(0, 3);
 
+  const FrontEndProductId = uuidv4();
+
   return (
     <div className="space-y-4">
       <h2 className="text-lg font-bold">Pending Orders</h2>
 
       {pendingOrders.length === 0 ? (
-        <div className="text-muted-foreground text-sm">No pending orders.</div>
+        <div className="text-muted-foreground font-medium text-sm">
+          No pending orders.
+        </div>
       ) : (
         <>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -35,7 +39,8 @@ const PendingOrders = () => {
                 >
                   <div className="flex justify-between text-sm font-medium">
                     <span className="font-semibold text-gray-800">
-                      {order.id} {uuidv4()}
+                      {order.id}
+                      {FrontEndProductId}
                     </span>
                     <span className="text-[11px] truncate max-w-[120px]">
                       {product?.name || 'No product'}

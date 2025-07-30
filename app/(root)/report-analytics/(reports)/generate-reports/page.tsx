@@ -486,6 +486,7 @@ import { useCurrentUser } from '@/hooks/useCurrentUser';
 import { ChevronLeft, Download, Eye, Mail } from 'lucide-react';
 import { useReportSummary } from '@/hooks/useReportSummary';
 import { useInventory } from '@/hooks/useInventory';
+import { InventoryItem } from '@/types';
 
 export interface GenerateReport {
   title: string;
@@ -513,6 +514,13 @@ const formSchema = z.object({
   fileName: z.string().min(1, 'File name is required'),
   format: z.enum(['pdf', 'csv', 'xlsx']),
 });
+
+type OrderItem = {
+  name: string;
+  quantity_sold: number;
+  revenue: number;
+  stock_status?: string;
+};
 
 type FormData = z.infer<typeof formSchema>;
 
@@ -555,31 +563,46 @@ const GenerateReports = () => {
   //   if (!summaryData)
   //     return { blob: new Blob(), cleanFileName: fileName, data: [] };
 
-  //   const data = summaryData?.data.summary?.map(
-  //     ({ name, quantity_sold, stock_status, revenue }) => ({
-  //       Product: name,
-  //       'Unit Sold': quantity_sold,
-  //       Revenue: `₦${revenue.toLocaleString()}`,
-  //       'Stock Status': stock_status,
-  //     }),
-  //   );
+  //   const selectedCategory = watch('category');
+
+  //   let data: Record<string, string | number>[] = [];
+
+  //   summaryData?.data.summary?.forEach((item) => {
+  //     const base = { Product: item.name };
+
+  //     const salesFields = {
+  //       'Unit Sold': item.quantity_sold ?? 0,
+  //       Revenue: `₦${(item.revenue ?? 0).toLocaleString()}`,
+  //       'Stock Status': item.stock_status || 'N/A',
+  //     };
+
+  //     const inventoryFields = {
+  //       'Stock Status': item.stock_status || 'N/A',
+  //       'Low Stock Threshold': item.stock_status ?? 0,
+  //       Price: `₦${(item.revenue ?? 0).toLocaleString()}`,
+  //     };
+
+  //     if (selectedCategory === 'sales') {
+  //       data.push({ ...base, ...salesFields });
+  //     } else if (selectedCategory === 'inventory') {
+  //       data.push({ ...base, ...inventoryFields });
+  //     } else {
+  //       // 'all' includes both sets of fields
+  //       data.push({
+  //         ...base,
+  //         ...salesFields,
+  //         ...inventoryFields,
+  //       });
+  //     }
+  //   });
 
   //   let blob: Blob;
 
   //   switch (format) {
   //     case 'csv':
-  //       const csvHeader = 'Product,Unit Sold,Revenue,Stock Status\n';
-  //       const csvRows = data
-  //         .map((row) =>
-  //           [
-  //             row.Product,
-  //             row['Unit Sold'],
-  //             row.Revenue,
-  //             row['Stock Status'],
-  //           ].join(','),
-  //         )
-  //         .join('\n');
-  //       blob = new Blob([csvHeader + csvRows], { type: 'text/csv' });
+  //       const headers = Object.keys(data[0] || {}).join(',') + '\n';
+  //       const rows = data.map((row) => Object.values(row).join(',')).join('\n');
+  //       blob = new Blob([headers + rows], { type: 'text/csv' });
   //       break;
 
   //     case 'xlsx':
@@ -599,64 +622,83 @@ const GenerateReports = () => {
   //     default:
   //       const doc = new jsPDF();
   //       doc.setFontSize(14);
-  //       doc.text('Sales Report', 10, 10);
+  //       doc.text('Report Summary', 10, 10);
   //       let y = 20;
   //       data.forEach((item, index) => {
-  //         doc.text(
-  //           `${index + 1}. ${item.Product} | Sold: ${
-  //             item['Unit Sold']
-  //           } | Revenue: ${item.Revenue} | Stock: ${item['Stock Status']}`,
-  //           10,
-  //           y,
-  //         );
+  //         const line = Object.entries(item)
+  //           .map(([key, val]) => `${key}: ${val}`)
+  //           .join(' | ');
+  //         doc.text(`${index + 1}. ${line}`, 10, y);
   //         y += 10;
   //       });
   //       blob = doc.output('blob');
   //       break;
   //   }
 
-  //   return { blob, cleanFileName: fileName.trim().replace(/\s+/g, '_'), data };
+  //   return {
+  //     blob,
+  //     cleanFileName: fileName.trim().replace(/\s+/g, '_'),
+  //     data,
+  //   };
   // };
 
   const generateBlob = () => {
-    if (!summaryData)
-      return { blob: new Blob(), cleanFileName: fileName, data: [] };
-
     const selectedCategory = watch('category');
+    const inventoryItems = inventory || [];
+    const orderItems = summaryData?.data?.summary || [];
 
     let data: Record<string, string | number>[] = [];
 
-    summaryData?.data.summary?.forEach((item) => {
-      const base = { Product: item.name };
-
-      const salesFields = {
+    if (selectedCategory === 'inventory') {
+      data = inventoryItems.map((item: InventoryItem) => ({
+        Product: item.product_name,
+        'Stock Level': item.stock_level,
+        'Low Stock Threshold': item.low_stock_threshold,
+        Price: `₦${item.price.toLocaleString()}`,
+      }));
+    } else if (selectedCategory === 'sales') {
+      data = orderItems.map((item: OrderItem) => ({
+        Product: item.name,
         'Unit Sold': item.quantity_sold ?? 0,
         Revenue: `₦${(item.revenue ?? 0).toLocaleString()}`,
         'Stock Status': item.stock_status || 'N/A',
-      };
+      }));
+    } else {
+      // 'all' combines both Inventory and Sales if matched by name
+      const combinedMap = new Map<string, Partial<InventoryItem & OrderItem>>();
 
-      const inventoryFields = {
-        'Stock Status': item.stock_status || 'N/A',
-        'Low Stock Threshold': item.stock_status ?? 0,
-        Price: `₦${(item.revenue ?? 0).toLocaleString()}`, // If you have actual price use it here
-      };
-
-      if (selectedCategory === 'sales') {
-        data.push({ ...base, ...salesFields });
-      } else if (selectedCategory === 'inventory') {
-        data.push({ ...base, ...inventoryFields });
-      } else {
-        // 'all' includes both sets of fields
-        data.push({
-          ...base,
-          ...salesFields,
-          ...inventoryFields,
+      inventoryItems.forEach((inv: InventoryItem) => {
+        combinedMap.set(inv.product_name, {
+          product_name: inv.product_name,
+          stock_level: inv.stock_level,
+          low_stock_threshold: inv.low_stock_threshold,
+          price: inv.price,
         });
-      }
-    });
+      });
+
+      orderItems.forEach((ord: OrderItem) => {
+        const existing = combinedMap.get(ord.name) || {};
+        combinedMap.set(ord.name, {
+          ...existing,
+          name: ord.name,
+          quantity_sold: ord.quantity_sold,
+          revenue: ord.revenue,
+          stock_status: ord.stock_status,
+        });
+      });
+
+      data = Array.from(combinedMap.values()).map((item) => ({
+        Product: item.product_name || item.name || 'Unnamed',
+        'Stock Level': item.stock_level ?? 'N/A',
+        'Low Stock Threshold': item.low_stock_threshold ?? 'N/A',
+        Price: item.price ? `₦${item.price.toLocaleString()}` : 'N/A',
+        'Unit Sold': item.quantity_sold ?? 0,
+        Revenue: item.revenue ? `₦${item.revenue.toLocaleString()}` : '₦0',
+        'Stock Status': item.stock_status ?? 'N/A',
+      }));
+    }
 
     let blob: Blob;
-
     switch (format) {
       case 'csv':
         const headers = Object.keys(data[0] || {}).join(',') + '\n';
@@ -724,7 +766,7 @@ const GenerateReports = () => {
     router.push('/report-analytics');
   };
 
-  const selectedCategory = watch('category'); // Get current category selection
+  const selectedCategory = watch('category');
 
   const filteredSummary = summaryData?.data.summary?.filter((item) => {
     if (selectedCategory === 'sales') {
@@ -735,7 +777,7 @@ const GenerateReports = () => {
       return item.stock_status && item.stock_status !== 'In Stock';
     }
 
-    return true; // 'all' returns everything
+    return true;
   });
 
   return (

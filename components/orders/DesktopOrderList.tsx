@@ -14,15 +14,14 @@ interface DesktopOrderListProps {
 
 const DesktopOrderList: FC<DesktopOrderListProps> = ({
   orders,
-  search,
-  setSearch,
-  filter,
-  setFilter,
+  // search,
+  // setSearch,
+  // filter,
+  // setFilter,
   setSelectedOrder,
 }) => {
   return (
     <div>
-      {/* Replace with your actual desktop UI logic */}
       <table className="w-full border text-sm">
         <thead>
           <tr className="bg-gray-100">

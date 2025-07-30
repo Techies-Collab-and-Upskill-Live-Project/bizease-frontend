@@ -9,7 +9,6 @@ import {
 } from '@/components/ui/dialog';
 
 import { Button } from '@/components/ui/button';
-import { useOrder } from '@/hooks/useOrder';
 
 interface DeleteConfirmationModalProps {
   open: boolean;

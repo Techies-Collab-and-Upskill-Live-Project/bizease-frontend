@@ -29,7 +29,7 @@ export function useOrder() {
     setError(null);
 
     try {
-      const response = await getOrders({ page, status, order });
+      const response = await getOrders();
 
       setOrders(response.data.orders);
 

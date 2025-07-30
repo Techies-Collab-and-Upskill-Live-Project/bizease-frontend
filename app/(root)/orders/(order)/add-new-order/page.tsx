@@ -3,10 +3,9 @@
 import { useRouter } from 'next/navigation';
 import { useForm, useFieldArray } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { string, z } from 'zod';
+import { z } from 'zod';
 import { toast } from 'sonner';
 import { ChevronLeft } from 'lucide-react';
-// import emailjs from '@emailjs/browser';
 import { useEffect, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
@@ -21,7 +20,6 @@ import {
 import AnimatedCountUp from '@/components/animations/AnimatedCountUp';
 import { useOrder } from '@/hooks/useOrder';
 import { useInventory } from '@/hooks/useInventory';
-import { OrderPayload } from '@/types';
 
 const orderSchema = z.object({
   client_name: z.string().min(1, 'Client name is required'),
@@ -52,8 +50,12 @@ export default function AddOrderPage() {
         if (inventory.length === 0) {
           await fetchInventory();
         }
-      } catch (err) {
-        toast.error(`Failed to load inventory ${err}`);
+      } catch (err: unknown) {
+        const message =
+          err && typeof err === 'object' && 'message' in err
+            ? String((err as { message?: string }).message)
+            : 'Failed to load inventory';
+        toast.error(message);
       } finally {
         setLoadingInventory(false);
       }
@@ -68,7 +70,7 @@ export default function AddOrderPage() {
     control,
     watch,
     trigger,
-    formState: { errors, isValid },
+    formState: { errors },
   } = useForm<OrderFormData>({
     resolver: zodResolver(orderSchema),
     defaultValues: {
@@ -122,26 +124,19 @@ export default function AddOrderPage() {
     };
 
     try {
-      console.log('Submitting Modal order:', orderPayload);
       const createdOrder = await createNewOrder(orderPayload);
 
-      // await emailjs.send(
-      //   'your_service_id',
-      //   'your_template_id',
-      //   {
-      //     to_name: data.clientName,
-      //     to_email: data.clientEmail,
-      //     total,
-      //     message: 'Your order has been placed successfully!',
-      //   },
-      //   'your_public_key',
-      // );
+      if (!createdOrder || !createdOrder.id) {
+        throw new Error('Invalid response from server');
+      }
 
       toast.success('Order added successfully!');
       router.push(`/orders/add-new-order-success/${createdOrder.id}`);
-    } catch (err: any) {
-      console.error('Order creation failed:', err.message);
-      toast.error(err.message || 'Failed to create order');
+    } catch (err: unknown) {
+      const errorMessage =
+        err instanceof Error ? err.message : 'Failed to create order';
+
+      toast.error(errorMessage);
     }
   };
 
@@ -169,7 +164,7 @@ export default function AddOrderPage() {
           </h1>
         </div>
 
-        <form onSubmit={(e) => e.preventDefault()} className="space-y-4">
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <Input placeholder="Client name" {...register('client_name')} />
           {errors.client_name && (
             <p className="text-sm text-red-500">{errors.client_name.message}</p>
@@ -259,7 +254,6 @@ export default function AddOrderPage() {
           <Button
             type="button"
             onClick={handlePreview}
-            disabled={!isValid}
             className="w-full bg-darkblue text-white hover:bg-blue-900"
           >
             Preview Order

@@ -26,13 +26,13 @@ interface MobileOrderListProps {
 }
 
 const MobileOrderList = ({
-  orders,
-  totalPending,
+  // orders,
+  // totalPending,
   search,
   setSearch,
   filter,
   setFilter,
-  setSelectedOrder,
+  // setSelectedOrder,
   floatButtonShow,
   setFloatButtonShow,
 }: MobileOrderListProps) => {

@@ -4,9 +4,8 @@ import React, { useMemo, useState } from 'react';
 import Image from 'next/image';
 import { useReport } from '@/hooks/useReport';
 import { ReportQuery } from '@/lib/services/report';
-import { formatCurrency, calculatePercentageChange } from '@/lib/utils';
+import { formatCurrency } from '@/lib/utils';
 import { useOrder } from '@/hooks/useOrder';
-import { ReportData } from '@/types';
 import Link from 'next/link';
 import { Button } from '../ui/button';
 
@@ -59,12 +58,7 @@ const ReportSums = () => {
     );
   }, [report?.date_revenue_chart_data]);
 
-  // For demo purposes: set previousRevenue statically or dynamically later
-  const previousRevenue = 1000000;
-  const revenueChange = calculatePercentageChange(
-    totalRevenue,
-    previousRevenue,
-  );
+  const revenueChange = report?.revenue_change;
 
   if (loading) {
     return (

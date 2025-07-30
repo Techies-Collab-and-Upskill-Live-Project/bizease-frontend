@@ -5,6 +5,7 @@ import { getReport, ReportQuery } from '@/lib/services/report';
 export interface BusinessReport {
   period: string;
   top_selling_product: string;
+  revenue_change: number;
   low_stock_items: number;
   pending_orders: number;
   total_products: number;

@@ -6,16 +6,13 @@ import { AlertTriangle } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 import { Button } from '@/components/ui/button';
-// import { useInventoryStore } from '@/lib/store/inventory';
 import { formatCurrency } from '@/lib/utils';
 import { useInventory } from '@/hooks/useInventory';
 
 const LowStockItems = () => {
-  const { inventory, loading, error, createItem, editItem, removeItem } =
-    useInventory();
+  const { inventory } = useInventory();
 
-  // const inventoryItems = useInventoryStore((state) => state.inventory);
-  const lowStockItems = inventory.filter(({ stock_level }) => stock_level < 5);
+  const lowStockItems = inventory.filter(({ stock_level }) => stock_level <= 5);
 
   const [showAll, setShowAll] = useState(false);
   const [showFloatButtons, setShowFloatButtons] = useState(false);

@@ -1,23 +1,43 @@
-import { InventoryItem } from '@/types';
+import {
+  DeleteInventoryResponse,
+  InventoryItem,
+  PostInventoryItem,
+} from '@/types';
 import { axiosInstance } from '../axios';
 
 export const getInventory = async () => {
   try {
     const res = await axiosInstance.get('/inventory');
     if (res.data.error) {
-      // console.error('Error fetching inventory:', res.data.error);
       throw new Error(res.data.error);
     }
 
-    // console.log('Inventory get data successfully:', res.data.data);
-
     return res.data.data;
-  } catch (err: any) {
-    throw new Error(err?.response?.data?.error || 'Failed to fetch inventory');
+  } catch (err: unknown) {
+    let errorMessage = 'Failed to fetch inventory';
+
+    if (
+      typeof err === 'object' &&
+      err !== null &&
+      'response' in err &&
+      typeof err.response === 'object' &&
+      err.response !== null &&
+      'data' in err.response &&
+      typeof err.response.data === 'object' &&
+      err.response.data !== null &&
+      'detail' in err.response.data &&
+      typeof err.response.data.detail === 'string'
+    ) {
+      errorMessage = err.response.data.detail;
+    } else if (err instanceof Error && err.message) {
+      errorMessage = err.message;
+    }
+
+    throw new Error(errorMessage);
   }
 };
 
-export const addInventoryItem = async (data: any) => {
+export const addInventoryItem = async (data: PostInventoryItem) => {
   try {
     const res = await axiosInstance.post('/inventory', data);
 
@@ -31,32 +51,29 @@ export const addInventoryItem = async (data: any) => {
 
     console.log('Inventory item posted successfully:', res.data.data);
     return res.data.data;
-  } catch (err: any) {
-    throw new Error(
-      err?.response?.data?.error ||
-        err?.message ||
-        'Failed to add inventory item',
-    );
+  } catch (err: unknown) {
+    let errorMessage = 'Failed to fetch inventory';
+
+    if (
+      typeof err === 'object' &&
+      err !== null &&
+      'response' in err &&
+      typeof err.response === 'object' &&
+      err.response !== null &&
+      'data' in err.response &&
+      typeof err.response.data === 'object' &&
+      err.response.data !== null &&
+      'detail' in err.response.data &&
+      typeof err.response.data.detail === 'string'
+    ) {
+      errorMessage = err.response.data.detail;
+    } else if (err instanceof Error && err.message) {
+      errorMessage = err.message;
+    }
+
+    throw new Error(errorMessage);
   }
 };
-
-// export const updateInventoryItem = async (id: string, data: InventoryItem) => {
-//   try {
-//     const res = await axiosInstance.put(`/inventory/${id}`, data);
-//     if (res.data.error) {
-//       console.error('Error updating inventory item:', res.data.error);
-//       throw new Error(res.data.error);
-//     }
-//     console.log('Inventory item updated successfully:', res.data.data);
-//     return res.data.data;
-//   } catch (err: any) {
-//     throw new Error(
-//       err?.response?.data?.error || 'Failed to update inventory item',
-//     );
-//   }
-// };
-
-// lib/services/inventory.ts
 
 export const updateInventoryItem = async (
   id: string,
@@ -66,45 +83,34 @@ export const updateInventoryItem = async (
     const res = await axiosInstance.put(`/inventory/${id}`, data);
     console.log(res, 'from services');
     return res.data.data;
-  } catch (err: any) {
-    console.error('API error:', err?.response?.data || err);
-    throw new Error(
-      err?.response?.data?.error || 'Failed to update inventory item',
-    );
+  } catch (err: unknown) {
+    let errorMessage = 'Failed to fetch inventory';
+
+    if (
+      typeof err === 'object' &&
+      err !== null &&
+      'response' in err &&
+      typeof err.response === 'object' &&
+      err.response !== null &&
+      'data' in err.response &&
+      typeof err.response.data === 'object' &&
+      err.response.data !== null &&
+      'detail' in err.response.data &&
+      typeof err.response.data.detail === 'string'
+    ) {
+      errorMessage = err.response.data.detail;
+    } else if (err instanceof Error && err.message) {
+      errorMessage = err.message;
+    }
+
+    throw new Error(errorMessage);
   }
 };
 
-// export const deleteInventoryItem = async (id: string): Promise<any> => {
-//   try {
-//     const response = await axiosInstance.delete(`/inventory/${id}`, {
-//       headers: {
-//         Authorization: `Bearer ${token}`,
-//       },
-//     });
-
-//     if (response.data?.error) {
-//       console.error(
-//         '[deleteInventoryItem] Backend error:',
-//         response.data.error,
-//       );
-//       throw new Error(response.data.error);
-//     }
-
-//     // console.log('[deleteInventoryItem] Deleted successfully:', response.data);
-//     return response.data;
-//   } catch (error: any) {
-//     const errorMsg =
-//       error?.response?.data?.error ||
-//       error.message ||
-//       'Failed to delete inventory item';
-//     console.error('[deleteInventoryItem] Error:', errorMsg);
-//     throw new Error(errorMsg);
-//   }
-// };
-
-export const deleteInventoryItem = async (id: string): Promise<any> => {
+export const deleteInventoryItem = async (
+  id: string,
+): Promise<DeleteInventoryResponse> => {
   try {
-    // Call the internal API route instead of the external one
     const response = await axiosInstance.delete(`/inventory/${id}`);
 
     if (response.data?.error) {
@@ -116,13 +122,27 @@ export const deleteInventoryItem = async (id: string): Promise<any> => {
     }
 
     return response.data;
-  } catch (error: any) {
-    const errorMsg =
-      error?.response?.data?.error ||
-      error?.message ||
-      'Failed to delete inventory item';
-    console.error('[deleteInventoryItem] Error:', errorMsg);
-    throw new Error(errorMsg);
+  } catch (err: unknown) {
+    let errorMessage = 'Failed to fetch inventory';
+
+    if (
+      typeof err === 'object' &&
+      err !== null &&
+      'response' in err &&
+      typeof err.response === 'object' &&
+      err.response !== null &&
+      'data' in err.response &&
+      typeof err.response.data === 'object' &&
+      err.response.data !== null &&
+      'detail' in err.response.data &&
+      typeof err.response.data.detail === 'string'
+    ) {
+      errorMessage = err.response.data.detail;
+    } else if (err instanceof Error && err.message) {
+      errorMessage = err.message;
+    }
+
+    throw new Error(errorMessage);
   }
 };
 
@@ -136,10 +156,26 @@ export const getInventoryStats = async () => {
     }
 
     return response.data.data;
-  } catch (error: any) {
-    console.error('Error fetching inventory stats:', error);
-    throw new Error(
-      error?.response?.data?.error || 'Failed to fetch inventory stats',
-    );
+  } catch (err: unknown) {
+    let errorMessage = 'Failed to fetch inventory';
+
+    if (
+      typeof err === 'object' &&
+      err !== null &&
+      'response' in err &&
+      typeof err.response === 'object' &&
+      err.response !== null &&
+      'data' in err.response &&
+      typeof err.response.data === 'object' &&
+      err.response.data !== null &&
+      'detail' in err.response.data &&
+      typeof err.response.data.detail === 'string'
+    ) {
+      errorMessage = err.response.data.detail;
+    } else if (err instanceof Error && err.message) {
+      errorMessage = err.message;
+    }
+
+    throw new Error(errorMessage);
   }
 };

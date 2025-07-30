@@ -10,8 +10,9 @@ import {
 } from '@/lib/validations/settings';
 import { z } from 'zod';
 import { useCurrentUser } from './useCurrentUser';
-import { updateUserInfo, UserData } from '@/lib/services/user';
+import { updateUserInfo } from '@/lib/services/user';
 import { toast } from 'sonner';
+import { UserData } from '@/types';
 
 const combinedSchema = z.discriminatedUnion('type', [
   profileSchema,

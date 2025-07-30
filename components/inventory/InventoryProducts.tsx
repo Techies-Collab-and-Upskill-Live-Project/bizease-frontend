@@ -10,7 +10,6 @@ import Link from 'next/link';
 import { SearchProductProps } from '@/types';
 import DeleteConfirmationModal from '../modals/DeleteModal';
 import { useInventory } from '@/hooks/useInventory';
-import { string } from 'zod';
 
 export default function InventoryComponent({
   setCurrentPage,
@@ -19,7 +18,7 @@ export default function InventoryComponent({
   filter,
 }: SearchProductProps) {
   const { inventory, deleteItem } = useInventory();
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm] = useState('');
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [selectedProductId, setSelectedProductId] = useState<number | null>(
     null,
@@ -29,8 +28,6 @@ export default function InventoryComponent({
   const itemsPerPage = 6;
 
   const selectedProduct = inventory.find(({ id }) => id === selectedProductId);
-
-  console.log(selectedProduct, 'is the deleting product id');
 
   const getStockStatus = (stock_level: number) => {
     if (stock_level === 0) return 'Zero Stock';
