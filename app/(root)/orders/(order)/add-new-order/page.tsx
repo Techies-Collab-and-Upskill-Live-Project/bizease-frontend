@@ -4,10 +4,8 @@ import { useRouter } from 'next/navigation';
 import { useForm, useFieldArray } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { v4 as uuidv4 } from 'uuid';
 import { toast } from 'sonner';
 import { ChevronLeft } from 'lucide-react';
-import emailjs from '@emailjs/browser';
 import { useEffect, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
@@ -19,14 +17,15 @@ import {
   DialogTitle,
   DialogFooter,
 } from '@/components/ui/dialog';
-import { useOrderStore, useInventoryStore } from '@/lib/store';
 import AnimatedCountUp from '@/components/animations/AnimatedCountUp';
+import { useOrder } from '@/hooks/useOrder';
+import { useInventory } from '@/hooks/useInventory';
 
 const orderSchema = z.object({
-  clientName: z.string().min(1, 'Client name is required'),
-  clientEmail: z.string().email('Invalid email'),
-  orderDate: z.string().min(1, 'Order date is required'),
-  items: z
+  client_name: z.string().min(1, 'Client name is required'),
+  client_email: z.string().email('Invalid email'),
+  order_date: z.string().min(1, 'Order date is required'),
+  ordered_products: z
     .array(
       z.object({
         productId: z.string().min(1, 'Select a product'),
@@ -40,8 +39,8 @@ type OrderFormData = z.infer<typeof orderSchema>;
 
 export default function AddOrderPage() {
   const router = useRouter();
-  const addOrder = useOrderStore((s) => s.addOrder);
-  const { inventory, fetchInventoryFromAPI, reduceStock } = useInventoryStore();
+  const { inventory, fetchInventory } = useInventory();
+  const { createNewOrder } = useOrder();
   const [previewOpen, setPreviewOpen] = useState(false);
   const [loadingInventory, setLoadingInventory] = useState(true);
 
@@ -49,17 +48,21 @@ export default function AddOrderPage() {
     const fetch = async () => {
       try {
         if (inventory.length === 0) {
-          await fetchInventoryFromAPI();
+          await fetchInventory();
         }
-      } catch (err) {
-        toast.error(`Failed to load inventory ${err}`);
+      } catch (err: unknown) {
+        const message =
+          err && typeof err === 'object' && 'message' in err
+            ? String((err as { message?: string }).message)
+            : 'Failed to load inventory';
+        toast.error(message);
       } finally {
         setLoadingInventory(false);
       }
     };
 
     fetch();
-  }, [inventory, fetchInventoryFromAPI]);
+  }, [inventory, fetchInventory]);
 
   const {
     register,
@@ -67,21 +70,21 @@ export default function AddOrderPage() {
     control,
     watch,
     trigger,
-    formState: { errors, isValid },
+    formState: { errors },
   } = useForm<OrderFormData>({
     resolver: zodResolver(orderSchema),
     defaultValues: {
-      items: [{ productId: '', quantity: 1 }],
+      ordered_products: [{ productId: '', quantity: 1 }],
     },
     mode: 'onChange',
   });
 
   const { fields, append, remove } = useFieldArray({
     control,
-    name: 'items',
+    name: 'ordered_products',
   });
 
-  const items = watch('items');
+  const items = watch('ordered_products');
 
   const total = items.reduce((sum, item) => {
     const product = inventory.find((p) => String(p.id) === item.productId);
@@ -98,54 +101,43 @@ export default function AddOrderPage() {
   };
 
   const onSubmit = async (data: OrderFormData) => {
-    const newOrder = {
-      id: uuidv4(),
-      name: data.clientName,
-      email: data.clientEmail,
-      status: 'Pending' as const,
-      total,
-      lastUpdated: data.orderDate,
-      date: new Date().toISOString(),
-      products: data.items
-        .map((item) => {
-          const product = inventory.find(
-            (p) => String(p.id) === item.productId,
-          );
-          if (!product) return null;
-          return {
-            productId: String(product.id),
-            productName: product.name,
-            quantity: item.quantity,
-            price: product.price,
-          };
-        })
-        .filter((p): p is NonNullable<typeof p> => p !== null),
+    const products = data.ordered_products
+      .map((item) => {
+        const product = inventory.find((p) => String(p.id) === item.productId);
+        if (!product) return null;
+        return {
+          name: product.product_name,
+          price: Number(product.price),
+          quantity: item.quantity,
+        };
+      })
+      .filter((p): p is NonNullable<typeof p> => p !== null);
+
+    const orderPayload = {
+      client_name: data.client_name,
+      client_email: data.client_email,
+      client_phone: '',
+      status: 'Pending' as 'Pending' | 'Cancelled' | 'Delivered',
+      order_date: data.order_date,
+      delivery_date: new Date().toISOString().split('T')[0],
+      ordered_products: products,
     };
 
-    newOrder.products.forEach((product) => {
-      reduceStock(Number(product.productId), product.quantity);
-    });
-
-    addOrder(newOrder);
-
     try {
-      await emailjs.send(
-        'your_service_id',
-        'your_template_id',
-        {
-          to_name: data.clientName,
-          to_email: data.clientEmail,
-          total,
-          message: 'Your order has been placed successfully!',
-        },
-        'your_public_key',
-      );
-    } catch {
-      toast.error('Order saved, but email failed.');
-    }
+      const createdOrder = await createNewOrder(orderPayload);
 
-    toast.success('Order added successfully!');
-    router.push(`/orders/add-new-order-success/${newOrder.id}`);
+      if (!createdOrder || !createdOrder.id) {
+        throw new Error('Invalid response from server');
+      }
+
+      toast.success('Order added successfully!');
+      router.push(`/orders/add-new-order-success/${createdOrder.id}`);
+    } catch (err: unknown) {
+      const errorMessage =
+        err instanceof Error ? err.message : 'Failed to create order';
+
+      toast.error(errorMessage);
+    }
   };
 
   if (loadingInventory) {
@@ -172,22 +164,25 @@ export default function AddOrderPage() {
           </h1>
         </div>
 
-        <form onSubmit={(e) => e.preventDefault()} className="space-y-4">
-          <Input placeholder="Client name" {...register('clientName')} />
-          {errors.clientName && (
-            <p className="text-sm text-red-500">{errors.clientName.message}</p>
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+          <Input placeholder="Client name" {...register('client_name')} />
+          {errors.client_name && (
+            <p className="text-sm text-red-500">{errors.client_name.message}</p>
           )}
 
-          <Input placeholder="Client email" {...register('clientEmail')} />
-          {errors.clientEmail && (
-            <p className="text-sm text-red-500">{errors.clientEmail.message}</p>
+          <Input placeholder="Client email" {...register('client_email')} />
+          {errors.client_email && (
+            <p className="text-sm text-red-500">
+              {errors.client_email.message}
+            </p>
           )}
 
           <div className="space-y-1">
             <Label>Items</Label>
             {fields.map((field, index) => {
               const selected = inventory.find(
-                (p) => String(p.id) === watch(`items.${index}.productId`),
+                (p) =>
+                  String(p.id) === watch(`ordered_products.${index}.productId`),
               );
               return (
                 <div
@@ -195,14 +190,14 @@ export default function AddOrderPage() {
                   className="grid grid-cols-1 sm:grid-cols-3 gap-2 items-start text-darkblue"
                 >
                   <select
-                    {...register(`items.${index}.productId`)}
+                    {...register(`ordered_products.${index}.productId`)}
                     className="border rounded px-2 py-1 text-sm"
                   >
                     <option value="">Select Product</option>
                     {inventory.map((product) => (
                       <option key={product.id} value={String(product.id)}>
-                        {product.name} (₦{product.price}) — Stock:{' '}
-                        {product.stock}
+                        {product.product_name} (₦{product.price}) — Stock:{' '}
+                        {product.stock_level}
                       </option>
                     ))}
                   </select>
@@ -210,10 +205,10 @@ export default function AddOrderPage() {
                   <Input
                     type="number"
                     placeholder="Qty"
-                    {...register(`items.${index}.quantity`, {
+                    {...register(`ordered_products.${index}.quantity`, {
                       valueAsNumber: true,
                     })}
-                    max={selected?.stock ?? 100}
+                    max={selected?.stock_level ?? 100}
                   />
 
                   <div className="text-sm py-2">
@@ -243,10 +238,10 @@ export default function AddOrderPage() {
           <Input
             type="date"
             placeholder="Order date"
-            {...register('orderDate')}
+            {...register('order_date')}
           />
-          {errors.orderDate && (
-            <p className="text-sm text-red-500">{errors.orderDate.message}</p>
+          {errors.order_date && (
+            <p className="text-sm text-red-500">{errors.order_date.message}</p>
           )}
 
           <div className="text-right font-medium">
@@ -259,7 +254,6 @@ export default function AddOrderPage() {
           <Button
             type="button"
             onClick={handlePreview}
-            disabled={!isValid}
             className="w-full bg-darkblue text-white hover:bg-blue-900"
           >
             Preview Order
@@ -273,13 +267,13 @@ export default function AddOrderPage() {
           <DialogTitle>Confirm Order</DialogTitle>
           <div className="space-y-2 text-sm">
             <p>
-              <strong>Name:</strong> {watch('clientName')}
+              <strong>Name:</strong> {watch('client_name')}
             </p>
             <p>
-              <strong>Email:</strong> {watch('clientEmail')}
+              <strong>Email:</strong> {watch('client_email')}
             </p>
             <p>
-              <strong>Date:</strong> {watch('orderDate')}
+              <strong>Date:</strong> {watch('order_date')}
             </p>
 
             <strong>Items:</strong>
@@ -291,7 +285,7 @@ export default function AddOrderPage() {
                 if (!p) return null;
                 return (
                   <li key={i}>
-                    {p.name} — {item.quantity} × ₦{p.price} = ₦
+                    {p.product_name} — {item.quantity} x ₦{p.price} = ₦
                     {(p.price * item.quantity).toFixed(2)}
                   </li>
                 );

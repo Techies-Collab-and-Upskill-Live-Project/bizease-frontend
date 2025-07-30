@@ -1,10 +1,10 @@
-"use client";
+'use client';
 
-import React, { useState } from "react";
-import { Button } from "../ui/button";
-import AddButton from "../shared/AddButton";
-import AddOrderModal from "../modals/AddOrderModal";
-import { useCurrentUser } from "@/hooks/useCurrentUser";
+import React, { useState } from 'react';
+import { Button } from '../ui/button';
+import AddButton from '../shared/InventoryAddButton';
+import AddOrderModal from '../modals/AddOrderModal';
+import { useCurrentUser } from '@/hooks/useCurrentUser';
 
 const UsernameAndButtons = () => {
   const [showModal, setShowModal] = useState(false);
@@ -15,7 +15,7 @@ const UsernameAndButtons = () => {
       <div className="mb-3 text-left">
         <h1 className="text-xl font-bold">Welcome</h1>
         <div className="text-sm text-left text-surface-500 font-semibold mb-2">
-          {loading ? "Loading..." : user?.full_name || `${error}`}
+          {loading ? 'Loading...' : user?.full_name || `${error}`}
         </div>
       </div>
 

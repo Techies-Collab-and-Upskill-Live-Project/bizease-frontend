@@ -1,13 +1,13 @@
 'use client';
 
-import React from 'react';
+import React, { useMemo, useState } from 'react';
 import Image from 'next/image';
-import { useInventoryStore, useOrderStore } from '@/lib/store';
-import {
-  calculateMostOrderedProduct,
-  calculatePercentageChange,
-  formatCurrency,
-} from '@/lib/utils';
+import { useReport } from '@/hooks/useReport';
+import { ReportQuery } from '@/lib/services/report';
+import { formatCurrency } from '@/lib/utils';
+import { useOrder } from '@/hooks/useOrder';
+import Link from 'next/link';
+import { Button } from '../ui/button';
 
 const MetricCard = ({
   label,
@@ -46,57 +46,86 @@ const MetricCard = ({
 );
 
 const ReportSums = () => {
-  const inventoryItems = useInventoryStore((state) => state.inventory);
-  const orders = useOrderStore((state) => state.orders);
+  const [period, setPeriod] = useState<ReportQuery['period']>('last-week');
+  const { report, loading } = useReport({ period });
+  const { orders } = useOrder();
 
-  const totalOrders = orders.length;
-  const totalRevenue = orders
-    .filter((order) => order.status !== 'Cancelled')
-    .reduce((sum, order) => sum + order.total, 0);
+  const totalRevenue = useMemo(() => {
+    if (!report?.date_revenue_chart_data) return 0;
+    return report.date_revenue_chart_data.reduce(
+      (sum, entry) => sum + Number(entry.revenue || 0),
+      0,
+    );
+  }, [report?.date_revenue_chart_data]);
 
-  const totalStockValue = inventoryItems.reduce(
-    (acc, item) => acc + item.price * item.stock,
-    0,
-  );
+  const revenueChange = report?.revenue_change;
 
-  const previousRevenue = 200000;
-  const previousStockValue = 50000;
-
-  const revenueChange = calculatePercentageChange(
-    totalRevenue,
-    previousRevenue,
-  );
-  const stockChange = calculatePercentageChange(
-    totalStockValue,
-    previousStockValue,
-  );
-
-  const totalProducts = inventoryItems.length;
-  const lowStockItems = inventoryItems.filter((item) => item.stock < 5).length;
-  const pendingOrders = orders.filter((o) => o.status === 'Pending').length;
-
-  const mostOrdered = calculateMostOrderedProduct(orders);
+  if (loading) {
+    return (
+      <p className="text-center text-sm text-muted-foreground py-4">
+        Loading report summary...
+      </p>
+    );
+  }
 
   return (
-    <div className="w-full mx-auto px-4 lg:px-8 mt-4">
+    <section className="w-full mx-auto px-4 lg:px-8 mt-4">
+      <div className="flex justify-between max-lg:justify-end">
+        <h1 className="text-lg font-bold text-darkblue hidden lg:block">
+          Report & Analytics
+        </h1>
+        <div className="flex gap-2">
+          <Link
+            href="/report-analytics/generate-reports"
+            className="w-full sm:w-auto"
+          >
+            <Button className="w-full bg-darkblue hover:bg-lightblue">
+              Export
+            </Button>
+          </Link>
+
+          <select
+            value={period}
+            onChange={(e) => setPeriod(e.target.value as ReportQuery['period'])}
+            className=" mb-4 border border-darkblue p-2 rounded-md text-sm text-darkblue"
+          >
+            <option value="last-week">Last Week</option>
+            <option value="last-month">Last Month</option>
+            <option value="last-6-months">Last 6 Months</option>
+            <option value="last-year">Last Year</option>
+          </select>
+        </div>
+      </div>
+
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 auto-rows-fr">
         <MetricCard
           label="Total Revenue"
           value={formatCurrency(totalRevenue)}
           change={revenueChange}
         />
-        <MetricCard label="Total Orders" value={totalOrders} />
+        <MetricCard label="Total Orders" value={orders.length} />
         <MetricCard
           label="Total Stock Value"
-          value={formatCurrency(totalStockValue)}
-          change={stockChange}
+          value={formatCurrency(Number(report?.total_stock_value ?? 0))}
         />
-        <MetricCard label="Total Products" value={totalProducts} />
-        <MetricCard label="Low Stock Items" value={lowStockItems} />
-        <MetricCard label="Top Selling Product" value={mostOrdered.name} />
-        <MetricCard label="Pending Orders" value={pendingOrders} />
+        <MetricCard
+          label="Total Products"
+          value={report?.total_products ?? 0}
+        />
+        <MetricCard
+          label="Low Stock Items"
+          value={report?.low_stock_items ?? 0}
+        />
+        <MetricCard
+          label="Top Selling Product"
+          value={report?.top_selling_product ?? 'N/A'}
+        />
+        <MetricCard
+          label="Pending Orders"
+          value={report?.pending_orders ?? 0}
+        />
       </div>
-    </div>
+    </section>
   );
 };
 

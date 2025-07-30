@@ -1,9 +1,9 @@
-import LoadingSpinner from "@/components/spinner";
-import React from "react";
+import LoadingSpinner from '@/components/spinner';
+import React from 'react';
 
 export default function Loading() {
   return (
-    <div>
+    <div className="">
       <LoadingSpinner />
     </div>
   );

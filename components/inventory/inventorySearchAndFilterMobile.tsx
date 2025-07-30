@@ -1,6 +1,6 @@
 'use client';
 
-import AddButton from '../shared/AddButton';
+import AddButton from '../shared/InventoryAddButton';
 import FilterSelect from '../shared/FilterButton';
 import SearchInput from '../shared/SearchInput';
 

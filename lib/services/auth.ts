@@ -1,4 +1,4 @@
-import { axiosInstance } from "../axios";
+import { axiosInstance } from '../axios';
 
 interface LoginPayload {
   email: string;
@@ -17,16 +17,16 @@ interface SignUpPayload {
 }
 
 export const login = async (payload: LoginPayload) => {
-  const response = await axiosInstance.post("/auth/login", payload);
+  const response = await axiosInstance.post('/auth/login', payload);
   return response;
 };
 
 export const signup = async (payload: SignUpPayload) => {
-  const response = await axiosInstance.post("/auth/signup", payload);
+  const response = await axiosInstance.post('/auth/signup', payload);
   return response;
 };
 
 export const logout = async () => {
-  const response = await axiosInstance.post("/auth/logout");
+  const response = await axiosInstance.post('/auth/logout');
   return response;
 };

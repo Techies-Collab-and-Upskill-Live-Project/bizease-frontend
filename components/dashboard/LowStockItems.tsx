@@ -6,12 +6,13 @@ import { AlertTriangle } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 import { Button } from '@/components/ui/button';
-import { useInventoryStore } from '@/lib/store';
 import { formatCurrency } from '@/lib/utils';
+import { useInventory } from '@/hooks/useInventory';
 
 const LowStockItems = () => {
-  const inventoryItems = useInventoryStore((state) => state.inventory);
-  const lowStockItems = inventoryItems.filter(({ stock }) => stock < 5);
+  const { inventory } = useInventory();
+
+  const lowStockItems = inventory.filter(({ stock_level }) => stock_level <= 5);
 
   const [showAll, setShowAll] = useState(false);
   const [showFloatButtons, setShowFloatButtons] = useState(false);
@@ -38,33 +39,37 @@ const LowStockItems = () => {
               </p>
             </div>
 
-            {visibleItems.map(({ id, stock, name, category, price }) => (
-              <div
-                key={id}
-                className="bg-surface-100 shadow-sm border rounded-lg p-4"
-              >
-                <div className="flex justify-between items-end">
-                  <div className="space-y-2 text-sm">
-                    <div className="font-semibold text-surface-500">{name}</div>
-                    <div className="text-xs font-medium text-surface-400">
-                      {category}
+            {visibleItems.map(
+              ({ id, stock_level, product_name, category, price }) => (
+                <div
+                  key={id}
+                  className="bg-surface-100 shadow-sm border rounded-lg p-4"
+                >
+                  <div className="flex justify-between items-end">
+                    <div className="space-y-2 text-sm">
+                      <div className="font-semibold text-surface-500">
+                        {product_name}
+                      </div>
+                      <div className="text-xs font-medium text-surface-400">
+                        {category}
+                      </div>
+                      <div className="flex items-center gap-1 text-xs font-medium bg-warning rounded-lg px-2 py-1 text-surface-600">
+                        <div className="h-1.5 w-1.5 rounded-full bg-red-600" />
+                        {stock_level} units - <span>Low Stock</span>
+                      </div>
+                      <div className="text-sm text-surface-500 font-medium">
+                        {formatCurrency(price)}
+                      </div>
                     </div>
-                    <div className="flex items-center gap-1 text-xs font-medium bg-warning rounded-lg px-2 py-1 text-surface-600">
-                      <div className="h-1.5 w-1.5 rounded-full bg-red-600" />
-                      {stock} units - <span>Low Stock</span>
-                    </div>
-                    <div className="text-sm text-surface-500 font-medium">
-                      {formatCurrency(price)}
-                    </div>
+                    <Link href={`/inventory/edit-product/${id}`}>
+                      <Button className="bg-darkblue text-surface-200 hover:bg-lightblue text-xs px-3 py-1 mt-1">
+                        Restock
+                      </Button>
+                    </Link>
                   </div>
-                  <Link href={`/inventory/edit-product/${id}`}>
-                    <Button className="bg-darkblue text-surface-200 hover:bg-lightblue text-xs px-3 py-1 mt-1">
-                      Restock
-                    </Button>
-                  </Link>
                 </div>
-              </div>
-            ))}
+              ),
+            )}
 
             {!showAll && lowStockItems.length > 6 && (
               <Button
@@ -91,27 +96,29 @@ const LowStockItems = () => {
         {lowStockCount > 0 ? (
           <>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              {visibleItems.map(({ id, stock, category, name, price }) => (
-                <div
-                  key={id}
-                  className="border rounded-2xl p-4 shadow-sm space-y-2"
-                >
-                  <div className="text-sm font-medium">{name}</div>
-                  <div className="text-sm text-gray-500">{category}</div>
-                  <div className="flex items-center text-xs font-semibold py-1 bg-warning rounded-3xl px-2 w-fit gap-2">
-                    <span className="w-2 h-2 rounded-full bg-red-600" />
-                    <span>{stock} Units</span> - <span>Low Stock</span>
+              {visibleItems.map(
+                ({ id, stock_level, category, product_name, price }) => (
+                  <div
+                    key={id}
+                    className="border rounded-2xl p-4 shadow-sm space-y-2"
+                  >
+                    <div className="text-sm font-medium">{product_name}</div>
+                    <div className="text-sm text-gray-500">{category}</div>
+                    <div className="flex items-center text-xs font-semibold py-1 bg-warning rounded-3xl px-2 w-fit gap-2">
+                      <span className="w-2 h-2 rounded-full bg-red-600" />
+                      <span>{stock_level} Units</span> - <span>Low Stock</span>
+                    </div>
+                    <div className="flex justify-between items-center text-sm">
+                      <span>{formatCurrency(price)}</span>
+                      <Link href={`/inventory/edit-product/${id}`}>
+                        <Button className="bg-darkblue font-normal text-white hover:bg-lightblue px-3 text-xs">
+                          Restock
+                        </Button>
+                      </Link>
+                    </div>
                   </div>
-                  <div className="flex justify-between items-center text-sm">
-                    <span>{formatCurrency(price)}</span>
-                    <Link href={`/inventory/edit-product/${id}`}>
-                      <Button className="bg-darkblue font-normal text-white hover:bg-lightblue px-3 text-xs">
-                        Restock
-                      </Button>
-                    </Link>
-                  </div>
-                </div>
-              ))}
+                ),
+              )}
             </div>
             {!showAll && lowStockItems.length > 6 && (
               <Button

@@ -1,17 +1,17 @@
-"use client"
+'use client';
 
-import { useEffect, useState } from "react"
+import { useEffect, useState } from 'react';
 
 export default function LoadingSpinner() {
-  const [rotation, setRotation] = useState(0)
+  const [rotation, setRotation] = useState(0);
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setRotation((prev) => (prev + 5) % 360)
-    }, 50)
+      setRotation((prev) => (prev + 5) % 360);
+    }, 50);
 
-    return () => clearInterval(interval)
-  }, [])
+    return () => clearInterval(interval);
+  }, []);
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50">
@@ -26,7 +26,9 @@ export default function LoadingSpinner() {
         ></div>
       </div>
 
-      <h1 className="mt-8 text-2xl md:text-3xl font-bold ">Please Wait...</h1>
+      <h1 className="mt-8 text-2xl md:text-3xl font-bold text-darkblue ">
+        Please Wait...
+      </h1>
     </div>
-  )
+  );
 }

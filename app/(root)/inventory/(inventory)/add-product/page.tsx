@@ -16,38 +16,46 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { addInventoryformSchema } from '@/lib/validations/addnewInventory';
 import { AddInventoryFormData } from '@/types';
-import { useInventoryStore } from '@/lib/store';
+import { useInventory } from '@/hooks/useInventory';
 
 export default function AddProductPage() {
-  const router = useRouter();
+  const { createItem } = useInventory();
 
-  const addProduct = useInventoryStore((state) => state.addProduct);
+  const router = useRouter();
 
   const form = useForm<AddInventoryFormData>({
     resolver: zodResolver(addInventoryformSchema),
     defaultValues: {
-      name: '',
+      product_name: '',
       category: '',
       description: '',
-      stock: 0,
+      stock_level: 0,
       price: 0,
     },
   });
 
-  const onSubmit = (data: AddInventoryFormData) => {
+  const onSubmit = async (data: AddInventoryFormData) => {
     const newProduct = {
-      ...data,
-      status: 'pending',
-      id: Date.now(),
-      lastUpdated: new Date().toISOString(),
+      product_name: data.product_name,
+      description: data.description,
+      category: data.category,
+      stock_level: data.stock_level,
+      price: data.price,
+      low_stock_threshold: 5, // default
+      date_added: new Date().toISOString().split('T')[0],
     };
 
     try {
-      addProduct(newProduct);
-      router.push(`/inventory/add-product-success/${newProduct.id}`);
+      const res = await createItem(newProduct);
+
+      const productId = res?.data?.id;
+
+      if (!productId) throw new Error('No product ID returned from API');
+
+      router.push(`/inventory/add-product-success/${productId}`);
+      router.push(`/inventory/add-product-failed/${productId}`);
     } catch (error) {
-      console.error(error);
-      router.push(`/inventory/add-product-failed/${newProduct.id}`);
+      console.error('Failed to add item:', error);
     }
   };
 
@@ -69,7 +77,7 @@ export default function AddProductPage() {
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             <FormField
               control={form.control}
-              name="name"
+              name="product_name"
               render={({ field }) => (
                 <FormItem>
                   <FormControl>
@@ -105,7 +113,7 @@ export default function AddProductPage() {
             />
             <FormField
               control={form.control}
-              name="stock"
+              name="stock_level"
               render={({ field }) => (
                 <FormItem>
                   <FormControl>

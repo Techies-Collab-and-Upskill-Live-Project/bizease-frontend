@@ -9,37 +9,54 @@ import {
   DialogTitle,
   DialogFooter,
 } from '@/components/ui/dialog';
-
-import { Order } from '@/types';
-import { useOrderStore } from '@/lib/store';
+import { UpdateOrderModalProps } from '@/types';
 import AnimatedCountUp from '../animations/AnimatedCountUp';
 import DeleteConfirmationModal from './DeleteModal';
+import { toast } from 'sonner';
+import { useOrder } from '@/hooks/useOrder';
 
-interface Props {
-  order: Order | null;
-  onClose: () => void;
-  showActions?: boolean;
-}
-
-const OrderModal = ({ order, onClose, showActions = true }: Props) => {
+const OrderModal = ({
+  order,
+  onClose,
+  showActions = true,
+}: UpdateOrderModalProps) => {
+  const { editOrder, removeOrder } = useOrder();
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [loading, setLoading] = useState(false);
+
   if (!order) return null;
 
-  const handleMarkDelivered = () => {
-    useOrderStore.getState().updateOrder({
-      ...order,
-      status: 'Delivered',
-      lastUpdated: new Date().toLocaleString(),
-    });
-    onClose();
+  const handleMarkDelivered = async () => {
+    try {
+      setLoading(true);
+      await editOrder(String(order.id), {
+        ...order,
+        status: 'Delivered',
+      });
+      toast.success('Order marked as delivered');
+      onClose();
+    } catch (err: unknown) {
+      const errorMessage =
+        err instanceof Error ? err.message : 'Failed to update order';
+      toast.error(errorMessage);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const handleDelete = () => {
-    useOrderStore.getState().deleteOrder(order.id);
-    onClose();
+  const handleDelete = async () => {
+    try {
+      setLoading(true);
+      await removeOrder(String(order.id));
+      onClose();
+    } catch (err: unknown) {
+      const errorMessage =
+        err instanceof Error ? err.message : 'Failed to update order';
+      toast.error(errorMessage);
+    } finally {
+      setLoading(false);
+    }
   };
-
-  const { id, name, date, status, total, lastUpdated } = order;
 
   return (
     <>
@@ -49,52 +66,51 @@ const OrderModal = ({ order, onClose, showActions = true }: Props) => {
             <DialogTitle>Order Details</DialogTitle>
           </DialogHeader>
 
-          <div className="space-y-2 text-sm text-gray-600">
+          <div className="space-y-2 text-sm text-gray-600 shadow">
             <p>
-              <strong>Order ID:</strong> {id}
+              <strong>Order ID:</strong> {order.id}
             </p>
             <p>
-              <strong>Customer:</strong> {name}
+              <strong>Customer:</strong> {order.client_name}
             </p>
             <p>
-              <strong>Date:</strong> {date}
+              <strong>Date:</strong>{' '}
+              {new Date(order.order_date).toLocaleString()}
             </p>
             <p>
-              <strong>Status:</strong> {status}
+              <strong>Status:</strong> {order.status}
             </p>
             <p>
-              <strong>Total:</strong> <AnimatedCountUp amount={total} />
+              <strong>Total:</strong>{' '}
+              <AnimatedCountUp amount={order?.total_price ?? 0} />
             </p>
             <p>
-              <strong>Last Updated:</strong> {lastUpdated}
+              <strong>Last Updated:</strong>{' '}
+              {new Date(order.order_date).toLocaleString()}
             </p>
           </div>
 
           {showActions && (
             <DialogFooter className="flex gap-2">
-              {status.toLowerCase() === 'pending' && (
+              {order.status.toLowerCase() === 'pending' && (
                 <Button
                   onClick={handleMarkDelivered}
-                  className="bg-success hover:bg-green-600 cursor-pointer text-white"
+                  className="bg-success hover:bg-green-600 text-white"
+                  disabled={loading}
                 >
                   Mark as Delivered
                 </Button>
               )}
 
-              {/* Simple delete without confirmation */}
               <Button
                 variant="destructive"
-                className="cursor-pointer"
-                onClick={handleDelete}
+                onClick={() => setShowDeleteConfirm(true)}
+                disabled={loading}
               >
                 Delete Order
               </Button>
 
-              <Button
-                variant="outline"
-                className="cursor-pointer"
-                onClick={onClose}
-              >
+              <Button variant="outline" onClick={onClose} disabled={loading}>
                 Close
               </Button>
             </DialogFooter>
@@ -102,16 +118,13 @@ const OrderModal = ({ order, onClose, showActions = true }: Props) => {
         </DialogContent>
       </Dialog>
 
-      {/* Optional: Confirmation Modal for Delete  */}
-
+      {/* Confirm Delete Modal */}
       <DeleteConfirmationModal
         open={showDeleteConfirm}
         onClose={() => setShowDeleteConfirm(false)}
-        onConfirm={() => {
-          handleDelete();
-          setShowDeleteConfirm(false);
-        }}
-        productName={order.name}
+        onConfirm={handleDelete}
+        productName={order.ordered_products[0].name}
+        productId={String(order.id)}
       />
     </>
   );

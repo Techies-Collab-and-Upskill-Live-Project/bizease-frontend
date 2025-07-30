@@ -1,50 +1,17 @@
 'use client';
 
 import React from 'react';
-import { formatCurrency } from '@/lib/utils';
-import { useInventoryStore, useOrderStore } from '@/lib/store';
-import type { Order, OrderProduct } from '@/types';
+// import { formatCurrency } from '@/lib/utils';
+import { useReport } from '@/hooks/useReport';
+import { useReportSummary } from '@/hooks/useReportSummary';
 
 const SummaryTable = () => {
-  const inventory = useInventoryStore((state) => state.inventory);
-  const orders = useOrderStore((state) => state.orders);
+  const { report, loading, error } = useReport({ period: 'last-week' });
+  const { summaryData } = useReportSummary();
 
-  const recentOrders: Order[] = [...orders]
-    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
-    .slice(0, 5);
+  const productSales = report?.product_sales_chart_data ?? [];
 
-  const soldUnitsMap = recentOrders.reduce((acc, order) => {
-    const products: OrderProduct[] = order.products ?? [];
-
-    for (const { productId, quantity } of products) {
-      if (productId && typeof quantity === 'number') {
-        acc[productId] = (acc[productId] || 0) + quantity;
-      }
-    }
-
-    return acc;
-  }, {} as Record<string, number>);
-
-  const summary = inventory
-    .filter((product) => soldUnitsMap[product.id])
-    .map(({ id, price, stock, name, lowStockThreshold }) => {
-      const sold = soldUnitsMap[id] || 0;
-      const revenue = sold * price;
-
-      let stockStatus = 'In Stock';
-      if (stock === 0) {
-        stockStatus = 'Zero Stock';
-      } else if (stock <= (lowStockThreshold ?? 5)) {
-        stockStatus = 'Low Stock';
-      }
-
-      return {
-        product: name,
-        unitSold: sold,
-        revenue,
-        stockStatus,
-      };
-    });
+  const summary = summaryData?.data.summary ?? [];
 
   return (
     <div className="w-full min-h-36 px-4 lg:px-8 mt-6">
@@ -53,11 +20,19 @@ const SummaryTable = () => {
       </h2>
 
       <div className="overflow-x-auto rounded-md border shadow-sm">
-        {summary.length > 0 ? (
+        {loading ? (
+          <div className="text-center py-6 text-gray-500 font-medium text-sm">
+            Loading report...
+          </div>
+        ) : error ? (
+          <div className="text-center py-6 text-red-500 font-medium text-sm">
+            Failed to load report.
+          </div>
+        ) : productSales.length > 0 ? (
           <table className="min-w-full text-left border-collapse">
             <thead className="bg-darkblue">
               <tr className="text-[12px] text-surface-200">
-                <th className="p-3 font-normal whitespace-nowrap">Product</th>
+                <th className="p-3 font-normal whitespace-nowrap">Productss</th>
                 <th className="p-3 font-normal whitespace-nowrap">Unit Sold</th>
                 <th className="p-3 font-normal whitespace-nowrap">Revenue</th>
                 <th className="p-3 font-normal whitespace-nowrap">
@@ -66,16 +41,22 @@ const SummaryTable = () => {
               </tr>
             </thead>
             <tbody className="bg-blue-50 text-left">
-              {summary.map((item, index) => (
-                <tr key={index} className="text-[11px] text-gray-800">
-                  <td className="p-3 font-medium whitespace-nowrap">
-                    {item.product}
-                  </td>
-                  <td className="p-3">{item.unitSold}</td>
-                  <td className="p-3">{formatCurrency(item.revenue)}</td>
-                  <td className="p-3">{item.stockStatus}</td>
-                </tr>
-              ))}
+              {summary.map(
+                ({ name, quantity_sold, revenue, stock_status }, index) => (
+                  <tr key={index} className="text-[11px] text-gray-800">
+                    <td className="p-3 font-medium whitespace-nowrap">
+                      {name}
+                    </td>
+                    <td className="p-3">{quantity_sold}</td>
+                    <td className="p-3">
+                      {typeof revenue === 'number'
+                        ? revenue.toLocaleString()
+                        : revenue}
+                    </td>
+                    <td className="p-3">{stock_status ?? 'In Stock'}</td>
+                  </tr>
+                ),
+              )}
             </tbody>
           </table>
         ) : (
