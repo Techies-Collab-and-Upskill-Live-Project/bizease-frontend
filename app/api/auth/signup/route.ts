@@ -5,7 +5,8 @@ export async function POST(request: NextRequest) {
   const body = await request.json();
 
 
-  console.log('Received signup request:', body);
+
+ 
 
   try {
     const result = await axios.post(
@@ -31,6 +32,7 @@ export async function POST(request: NextRequest) {
       path: '/',
       sameSite: 'strict',
   
+
     });
 
     response.cookies.set('refresh_token', refresh, {
