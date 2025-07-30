@@ -1,6 +1,6 @@
 'use client';
 
-import useInventoryStats from '@/hooks/useInventoryStats';
+import useInventoryStats from '@/hooks/useinventoryStats';
 import AnimatedCountUp from '../animations/AnimatedCountUp';
 import { formatCurrency } from '@/lib/utils';
 
