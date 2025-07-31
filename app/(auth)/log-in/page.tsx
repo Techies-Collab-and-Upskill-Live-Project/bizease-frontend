@@ -168,7 +168,7 @@ const LogIn = () => {
               alt=""
               className="w-10 h-10 cursor-pointer"
             />
-            <Image
+            {/* <Image
               width={60}
               height={58}
               src={'/apple.png'}
@@ -181,7 +181,7 @@ const LogIn = () => {
               src={'/microsoft.png'}
               alt=""
               className="w-10 h-10 cursor-pointer"
-            />
+            /> */}
           </div>
           <a href="/sign-up" className=" text-[13px] underline ">
             Do not have account? Sign up

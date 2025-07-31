@@ -3,7 +3,6 @@ import axios from 'axios';
 
 export async function POST(request: NextRequest) {
   const body = await request.json();
-  console.log('Login request body:', body);
 
   return axios
     .post(`${process.env.NEXT_PUBLIC_BASE_URL}accounts/login/`, body)
