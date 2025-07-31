@@ -12,7 +12,7 @@ const TotalInventory = () => {
     isCurrency = false,
   ) => {
     if (loading) return 'Loading...';
-    if (error || value === undefined || value === null) return 'N/A';
+    if (error || value === undefined || value === null) return 0;
     return isCurrency ? (
       formatCurrency(value)
     ) : (

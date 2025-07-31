@@ -12,6 +12,7 @@ import AnimatedCountUp from '@/components/animations/AnimatedCountUp';
 import { useDashboard } from '@/hooks/useDashboard';
 import { useReport } from '@/hooks/useReport';
 import { ReportQuery } from '@/lib/services/report';
+import InventorySkeleton from '@/components/inventory/InventorySkeleton';
 
 const DashboardPage = () => {
   const [period] = useState<ReportQuery['period']>('last-week');
@@ -20,11 +21,15 @@ const DashboardPage = () => {
   const { report } = useReport({ period });
 
   const revenue = dashboardStats?.revenue ?? 0;
-  const topProduct = dashboardStats?.top_Selling_product ?? 'Not available';
+
+  const topProduct = report?.top_selling_product ?? 'Not available';
+
   const revenueChangeImage =
     report?.revenue_change !== undefined && report.revenue_change >= 0
       ? '/icon/green.svg'
       : '/icon/red.svg';
+
+  if (loading) return <InventorySkeleton />;
 
   return (
     <section className="relative min-h-screen h-fit w-full bg-gray-100">

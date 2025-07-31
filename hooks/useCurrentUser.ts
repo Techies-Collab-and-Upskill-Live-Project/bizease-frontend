@@ -44,10 +44,8 @@ export function useCurrentUser() {
     }
   };
 
-
   useEffect(() => {
-    fetchUser(); 
-
+    fetchUser();
   }, []);
 
   return { user, loading, error, refetchUser: fetchUser };
