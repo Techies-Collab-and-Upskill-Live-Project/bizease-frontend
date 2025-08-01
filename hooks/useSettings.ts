@@ -85,7 +85,6 @@ export const useSettings = (type: SettingType) => {
 
     try {
       const response = await updateUserInfo(mergedData);
-      console.log(response);
       toast.info(response.detail);
     } catch (error) {
       console.error('Error updating user info:', error);

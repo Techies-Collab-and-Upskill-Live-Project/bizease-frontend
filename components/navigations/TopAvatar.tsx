@@ -10,7 +10,7 @@ const TopAvatar = ({ type }: CustomLogoProp) => {
         <CustomLogo type={type} />
       </div>
       <div className="flex gap-2 md:gap-4 items-center ">
-        <Link href={'/'}>
+        <Link href={'/bashboard'}>
           <Image
             src={'/icon/notification.png'}
             width={18}
@@ -18,7 +18,7 @@ const TopAvatar = ({ type }: CustomLogoProp) => {
             alt="notification"
           />
         </Link>
-        <Link href={'/'}>
+        <Link href={'/bashboard'}>
           <Image
             src={'/icon/generic-avatar.svg'}
             width={20}

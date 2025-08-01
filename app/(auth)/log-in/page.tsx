@@ -15,6 +15,11 @@ import useLogin from '@/hooks/useLogin';
 import { Eye, EyeOff, Mail } from 'lucide-react';
 import Image from 'next/image';
 import LoadingButton from '@/components/loading-button';
+import { signIn } from 'next-auth/react';
+import { Button } from '@/components/ui/button';
+// import { useRouter } from 'next/navigation';
+import { toast } from 'sonner';
+// import CredentialsLoginForm from '@/components/GoogleForm';
 
 interface LoginFormData {
   email: string;
@@ -22,6 +27,7 @@ interface LoginFormData {
 }
 
 const LogIn = () => {
+  // const router = useRouter();
   const { loginSchema, onSubmit } = useLogin();
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -31,6 +37,22 @@ const LogIn = () => {
     setLoading(true);
     try {
       await onSubmit(data);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const googleLogin = async () => {
+    setLoading(true);
+    try {
+      const res = await signIn('google', {
+        callbackUrl: '/dashboard',
+      });
+      console.log(res, 'googleLogin');
+      toast.success('Your accountis signed in successfull');
+    } catch (error) {
+      console.error('Google login error:', error);
+      toast.error('Your accountis signed in successfull');
     } finally {
       setLoading(false);
     }
@@ -159,15 +181,20 @@ const LogIn = () => {
       {/* Login Alternatives */}
       <div className="absolute top-134 md:top-164 left-1/2 transform -translate-x-1/2 w-10/12 max-w-md z-10 p-6">
         <div className=" justify-center  flex flex-col gap-3 items-center ">
-          <p className="text-gray-500 text-sm tracking-wide">-or login with-</p>
           <div className="flex gap-6 items-center justify-center">
-            <Image
-              width={60}
-              height={58}
-              src={'/google.png'}
-              alt=""
-              className="w-10 h-10 cursor-pointer"
-            />
+            <p className="text-gray-500 text-sm tracking-wide">
+              -or login with-
+            </p>
+            {/* <CredentialsLoginForm /> */}
+            <Button onClick={googleLogin}>
+              <Image
+                width={60}
+                height={58}
+                src={'/google.png'}
+                alt=""
+                className="w-8 h-8 cursor-pointer"
+              />
+            </Button>
             {/* <Image
               width={60}
               height={58}

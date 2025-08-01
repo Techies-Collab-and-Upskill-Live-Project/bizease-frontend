@@ -17,6 +17,7 @@ import { Eye, EyeOff, Mail } from 'lucide-react';
 import Image from 'next/image';
 import useLocation from '@/hooks/useLocation';
 import LoadingButton from '@/components/loading-button';
+import { signIn } from 'next-auth/react';
 
 type SignUpFormData = {
   business_name: string;
@@ -45,8 +46,6 @@ const SignUp = () => {
   } = useLocation();
 
   const submit = async (data: SignUpFormData) => {
-    console.log('SIGNUP PAYLOAD >>>', data);
-
     if (loading) return;
     setLoading(true);
     try {
@@ -54,6 +53,10 @@ const SignUp = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const googleLogin = () => {
+    signIn('google');
   };
 
   return (
@@ -363,17 +366,19 @@ const SignUp = () => {
       {/* Login Alternatives */}
       <div className="absolute top-240 md:top-284 left-1/2 transform -translate-x-1/2 w-10/12 max-w-md z-10 p-6">
         <div className=" justify-center  flex flex-col gap-3 items-center ">
-          <p className="text-gray-500 text-sm tracking-wide">
-            -or Signup with-
-          </p>
           <div className="flex gap-6 items-center justify-center">
-            <Image
-              width={60}
-              height={58}
-              src={'/google.png'}
-              alt="google-icon"
-              className="w-10 h-10 cursor-pointer"
-            />
+            <p className="text-gray-500 text-sm tracking-wide">
+              - or Signup with -
+            </p>
+            <Button onClick={googleLogin}>
+              <Image
+                width={40}
+                height={18}
+                src={'/google.png'}
+                alt="google-icon"
+                className="w-8 h-8 cursor-pointer"
+              />
+            </Button>
             {/* <Image
               width={60}
               height={58}

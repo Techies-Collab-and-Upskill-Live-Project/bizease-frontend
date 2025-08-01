@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import Image from 'next/image';
 
@@ -9,12 +9,22 @@ import { navItems } from '@/constants';
 
 import SidebarUser from './SidebarUser';
 import CustomLogo from '../CustomLogo';
+import { Button } from '../ui/button';
+
+import { logout } from '@/lib/services/auth';
+import { LogOut } from 'lucide-react';
 
 const SideNavbar = () => {
   const pathname = usePathname();
+  const route = useRouter();
 
   const isActive = (route: string) =>
     pathname === route || pathname.startsWith(route + '/');
+
+  const handleLogout = async () => {
+    await logout();
+    route.push('/log-in');
+  };
 
   return (
     <section className="sidebar sticky hidden lg:block z-100">
@@ -37,6 +47,14 @@ const SideNavbar = () => {
           </Link>
         ))}
       </nav>
+      <Button
+        onClick={handleLogout}
+        className="flex items-center w-full gap-10 text-surface-200 font-semibold mt-30 hover:bg-gradient underline"
+      >
+        <LogOut className="w-4 h-4" />
+        Logout
+      </Button>
+      v
     </section>
   );
 };

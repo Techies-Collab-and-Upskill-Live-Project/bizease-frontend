@@ -1,18 +1,35 @@
-import { axiosInstance } from '../axios';
+import axios, { AxiosError } from 'axios';
 
-export interface GmailLoginPayload {
+type GmailLoginInput = {
   email: string;
   name: string;
-}
+};
 
-export async function gmailLogin(payload: GmailLoginPayload) {
+type GmailLoginResponse = {
+  access: string;
+  refresh: string;
+};
+
+export async function gmailLogin(
+  input: GmailLoginInput,
+): Promise<GmailLoginResponse> {
   try {
-    const response = await axiosInstance.post('/auth/gmail-login/', payload);
-    return response.data;
-  } catch (error: any) {
-    const backendMessage =
-      error?.response?.data?.detail ||
-      'Failed to login with Google credentials';
+    const response = await axios.post(
+      `${process.env.NEXT_PUBLIC_BASE_URL}accounts/google-login/`,
+      input,
+      {
+        headers: { 'Content-Type': 'application/json' },
+      },
+    );
+
+    return response.data.data;
+  } catch (error: unknown) {
+    let backendMessage = 'Failed to login with Google credentials';
+
+    if (error instanceof AxiosError && error.response?.data?.detail) {
+      backendMessage = error.response.data.detail;
+    }
+
     throw new Error(backendMessage);
   }
 }
