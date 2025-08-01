@@ -1,11 +1,4 @@
-import { AxiosError } from 'axios';
 import { axiosInstance } from '../axios';
-
-// import { NextAuthOptions, User, getServerSession } from 'next-auth';
-// import { useSession } from 'next-auth/react';
-// import { redirect } from 'next/navigation';
-// import Credentials from 'next-auth/providers/credentials';
-// import GoogleProvider from 'next-auth/providers/google';
 
 interface LoginPayload {
   email: string;
@@ -42,18 +35,3 @@ export const logout = async () => {
   const response = await axiosInstance.post('/auth/logout');
   return response;
 };
-
-export async function gmailLogin(payload: GmailLoginPayload) {
-  try {
-    const response = await axiosInstance.post('/auth/', payload);
-    return response.data;
-  } catch (error: unknown) {
-    let backendMessage = 'Failed to login with Google credentials';
-
-    if (error instanceof AxiosError && error.response?.data?.detail) {
-      backendMessage = error.response.data.detail;
-    }
-
-    throw new Error(backendMessage);
-  }
-}

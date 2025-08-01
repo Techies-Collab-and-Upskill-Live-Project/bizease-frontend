@@ -1,98 +1,31 @@
-// import { NextAuthOptions } from 'next-auth';
-// import CredentialsProvider from 'next-auth/providers/credentials';
-// import GoogleProvider from 'next-auth/providers/google';
-
-// export const authConfig: NextAuthOptions = {
-//   providers: [
-//     CredentialsProvider({
-//       name: 'Sign In',
-//       credentials: {
-//         email: {
-//           label: 'Email',
-//           type: 'email',
-//           placeholder: 'Enter your email here',
-//         },
-//         password: { label: 'Password', type: 'password' },
-//       },
-//       async authorize(credentials) {
-//         if (!credentials || !credentials.email || !credentials.password) {
-//           return null;
-//         }
-
-//         try {
-//           console.log('received email payload', credentials);
-//           console.log(
-//             `${process.env.NEXT_PUBLIC_BASE_URL}accounts/google-login/`,
-//           );
-
-//           const res = await fetch(
-//             `${process.env.NEXT_PUBLIC_BASE_URL}accounts/google-login/`,
-//             {
-//               method: 'POST',
-//               headers: { 'Content-Type': 'application/json' },
-//               body: JSON.stringify({
-//                 email: credentials.email,
-//                 password: credentials.password,
-//               }),
-//             },
-//           );
-
-//           if (!res.ok) {
-//             const errorText = await res.text();
-//             console.error('Login failed:', res.status, errorText);
-//             return null;
-//           }
-
-//           // if (!res.ok) return null;
-
-//           const data = await res.json();
-
-//           console.log('received credentials', res);
-//           console.log('received data', data);
-
-//           // Return a user object with tokens (this is passed to JWT callback)
-//           return {
-//             id: data.user.id,
-//             email: data.user.email,
-//             name: data.user.name,
-//             accessToken: data.data.access,
-//             refreshToken: data.data.refresh,
-//           };
-//         } catch (error) {
-//           console.error('Login error:', error);
-//           return null;
-//         }
-//       },
-//     }),
-//     GoogleProvider({
-//       clientId: process.env.GOOGLE_CLIENT_ID as string,
-//       clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
-//     }),
-//   ],
-//   secret: process.env.NEXT_AUTH_SECRET,
-//   session: {
-//     strategy: 'jwt',
-//   },
-//   callbacks: {
-//     async jwt({ token, user }) {
-//       if (user) {
-//         token.accessToken = user.accessToken;
-//         token.refreshToken = user.refreshToken;
-//       }
-//       return token;
-//     },
-//     async session({ session, token }) {
-//       if (token) {
-//         session.accessToken = token.accessToken;
-//         session.refreshToken = token.refreshToken;
-//       }
-//       return session;
-//     },
-//   },
-// };
+// lib/auths.ts
 import { type NextAuthOptions } from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import GoogleProvider from 'next-auth/providers/google';
+
+declare module 'next-auth' {
+  interface Session {
+    user: {
+      name?: string | null;
+      email?: string | null;
+      image?: string | null;
+      accessToken?: string;
+      refreshToken?: string;
+    };
+  }
+
+  interface User {
+    accessToken?: string;
+    refreshToken?: string;
+  }
+}
+
+declare module 'next-auth/jwt' {
+  interface JWT {
+    accessToken?: string;
+    refreshToken?: string;
+  }
+}
 
 export const authConfig: NextAuthOptions = {
   providers: [
@@ -107,34 +40,27 @@ export const authConfig: NextAuthOptions = {
 
         try {
           const res = await fetch(
-            `${process.env.NEXT_PUBLIC_BASE_URL}accounts/login/`,
+            `${process.env.NEXT_PUBLIC_BASE_URL}/accounts/login/`,
             {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({
-                email: credentials.email,
-                password: credentials.password,
-              }),
+              body: JSON.stringify(credentials),
             },
           );
 
-          if (!res.ok) {
-            const errorText = await res.text();
-            console.error('Login failed:', res.status, errorText);
-            return null;
-          }
+          if (!res.ok) return null;
 
           const data = await res.json();
 
           return {
             id: data.user.id,
-            email: data.user.email,
             name: data.user.name,
+            email: data.user.email,
             accessToken: data.data.access,
             refreshToken: data.data.refresh,
           };
         } catch (error) {
-          console.error('Login error:', error);
+          console.error('Credentials login error:', error);
           return null;
         }
       },
@@ -146,23 +72,12 @@ export const authConfig: NextAuthOptions = {
     }),
   ],
 
-  session: {
-    strategy: 'jwt',
-  },
-
   callbacks: {
-    async jwt({ token, user, account, profile }) {
-      if (user) {
-        token.accessToken = user.accessToken;
-        token.refreshToken = user.refreshToken;
-      }
-      console.log(account, token, user, 'items being sent to API');
-
-      // If logging in via Google
+    async signIn({ account, profile }) {
       if (account?.provider === 'google' && profile?.email && profile?.name) {
         try {
           const res = await fetch(
-            `${process.env.NEXT_PUBLIC_BASE_URL}accounts/google-login/`,
+            `${process.env.NEXT_PUBLIC_BASE_URL}/accounts/google-login/`,
             {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
@@ -173,39 +88,55 @@ export const authConfig: NextAuthOptions = {
             },
           );
 
-          if (res.ok) {
-            const data = await res.json();
-            token.accessToken = data.data.access;
-            token.refreshToken = data.data.refresh;
-          } else {
-            const errText = await res.text();
-            console.error('Google login backend error:', res.status, errText);
-          }
+          if (!res.ok) return false;
+
+          const data = await res.json();
+
+          // Attach backend-issued tokens to account (temporary storage)
+          account.accessToken = data.data.access;
+          account.refreshToken = data.data.refresh;
         } catch (err) {
-          console.error('Google login exception:', err);
+          console.error('Google signIn error:', err);
+          return false;
         }
+      }
+
+      return true;
+    },
+
+    async jwt({ token, user, account }) {
+      // From credentials login
+      if (user?.accessToken) {
+        token.accessToken = user.accessToken;
+        token.refreshToken = user.refreshToken;
+      }
+
+      // From Google login
+      if (account?.accessToken) {
+        token.accessToken = account.accessToken as string;
+        token.refreshToken = account.refreshToken as string;
       }
 
       return token;
     },
 
     async session({ session, token }) {
-      if (token) {
-        session.accessToken = token.accessToken;
-        session.refreshToken = token.refreshToken;
+      if (session.user && token?.accessToken) {
+        session.user.accessToken = token.accessToken;
+        session.user.refreshToken = token.refreshToken;
       }
+
       return session;
     },
 
-    async redirect({ baseUrl }) {
-      // Always redirect to dashboard after login
-      return `${baseUrl}/dashboard`;
+    redirect() {
+      return '/dashboard';
     },
   },
 
   pages: {
-    signIn: '/log-in', // Custom login page
+    signIn: '/log-in',
   },
 
-  secret: process.env.NEXT_AUTH_SECRET,
+  secret: process.env.NEXTAUTH_SECRET,
 };

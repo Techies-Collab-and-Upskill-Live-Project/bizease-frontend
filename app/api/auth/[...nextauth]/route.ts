@@ -1,6 +1,23 @@
-import { authConfig } from '@/lib/auths';
 import NextAuth from 'next-auth';
+import GoogleProvider from 'next-auth/providers/google';
 
-const handler = NextAuth(authConfig);
+export const authOptions = {
+  providers: [
+    GoogleProvider({
+      clientId: process.env.GOOGLE_CLIENT_ID!,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+    }),
+  ],
+  callbacks: {
+    async redirect({ baseUrl }: { baseUrl: string }) {
+      return `${baseUrl}/api/auth/google-login`;
+    },
+  },
+  pages: {
+    signIn: '/log-in',
+  },
+  secret: process.env.NEXTAUTH_SECRET,
+};
 
+const handler = NextAuth(authOptions);
 export { handler as GET, handler as POST };
