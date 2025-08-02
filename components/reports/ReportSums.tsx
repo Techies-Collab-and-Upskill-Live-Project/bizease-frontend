@@ -8,6 +8,7 @@ import { formatCurrency } from '@/lib/utils';
 import { useOrder } from '@/hooks/useOrder';
 import Link from 'next/link';
 import { Button } from '../ui/button';
+import ReportSumsSkeleton from './SkeletalLoad';
 
 const MetricCard = ({
   label,
@@ -60,13 +61,7 @@ const ReportSums = () => {
 
   const revenueChange = report?.revenue_change;
 
-  if (loading) {
-    return (
-      <p className="text-center text-sm text-muted-foreground py-4">
-        Loading report summary...
-      </p>
-    );
-  }
+  if (loading) return <ReportSumsSkeleton />;
 
   return (
     <section className="w-full mx-auto px-4 lg:px-8 mt-4">

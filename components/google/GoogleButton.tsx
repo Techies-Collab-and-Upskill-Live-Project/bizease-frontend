@@ -5,6 +5,7 @@ import { Button } from '../ui/button';
 import Image from 'next/image';
 import { useState } from 'react';
 import { toast } from 'sonner';
+import { Loader2 } from 'lucide-react';
 
 export default function LoginWithGoogle() {
   const [isLoading, setIsLoading] = useState(false);
@@ -12,39 +13,39 @@ export default function LoginWithGoogle() {
   const handleGoogleLogin = async () => {
     try {
       setIsLoading(true);
-      toast.loading('Logging in with google...');
+      toast.loading('Logging in with Google...');
       await signIn('google');
     } catch (err) {
-      toast.error('Something went wrong during login:');
-      console.log(err);
+      toast.error('Something went wrong during login.');
+      console.error(err);
     } finally {
       setIsLoading(false);
     }
   };
 
-  if (isLoading) {
-    return (
-      <span className="bg-surface-200 rounded-lg py-2 text-surface-400 px-4">
-        Loading...
-      </span>
-    );
-  }
-
   return (
-    <>
-      <Button
-        onClick={handleGoogleLogin}
-        className=" text-surface-300 px-4 py-2 cursor-pointer rounded"
-      >
-        or login with google
-        <Image
-          width={30}
-          height={26}
-          src={'/google.png'}
-          alt=""
-          className="w-6 h-6 "
-        />
-      </Button>
-    </>
+    <Button
+      onClick={handleGoogleLogin}
+      disabled={isLoading}
+      className="flex items-center gap-2 text-surface-300 px-4 py-2 cursor-pointer rounded"
+    >
+      {isLoading ? (
+        <>
+          <Loader2 className="w-4 h-4 animate-spin" />
+          Logging in...
+        </>
+      ) : (
+        <>
+          or login with Google
+          <Image
+            width={30}
+            height={26}
+            src="/google.png"
+            alt="Google logo"
+            className="w-6 h-6"
+          />
+        </>
+      )}
+    </Button>
   );
 }
