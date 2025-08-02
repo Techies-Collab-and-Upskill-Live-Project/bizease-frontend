@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { usePathname, useRouter } from 'next/navigation';
+import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import Image from 'next/image';
 
@@ -13,17 +13,31 @@ import { Button } from '../ui/button';
 
 import { logout } from '@/lib/services/auth';
 import { LogOut } from 'lucide-react';
+import { signOut } from 'next-auth/react';
+import { toast } from 'sonner';
 
 const SideNavbar = () => {
   const pathname = usePathname();
-  const route = useRouter();
+  // const route = useRouter();
 
   const isActive = (route: string) =>
     pathname === route || pathname.startsWith(route + '/');
 
-  const handleLogout = async () => {
-    await logout();
-    route.push('/log-in');
+  const handleAllLogout = async (): Promise<void> => {
+    try {
+      await logout();
+
+      const res = await fetch('/api/auth/logout', { method: 'POST' });
+
+      if (!res.ok) {
+        throw new Error('Failed to clear cookies');
+      }
+
+      await signOut({ callbackUrl: '/log-in' });
+    } catch (err) {
+      const errorMsg = err instanceof Error ? err.message : 'Unknown error';
+      toast.error(`Logout failed: ${errorMsg}`);
+    }
   };
 
   return (
@@ -48,7 +62,7 @@ const SideNavbar = () => {
         ))}
       </nav>
       <Button
-        onClick={handleLogout}
+        onClick={handleAllLogout}
         className="flex items-center w-full gap-10 text-surface-200 font-semibold mt-30 hover:bg-gradient underline"
       >
         <LogOut className="w-4 h-4" />

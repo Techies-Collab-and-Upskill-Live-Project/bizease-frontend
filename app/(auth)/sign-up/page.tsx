@@ -17,7 +17,6 @@ import { Eye, EyeOff, Mail } from 'lucide-react';
 import Image from 'next/image';
 import useLocation from '@/hooks/useLocation';
 import LoadingButton from '@/components/loading-button';
-import { signIn } from 'next-auth/react';
 import LoginWithGoogle from '@/components/google/GoogleButton';
 
 type SignUpFormData = {
@@ -54,10 +53,6 @@ const SignUp = () => {
     } finally {
       setLoading(false);
     }
-  };
-
-  const googleLogin = () => {
-    signIn('google');
   };
 
   return (

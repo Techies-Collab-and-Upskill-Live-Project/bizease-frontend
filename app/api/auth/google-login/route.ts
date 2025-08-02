@@ -1,22 +1,17 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
-import { authOptions } from '../[...nextauth]/route';
-import axios from 'axios';
+import { authOptions } from '@/lib/authOptions';
+import axios, { AxiosError } from 'axios';
 
 export async function GET(req: NextRequest) {
   const session = await getServerSession(authOptions);
 
-  console.log('getting session at google-login', session);
-
   if (!session?.user?.email || !session.user.name) {
-    return NextResponse.redirect(
-      new URL('/log-in?error=missing-google-info', req.url),
-    );
+    return NextResponse.redirect(new URL('/log-in', req.url));
   }
 
   try {
     const { email, name } = session.user;
-    console.log('getting payload at google-login', name, email);
 
     const res = await axios.post(
       `${process.env.NEXT_PUBLIC_BASE_URL}/accounts/google-login/`,
@@ -25,8 +20,6 @@ export async function GET(req: NextRequest) {
         name,
       },
     );
-
-    console.log('getting response at google-login', res);
 
     const { access, refresh } = res.data.data;
 
@@ -51,8 +44,19 @@ export async function GET(req: NextRequest) {
     });
 
     return response;
-  } catch (err: any) {
-    console.error('Google login error:', err.response?.data || err.message);
+  } catch (err: unknown) {
+    let errorMessage = 'Unknown error';
+
+    if (err instanceof AxiosError) {
+      errorMessage = err.response?.data
+        ? JSON.stringify(err.response.data)
+        : err.message;
+    } else if (err instanceof Error) {
+      errorMessage = err.message;
+    }
+
+    console.error('Google login error:', errorMessage);
+
     return NextResponse.redirect(
       new URL('/log-in?error=google-login-failed', req.url),
     );

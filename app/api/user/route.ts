@@ -5,12 +5,10 @@ interface UserDataResponse {
   detail?: string;
 }
 
-
 export async function GET(req: NextRequest) {
   const accessToken = req.cookies.get('access_token')?.value;
 
   if (!accessToken) {
-    console.log('no token');
     return NextResponse.json(
       { message: 'Unauthorized: No access token' },
       { status: 401 },
@@ -27,11 +25,9 @@ export async function GET(req: NextRequest) {
       },
     );
 
-      return NextResponse.json({ status: 200, data: response.data });
+    return NextResponse.json({ status: 200, data: response.data });
   } catch (error) {
     const axiosError = error as AxiosError<UserDataResponse>;
-
-    console.error('Error fetching user data:', axiosError.message);
 
     return NextResponse.json(
       {
@@ -39,7 +35,6 @@ export async function GET(req: NextRequest) {
           axiosError.response?.data?.detail || 'Failed to fetch user details',
       },
       {
-
         status: axiosError.response?.status,
       },
     );
@@ -69,7 +64,6 @@ export async function PUT(req: NextRequest) {
         },
       },
     );
-    console.log('User data updated successfully:', response.data);
 
     return NextResponse.json({ status: 200, data: response.data });
   } catch (error) {
@@ -82,7 +76,6 @@ export async function PUT(req: NextRequest) {
       {
         status: axiosError.response?.status,
       },
-
     );
   }
 }
