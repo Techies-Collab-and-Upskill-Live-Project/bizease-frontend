@@ -21,8 +21,6 @@ export async function GET(req: NextRequest) {
       },
     );
 
-    console.log('Fetched route orders:', response.data);
-
     return NextResponse.json({ status: 200, data: response.data });
   } catch (error) {
     const axiosError = error as AxiosError;
@@ -68,8 +66,6 @@ export async function POST(req: NextRequest) {
         },
       },
     );
-    console.log('Order created:', response.data);
-    console.log('Order created:', response.data.data);
 
     return NextResponse.json({ status: 200, data: response.data });
   } catch (error) {

@@ -23,9 +23,11 @@ import Link from 'next/link';
 import { Input } from '@/components/ui/input';
 import { v4 as uuidv4 } from 'uuid';
 import type { Order } from '@/types';
+import { Skeleton2 } from '@/components/ui/skeleton';
+import InventorySkeleton from '@/components/inventory/InventorySkeleton';
 
 const OrdersPage = () => {
-  const { orders } = useOrder();
+  const { orders, loading } = useOrder();
   const { stats, loading: statsLoading } = useOrderStats();
 
   const [floatButtonShow, setFloatButtonShow] = useState(false);
@@ -74,6 +76,8 @@ const OrdersPage = () => {
     stats?.pending_orders ??
     filtered.filter(({ status }) => status.toLowerCase() === 'pending').length;
 
+  if (loading) return <InventorySkeleton />;
+
   return (
     <section className="bg-gray-100 pb-5">
       <TopAvatar type="Orders" />
@@ -100,31 +104,39 @@ const OrdersPage = () => {
           <div className="flex w-1/3">
             <div>
               <p className="text-surface-200 text-[10px]">Total Order</p>
-              <p className="font-semibold text-surface-200">
-                {statsLoading ? 'loading...' : stats?.total_orders ?? 0}
-              </p>
+              {statsLoading ? (
+                <Skeleton2 className="h-4 w-12" />
+              ) : (
+                <p className="font-semibold text-surface-200">
+                  {stats?.total_orders ?? 0}
+                </p>
+              )}
             </div>
           </div>
           <div className="flex w-1/3 gap-8">
             <div className="w-[1px] h-8 my-auto bg-surface-300" />
             <div>
               <p className="text-surface-200 text-[10px]">Pending Orders</p>
-              <p className="font-semibold text-surface-200">
-                {statsLoading ? 'loading...' : stats?.pending_orders ?? 0}
-              </p>
+              <span className="font-semibold text-surface-200">
+                {statsLoading ? (
+                  <Skeleton2 className="h-4 w-12" />
+                ) : (
+                  stats?.pending_orders ?? 0
+                )}
+              </span>
             </div>
           </div>
           <div className="flex w-1/3 justify-center gap-8 md:ml-10 max-md:justify-end">
             <div className="w-[1px] h-8 my-auto bg-surface-300" />
             <div>
               <p className="text-surface-200 text-[10px]">Total Revenue</p>
-              <p className="font-semibold text-surface-200">
+              <span className="font-semibold text-surface-200">
                 {statsLoading ? (
-                  'loading...'
+                  <Skeleton2 />
                 ) : (
                   <AnimatedCountUp amount={stats?.total_revenue ?? 0} />
                 )}
-              </p>
+              </span>
             </div>
           </div>
         </div>

@@ -16,6 +16,11 @@ interface SignUpPayload {
   business_type: string;
 }
 
+export interface GmailLoginPayload {
+  email: string;
+  name: string;
+}
+
 export const login = async (payload: LoginPayload) => {
   const response = await axiosInstance.post('/auth/login', payload);
   return response;

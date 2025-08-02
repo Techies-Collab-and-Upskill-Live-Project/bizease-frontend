@@ -22,15 +22,6 @@ export async function GET(req: NextRequest) {
     if (isAxiosError(error)) {
       status = error.response?.status || 500;
       detail = error.response?.data?.detail || detail;
-
-      console.error('Error fetching inventory stats (AxiosError):', {
-        message: error.message,
-        response: error.response?.data,
-      });
-    } else if (error instanceof Error) {
-      console.error('Error fetching inventory stats:', {
-        message: error.message,
-      });
     } else {
       console.error('Unknown error while fetching inventory stats');
     }

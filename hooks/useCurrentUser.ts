@@ -25,7 +25,7 @@ interface User {
 }
 
 export function useCurrentUser() {
-  const route = useRouter();
+  // const route = useRouter();
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);

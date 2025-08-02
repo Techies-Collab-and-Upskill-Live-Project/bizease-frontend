@@ -21,15 +21,9 @@ export async function GET(req: NextRequest) {
       },
     );
 
-    console.log('Fetched route orders:', response.data);
-
     return NextResponse.json({ status: 200, data: response.data });
   } catch (error) {
     const axiosError = error as AxiosError;
-    console.error(
-      '[fetchOrders] Error:',
-      axiosError.response?.data || axiosError.message || error,
-    );
 
     return NextResponse.json(
       {

@@ -29,7 +29,6 @@ type ReportAnalyticsParams =
 
 export async function GET(req: NextRequest) {
   const accessToken = req.cookies.get('access_token')?.value;
-  console.log('Access Token:', accessToken);
 
   if (!accessToken) {
     return NextResponse.json(
@@ -88,8 +87,6 @@ export async function GET(req: NextRequest) {
       },
     );
 
-    console.log('Report Analytics Data:', response.data);
-
     return NextResponse.json({ status: 200, data: response.data.data });
   } catch (error) {
     const axiosError = error as AxiosError<ApiErrorResponse>;
@@ -98,8 +95,6 @@ export async function GET(req: NextRequest) {
       axiosError.response?.data?.detail ||
       axiosError.response?.data?.message ||
       'Failed to fetch report analytics';
-
-    console.error('Error fetching report analytics:', message);
 
     return NextResponse.json(
       { message },
