@@ -42,7 +42,7 @@ const DashboardPage = () => {
       <TopAvatar type="Dashboard" />
 
       {/* Floating Mobile Button */}
-      <div className="fixed bottom-4 right-4 z-50 md:hidden animate-slide-up-fade">
+      <div className="fixed top-1/2 right-4 transform -translate-y-1/2 z-50 md:hidden">
         <MobileButtons />
       </div>
 

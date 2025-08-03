@@ -13,7 +13,7 @@ const MobileButtons = () => {
   const handleAddNewProduct = () => router.push('/inventory/add-product');
 
   return (
-    <div className="hidden max-md:flex flex-col items-end gap-3 fixed bottom-4 right-4 z-50">
+    <div className="fixed top-100 right-4 transform -translate-y-1/2 z-50 flex flex-col items-end gap-3">
       {showOptions && (
         <div className="flex flex-col gap-2">
           <Button
@@ -21,7 +21,7 @@ const MobileButtons = () => {
             className="bg-darkblue hover:bg-lightblue text-surface-200 font-normal"
             aria-label="Add New Order"
           >
-            Add New Order checking-
+            Add New Order
           </Button>
           <Button
             onClick={handleAddNewProduct}
@@ -29,13 +29,13 @@ const MobileButtons = () => {
             variant="ghost"
             aria-label="Add New Product"
           >
-            Add New Product ---
+            Add New Product
           </Button>
         </div>
       )}
 
       <Button
-        onClick={() => setShowOptions(showOptions)}
+        onClick={() => setShowOptions((prev) => !prev)}
         className="p-4 font-semibold bg-darkblue hover:bg-lightblue text-surface-200"
         aria-label={showOptions ? 'Hide action buttons' : 'Show action buttons'}
       >

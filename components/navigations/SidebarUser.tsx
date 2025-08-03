@@ -2,6 +2,7 @@
 
 import { Tooltip } from '@/components/ui/tooltip';
 import { useCurrentUser } from '@/hooks/useCurrentUser';
+import { Skeleton2 } from '../ui/skeleton';
 
 const SidebarUser = () => {
   const { user, loading, error } = useCurrentUser();
@@ -9,7 +10,7 @@ const SidebarUser = () => {
   if (loading) {
     return (
       <div className="flex items-center justify-start gap-4 bg-gradient p-4 rounded w-[180px] my-8">
-        <p className="text-sm text-gray-400">Loading user...</p>
+        <Skeleton2 />
       </div>
     );
   }
