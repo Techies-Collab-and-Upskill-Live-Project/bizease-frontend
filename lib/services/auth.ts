@@ -37,8 +37,6 @@ export const logout = async () => {
 };
 
 export async function forgotPassword(email: string) {
-  console.log('sending from lib', email);
-
   return axiosInstance.post('/auth/forgot-password', { email });
 }
 
