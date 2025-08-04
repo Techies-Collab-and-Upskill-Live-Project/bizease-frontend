@@ -149,7 +149,7 @@ const LogIn = () => {
 
             {/* Forgot Password */}
             <div className="w-full flex justify-center items-center">
-              <a href="/forgot-password-ui" className=" text-[13px] underline ">
+              <a href="/forgot-password" className=" text-[13px] underline ">
                 Forgot your password?
               </a>
             </div>
