@@ -5,7 +5,7 @@ export async function POST(req: Request) {
   try {
     const body = await req.json();
     const res = await axios.post(
-      `${process.env.NEXT_PUBLIC_BASE_URL}/accounts/password-reset/`,
+      `${process.env.NEXT_PUBLIC_BASE_URL}/accounts/password-reset-confirm/`,
       body,
     );
 

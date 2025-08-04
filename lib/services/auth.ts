@@ -37,12 +37,15 @@ export const logout = async () => {
 };
 
 export async function forgotPassword(email: string) {
+  console.log('sending from lib', email);
+
   return axiosInstance.post('/auth/forgot-password', { email });
 }
 
 export async function resetPassword(payload: {
   otp: string;
   password: string;
+  email: string;
 }) {
   return axiosInstance.post('/auth/reset-password', payload);
 }

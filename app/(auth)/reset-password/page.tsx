@@ -17,7 +17,7 @@ const ResetConfirmPasswordPage = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    await confirmReset(otp, password);
+    await confirmReset(otp, password, email);
     route.push('/log-in');
   };
 
