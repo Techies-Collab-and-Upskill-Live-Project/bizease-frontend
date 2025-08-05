@@ -1,47 +1,69 @@
 'use client';
 
-import AddButton from '../shared/InventoryAddButton';
-import FilterSelect from '../shared/FilterButton';
-import SearchInput from '../shared/SearchInput';
+import React, { useEffect, useState } from 'react';
+import { Input } from '@/components/ui/input';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { Search } from 'lucide-react';
 
-interface InventoryHeaderActionsMobileProps {
+interface InventorySearchFilterProps {
   searchTerm: string;
-  setSearchTerm: (value: string) => void;
-  onResetPage: () => void;
-  filterValue: string;
-  setFilter: (value: string) => void;
+  onSearchChange: (term: string) => void;
+  filter: string;
+  onFilterChange: (value: string) => void;
 }
 
-export const InventoryHeaderActionsMobile = ({
+const InventorySearchFilter: React.FC<InventorySearchFilterProps> = ({
   searchTerm,
-  setSearchTerm,
-  onResetPage,
-  filterValue,
-  setFilter,
-}: InventoryHeaderActionsMobileProps) => {
+  onSearchChange,
+  filter,
+  onFilterChange,
+}) => {
+  const [localSearch, setLocalSearch] = useState(searchTerm);
+
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      onSearchChange(localSearch);
+    }, 300);
+
+    return () => clearTimeout(handler);
+  }, [localSearch, onSearchChange]);
+
   return (
-    <div className="flex w-full px-6 justify-between items-center gap-4 lg:hidden mb-3 mt-6">
-      <SearchInput
-        placeholder="Search inventory..."
-        searchTerm={searchTerm}
-        setSearchTerm={setSearchTerm}
-        onResetPage={onResetPage}
-      />
-      <div className="w-fit flex justify-between items-center gap-2">
-        <FilterSelect
-          filterValue={filterValue}
-          className="w-full"
-          onChange={setFilter}
-          placeholder="Filter Products"
-          options={[
-            { label: 'All Products', value: 'all' },
-            { label: 'Low Stock', value: 'low' },
-            { label: 'In Stock', value: 'in' },
-            { label: 'No Stock', value: 'no' },
-          ]}
+    <div className="flex lg:hidden justify-between items-center gap-4 px-2 py-2 mb-4 max-md:flex-col">
+      {/* Search */}
+      <div className="relative w-full md:max-w-md">
+        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+        <Input
+          type="text"
+          value={localSearch}
+          onChange={(e) => setLocalSearch(e.target.value)}
+          placeholder="Search products"
+          className="pl-9 pr-4 py-2 text-sm border rounded-md w-full"
         />
-        <AddButton label="Add" className="hidden whitespace-nowrap px-3" />
+      </div>
+
+      {/* Filter */}
+      <div className="w-full md:w-56">
+        <Select value={filter} onValueChange={onFilterChange}>
+          <SelectTrigger className="w-full text-sm border rounded-md py-2 px-4">
+            <SelectValue placeholder="Filter by" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">All Products</SelectItem>
+            <SelectItem value="low">Low Stock</SelectItem>
+            <SelectItem value="zero">Zero Stock</SelectItem>
+            <SelectItem value="in">In Stock</SelectItem>
+          </SelectContent>
+        </Select>
       </div>
     </div>
   );
 };
+
+export default InventorySearchFilter;

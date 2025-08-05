@@ -1,12 +1,14 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 // import { formatCurrency } from '@/lib/utils';
 import { useReport } from '@/hooks/useReport';
 import { useReportSummary } from '@/hooks/useReportSummary';
+import { ReportQuery } from '@/lib/services/report';
 
 const SummaryTable = () => {
-  const { report, loading, error } = useReport({ period: 'last-week' });
+  const [period] = useState<ReportQuery['period']>('last-week');
+  const { report, loading, error } = useReport({ period });
   const { summaryData } = useReportSummary();
 
   const productSales = report?.product_sales_chart_data ?? [];

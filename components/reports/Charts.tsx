@@ -42,8 +42,8 @@ const Charts = () => {
       {
         label: 'Revenue',
         data: report.date_revenue_chart_data.map((d) => d.revenue),
-        borderColor: 'rgba(34,211,238,1)',
-        backgroundColor: 'rgba(34,211,238,0.2)',
+        borderColor: '#2E9185',
+        backgroundColor: '#2E9185',
         tension: 0.4,
         fill: true,
         pointRadius: 3,
@@ -51,13 +51,7 @@ const Charts = () => {
     ],
   };
 
-  const colors = [
-    'rgba(34,211,238,0.7)',
-    'rgba(34,211,238,0.5)',
-    'rgba(34,211,238,0.3)',
-    'rgba(34,211,238,0.6)',
-    'rgba(34,211,238,0.4)',
-  ];
+  const colors = ['#2E9185', '#2E9185', '#2E9185', '#2E9185', '#2E9185'];
 
   const barChartData = {
     labels: report.product_sales_chart_data.map((p) => p.name),
