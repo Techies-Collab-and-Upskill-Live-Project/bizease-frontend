@@ -68,7 +68,6 @@ const SideNavbar = () => {
         <LogOut className="w-4 h-4" />
         Logout
       </Button>
-      v
     </section>
   );
 };
