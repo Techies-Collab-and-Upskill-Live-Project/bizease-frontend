@@ -21,12 +21,6 @@ const LowStockItems = () => {
   const visibleItems = showAll ? lowStockItems : lowStockItems.slice(0, 6);
   const lowStockCount = lowStockItems.length;
 
-  // const handleAddOrder = () => {
-  //   console.log('Navigating to add order...');
-  //   router.push('/orders/add-new-order');
-  // };
-  // const handleAddNewProduct = () => router.push('/inventory/add-product');
-
   return (
     <div className="relative space-y-4 mb-24">
       <h2 className="font-semibold text-lg">Low Stock Items</h2>

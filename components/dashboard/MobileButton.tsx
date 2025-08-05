@@ -13,7 +13,7 @@ const MobileButtons = () => {
   const handleAddNewProduct = () => router.push('/inventory/add-product');
 
   return (
-    <div className="fixed top-100 right-4 transform -translate-y-1/2 z-50 flex flex-col items-end gap-3">
+    <div className="fixed lg:hidden top-130 right-4 border-1 border-surface-100 transform -translate-y-1/2 z-50 flex flex-col items-end gap-3">
       {showOptions && (
         <div className="flex flex-col gap-2">
           <Button
