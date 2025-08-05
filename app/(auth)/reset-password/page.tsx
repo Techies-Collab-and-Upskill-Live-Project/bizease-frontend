@@ -3,7 +3,6 @@
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { KeyRound } from 'lucide-react';
 import Image from 'next/image';
 import { useForgotPassword } from '@/hooks/useForgotPassword';
 import { useRouter } from 'next/navigation';
@@ -22,7 +21,7 @@ const ResetConfirmPasswordPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#F5F5F5]">
+    <section className="relative h-screen min-h-screen  bg-surface-100 ">
       {/* Top Section */}
       <div className="flex py-25 md:py-40 items-center justify-center gap-2 bg-gradient-to-b rounded-b-lg from-blue-800 to-blue-600 text-white">
         <Image
@@ -37,7 +36,7 @@ const ResetConfirmPasswordPage = () => {
       </div>
 
       {/* Floating Form */}
-      <div className="absolute top-70 md:top-100 left-1/2 transform -translate-x-1/2 w-10/12 max-w-md bg-white rounded-lg shadow-2xl z-10 px-7 py-8">
+      <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/5 w-11/12 max-w-md bg-white rounded-lg shadow-2xl z-10 px-7 py-8">
         <div className="text-center my-6 md:py-4">
           <h2 className="text-2xl font-semibold">Reset Your Password</h2>
         </div>
@@ -78,7 +77,6 @@ const ResetConfirmPasswordPage = () => {
                 placeholder="Enter new password"
                 className="pr-10 text-xs"
               />
-              <KeyRound className="absolute right-3 top-1/2 transform -translate-y-1/2 w-4 h-4" />
             </div>
           </div>
 
@@ -91,7 +89,7 @@ const ResetConfirmPasswordPage = () => {
           </Button>
         </form>
       </div>
-    </div>
+    </section>
   );
 };
 

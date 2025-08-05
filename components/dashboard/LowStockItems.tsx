@@ -7,7 +7,6 @@ import { AlertTriangle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { formatCurrency } from '@/lib/utils';
 import { useInventory } from '@/hooks/useInventory';
-// import { useRouter } from 'next/navigation';
 import MobileButtons from './MobileButton';
 
 const LowStockItems = () => {
