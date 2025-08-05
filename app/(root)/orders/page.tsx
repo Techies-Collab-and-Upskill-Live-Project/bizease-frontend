@@ -21,7 +21,7 @@ import {
 } from '@/components/ui/select';
 import Link from 'next/link';
 import { Input } from '@/components/ui/input';
-import { v4 as uuidv4 } from 'uuid';
+// import { v4 as uuidv4 } from 'uuid';
 import type { Order } from '@/types';
 import { Skeleton2 } from '@/components/ui/skeleton';
 import InventorySkeleton from '@/components/inventory/InventorySkeleton';
@@ -168,21 +168,25 @@ const OrdersPage = () => {
               >
                 <div className="flex justify-between text-xs font-semibold text-surface-500 mb-1">
                   <span className="text-sm text-surface-500">
-                    ID - {order.id}
-                    {uuidv4()}
+                    Order Id: - {order.id}
+                    {/* {uuidv4()} */}
                   </span>
                   <span className="text-sm text-surface-400">
-                    {new Date(order.order_date).toLocaleDateString()}
+                    {new Date(order.order_date).toLocaleDateString('en-NG', {
+                      weekday: 'long',
+                      year: 'numeric',
+                      month: 'long',
+                      day: 'numeric',
+                    })}
                   </span>
                 </div>
                 <p className="text-sm font-semibold text-surface-400 mt-2">
-                  {order.client_name} - ₦
-                  {Number(order.total_price).toLocaleString()}
+                  {order.client_name} - ₦ {order.total_price}
                 </p>
                 <div className="flex justify-between items-center mt-2">
                   <div
                     className={cn(
-                      'text-xs flex items-center font-semibold px-3 py-1 rounded-full capitalize',
+                      'text-xs flex items-center font-medium px-3 py-1 rounded-full capitalize',
                       {
                         'bg-warning-bg text-warning':
                           order.status.toLowerCase() === 'pending',
@@ -194,7 +198,7 @@ const OrdersPage = () => {
                     )}
                   >
                     <div
-                      className={cn('h-2 w-2 rounded-full mr-2', {
+                      className={cn('h-2 w-2 text-xs rounded-full mr-2', {
                         'bg-warning': order.status.toLowerCase() === 'pending',
                         'bg-success':
                           order.status.toLowerCase() === 'delivered',
@@ -267,8 +271,8 @@ const OrdersPage = () => {
                   <span>Order ID</span>
                   <span>Customer</span>
                   <span>Total</span>
-                  <span>Date</span>
-                  <span className="ml-4">Status</span>
+                  <span className="ml-8">Date</span>
+                  <span className="ml-8">Status</span>
                   <span className="text-center">Actions</span>
                 </div>
 
@@ -279,25 +283,37 @@ const OrdersPage = () => {
                       className="grid grid-cols-6 items-center text-surface-500 py-2 border-b text-sm"
                     >
                       <span>
-                        ID {order.id}
-                        {uuidv4()}
+                        Order Id: {order.id}
+                        {/* {uuidv4()} */}
                       </span>
-                      <span>{order.client_name}</span>
+                      <span className="ml-4">{order.client_name}</span>
                       <span>
                         <AnimatedCountUp amount={order.total_price || 0} />
                       </span>
-                      <span className="text-left">
-                        {new Date(order.order_date).toLocaleDateString()}
+                      <span className="text-xs text-surface-400">
+                        {new Date(order.order_date).toLocaleDateString(
+                          'en-NG',
+                          {
+                            weekday: 'long',
+                            year: 'numeric',
+                            month: 'long',
+                            day: 'numeric',
+                          },
+                        )}
                       </span>
+
                       <span
-                        className={cn('capitalize px-3 py-1 rounded-xl w-fit', {
-                          'text-warning bg-warning-bg':
-                            order.status.toLowerCase() === 'pending',
-                          'text-success bg-success-bg':
-                            order.status.toLowerCase() === 'delivered',
-                          'text-darkblue bg-blue-100':
-                            order.status.toLowerCase() === 'cancelled',
-                        })}
+                        className={cn(
+                          'capitalize px-2 py-1 text-xs ml-6 rounded-xl w-fit',
+                          {
+                            'text-warning bg-warning-bg':
+                              order.status.toLowerCase() === 'pending',
+                            'text-success bg-success-bg':
+                              order.status.toLowerCase() === 'delivered',
+                            'text-darkblue bg-blue-100':
+                              order.status.toLowerCase() === 'cancelled',
+                          },
+                        )}
                       >
                         {order.status}
                       </span>

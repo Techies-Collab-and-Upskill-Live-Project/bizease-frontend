@@ -23,7 +23,7 @@ const LowStockItems = () => {
 
   return (
     <div className="relative space-y-4 mb-24">
-      <h2 className="font-semibold text-lg">Low Stock Items</h2>
+      <h2 className="font-semibold text-gray-600 text-lg">Low Stock Items</h2>
 
       {/* ===== MOBILE VIEW ===== */}
       <div className="hidden max-lg:block space-y-4">
@@ -48,7 +48,7 @@ const LowStockItems = () => {
                 >
                   <div className="flex justify-between items-end">
                     <div className="space-y-2 text-sm">
-                      <div className="font-semibold text-surface-500">
+                      <div className="font-semibold text-surface-400">
                         {product_name}
                       </div>
                       <div className="text-xs font-medium text-surface-400">
@@ -58,7 +58,7 @@ const LowStockItems = () => {
                         <div className="h-1.5 w-1.5 rounded-full bg-red-600" />
                         {stock_level} units - <span>Low Stock</span>
                       </div>
-                      <div className="text-sm text-surface-500 font-medium">
+                      <div className="text-sm text-surface-400 font-medium">
                         {formatCurrency(price)}
                       </div>
                     </div>
@@ -101,7 +101,9 @@ const LowStockItems = () => {
                     key={id}
                     className="border rounded-2xl p-4 shadow-sm space-y-2"
                   >
-                    <div className="text-sm font-medium">{product_name}</div>
+                    <div className="text-sm font-semibold text-gray-600">
+                      {product_name}
+                    </div>
                     <div className="text-sm text-gray-500">{category}</div>
                     <div className="flex items-center text-xs font-semibold py-1 bg-warning rounded-3xl px-2 w-fit gap-2">
                       <span className="w-2 h-2 rounded-full bg-red-600" />
