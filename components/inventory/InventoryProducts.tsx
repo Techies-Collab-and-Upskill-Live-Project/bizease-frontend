@@ -85,7 +85,7 @@ export default function InventoryComponent() {
   return (
     <div className="space-y-4 max-lg:bg-gray-100 max-md:overflow-hidden py-4">
       {/* Desktop View */}
-      <div className="max-lg:absolute z-40 top-20 right-6 left-6">
+      <div className="max-lg:fixed z-40 top-20 right-6 left-6">
         <InventorySearchFilter
           searchTerm={searchTerm}
           onSearchChange={setSearchTerm}
@@ -94,7 +94,7 @@ export default function InventoryComponent() {
         />
       </div>
       <div className="max-lg:hidden grid grid-cols-1 gap-4">
-        <div className="px-4 grid grid-cols-7 text-center bg-gray-100 py-3 text-gray-500 font-semibold rounded gap-4 text-sm">
+        <div className="px-4 grid grid-cols-7 text-center bg-gray-200 py-3 text-gray-500 font-semibold rounded gap-4 text-sm">
           <span>Items in Stock</span>
           <span>Category</span>
           <span>Stock</span>

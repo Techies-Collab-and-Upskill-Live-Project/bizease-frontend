@@ -20,12 +20,12 @@ interface InventorySearchFilterProps {
   onFilterChange: (value: string) => void;
 }
 
-const InventorySearchFilter: React.FC<InventorySearchFilterProps> = ({
+const InventorySearchFilter = ({
   searchTerm,
   onSearchChange,
   filter,
   onFilterChange,
-}) => {
+}: InventorySearchFilterProps) => {
   const [localSearch, setLocalSearch] = useState(searchTerm);
   const router = useRouter();
 
@@ -42,9 +42,9 @@ const InventorySearchFilter: React.FC<InventorySearchFilterProps> = ({
   };
 
   return (
-    <section className="flex flex-wrap items-center justify-between mx-auto w-full gap-4 py-2 mb-4">
+    <section className="flex items-center justify-between mx-auto w-full gap-4 py-2 mb-4">
       {/* Search - stays left */}
-      <div className="relative min-w-[200px] max-w-md">
+      <div className="relative min-w-[120px] max-w-md">
         <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
         <Input
           type="text"
