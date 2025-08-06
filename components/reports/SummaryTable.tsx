@@ -1,10 +1,10 @@
 'use client';
 
 import React, { useState } from 'react';
-// import { formatCurrency } from '@/lib/utils';
 import { useReport } from '@/hooks/useReport';
 import { useReportSummary } from '@/hooks/useReportSummary';
 import { ReportQuery } from '@/lib/services/report';
+import { Skeleton2 } from '../ui/skeleton';
 
 const SummaryTable = () => {
   const [period] = useState<ReportQuery['period']>('last-week');
@@ -21,19 +21,19 @@ const SummaryTable = () => {
         Recent Sales Summary
       </h2>
 
-      <div className="overflow-x-auto rounded-md border shadow-sm">
+      <div className=" rounded-md border shadow-sm">
         {loading ? (
           <div className="text-center py-6 text-gray-500 font-medium text-sm">
-            Loading report...
+            <Skeleton2 />
           </div>
         ) : error ? (
           <div className="text-center py-6 text-red-500 font-medium text-sm">
             Failed to load report.
           </div>
         ) : productSales.length > 0 ? (
-          <table className="min-w-full text-left border-collapse">
+          <table className="w-full text-left border-collapse">
             <thead className="bg-darkblue">
-              <tr className="text-[12px] text-surface-200">
+              <tr className="text-[11px] text-surface-200">
                 <th className="p-3 font-normal whitespace-nowrap">Productss</th>
                 <th className="p-3 font-normal whitespace-nowrap">Unit Sold</th>
                 <th className="p-3 font-normal whitespace-nowrap">Revenue</th>
@@ -45,7 +45,7 @@ const SummaryTable = () => {
             <tbody className="bg-blue-50 text-left">
               {summary.map(
                 ({ name, quantity_sold, revenue, stock_status }, index) => (
-                  <tr key={index} className="text-[11px] text-gray-800">
+                  <tr key={index} className="text-[10px] text-surface-600">
                     <td className="p-3 font-medium whitespace-nowrap">
                       {name}
                     </td>

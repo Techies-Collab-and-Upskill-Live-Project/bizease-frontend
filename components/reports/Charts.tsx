@@ -102,7 +102,7 @@ const Charts = () => {
               <CustomLegend label="Revenue" />
             </div>
             <Line
-              style={{ width: '98%', maxWidth: '98%' }}
+              style={{ width: '90%', maxWidth: '90%' }}
               data={lineChartData}
               options={chartOptions}
             />
@@ -119,14 +119,14 @@ const Charts = () => {
           Top Products by Quantity Sold
         </h2>
         <div className="bg-surface-100 rounded-xl shadow-sm p-4 overflow-x-hidden">
-          <div className="w-full h-[280px] md:h-[320px] relative">
+          <div className="w-full h-[280px] md:h-[305px] relative">
             {report.product_sales_chart_data.length === 0 ? (
               <p className="text-center text-muted-foreground">
                 No product sales data available.
               </p>
             ) : (
               <Bar
-                style={{ width: '100%', maxWidth: '100%' }}
+                style={{ width: '90%', maxWidth: '90%' }}
                 data={barChartData}
                 options={chartOptions}
               />
