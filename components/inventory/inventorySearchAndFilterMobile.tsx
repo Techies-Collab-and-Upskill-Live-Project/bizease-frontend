@@ -18,12 +18,12 @@ interface InventorySearchFilterProps {
   onFilterChange: (value: string) => void;
 }
 
-const InventorySearchFilter: React.FC<InventorySearchFilterProps> = ({
+const InventorySearchFilter = ({
   searchTerm,
   onSearchChange,
   filter,
   onFilterChange,
-}) => {
+}: InventorySearchFilterProps) => {
   const [localSearch, setLocalSearch] = useState(searchTerm);
 
   useEffect(() => {

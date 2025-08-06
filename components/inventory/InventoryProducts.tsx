@@ -85,7 +85,7 @@ export default function InventoryComponent() {
   return (
     <div className="space-y-4 max-lg:bg-gray-100 max-md:overflow-hidden py-4">
       {/* Desktop View */}
-      <div className="max-lg:fixed z-40 top-20 right-6 left-6">
+      <div className="max-lg:absolute z-40 top-20 right-6 left-6">
         <InventorySearchFilter
           searchTerm={searchTerm}
           onSearchChange={setSearchTerm}
