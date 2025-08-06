@@ -1,41 +1,38 @@
 'use client';
 
 import React, { useEffect, useMemo, useState } from 'react';
-import { ChevronRight, ChevronLeft, AlertTriangle, Search } from 'lucide-react';
+import {
+  ChevronRight,
+  ChevronLeft,
+  AlertTriangle,
+  Minus,
+  Plus,
+} from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useMediaQuery } from 'usehooks-ts';
-import ViewOrderModal from '@/components/modals/OrderModal';
 import AnimatedCountUp from '@/components/animations/AnimatedCountUp';
 import TopAvatar from '@/components/navigations/TopAvatar';
-import MobileOrderList from '@/components/orders/MobileOrderList';
 import { useOrder } from '@/hooks/useOrder';
 import { useOrderStats } from '@/hooks/useOrderStats';
 import { cn } from '@/lib/utils';
+import { useRouter } from 'next/navigation';
 
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
-import Link from 'next/link';
-import { Input } from '@/components/ui/input';
-// import { v4 as uuidv4 } from 'uuid';
-import type { Order } from '@/types';
+import ViewOrderModal from '@/components/modals/OrderModal';
+
+import { Order } from '@/types';
 import { Skeleton2 } from '@/components/ui/skeleton';
 import InventorySkeleton from '@/components/inventory/InventorySkeleton';
+import OrderControls from '@/components/orders/SearchAndFilterOrder';
 
 const OrdersPage = () => {
   const { orders, loading } = useOrder();
   const { stats, loading: statsLoading } = useOrderStats();
 
-  const [floatButtonShow, setFloatButtonShow] = useState(false);
+  const router = useRouter();
+  const [fabOpen, setFabOpen] = useState(false);
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
   const [search, setSearch] = useState('');
-  const [filter, setFilter] = useState<
-    'all' | 'pending' | 'delivered' | 'cancelled'
-  >('all');
+  const [filter, setFilter] = useState<'all' | 'pending' | 'delivered'>('all');
   const [cache, setCache] = useState<Record<string, Order[]>>({});
   const [hasMounted, setHasMounted] = useState(false);
   const isMobile = useMediaQuery('(max-width: 1020px)');
@@ -43,13 +40,8 @@ const OrdersPage = () => {
   const [page, setPage] = useState(1);
   const perPage = 7;
 
-  useEffect(() => {
-    setHasMounted(true);
-  }, []);
-
-  useEffect(() => {
-    setCache({});
-  }, [orders]);
+  useEffect(() => setHasMounted(true), []);
+  useEffect(() => setCache({}), [orders]);
 
   const filtered = useMemo(() => {
     return orders.filter(({ client_name, status }) => {
@@ -72,10 +64,6 @@ const OrdersPage = () => {
 
   const totalPages = Math.max(1, Math.ceil(filtered.length / perPage));
 
-  const totalPending =
-    stats?.pending_orders ??
-    filtered.filter(({ status }) => status.toLowerCase() === 'pending').length;
-
   if (loading) return <InventorySkeleton />;
 
   return (
@@ -86,20 +74,16 @@ const OrdersPage = () => {
         <h1 className="text-surface-600 font-bold text-lg mt-2 hidden lg:block">
           Orders
         </h1>
-        <div className="lg:hidden">
-          <MobileOrderList
-            orders={paginated}
-            totalPending={totalPending}
+
+        <div className="w-full lg:hidden">
+          <OrderControls
             search={search}
             setSearch={setSearch}
             filter={filter}
             setFilter={(val) => setFilter(val as typeof filter)}
-            setSelectedOrder={setSelectedOrder}
-            floatButtonShow={floatButtonShow}
-            setFloatButtonShow={setFloatButtonShow}
           />
         </div>
-        {/* Summary Section */}
+
         <div className="flex bg-gradient items-center justify-between w-full pl-4 md:pr-30 max-md:pr-8 py-4 mx-auto rounded-sm">
           <div className="flex w-1/3">
             <div>
@@ -140,7 +124,7 @@ const OrdersPage = () => {
             </div>
           </div>
         </div>
-        {/* Mobile Alert */}
+
         {hasMounted && isMobile && (
           <div className="p-4 rounded-lg shadow-sm mt-4">
             <div className="flex-center items-center gap-2 mb-2">
@@ -159,9 +143,10 @@ const OrdersPage = () => {
             </p>
           </div>
         )}
+
         {hasMounted && isMobile && (
           <div className="min-h-50 space-y-4 mt-6 bg-gray-50">
-            {orders.map((order) => (
+            {paginated.map((order) => (
               <div
                 key={order.id}
                 className="bg-gray-100 p-4 rounded-lg shadow border"
@@ -169,7 +154,6 @@ const OrdersPage = () => {
                 <div className="flex justify-between text-xs font-semibold text-surface-500 mb-1">
                   <span className="text-sm text-surface-500">
                     Order Id: - {order.id}
-                    {/* {uuidv4()} */}
                   </span>
                   <span className="text-sm text-surface-400">
                     {new Date(order.order_date).toLocaleDateString('en-NG', {
@@ -192,8 +176,6 @@ const OrdersPage = () => {
                           order.status.toLowerCase() === 'pending',
                         'bg-success-bg text-success':
                           order.status.toLowerCase() === 'delivered',
-                        'bg-blue-100 text-darkblue':
-                          order.status.toLowerCase() === 'cancelled',
                       },
                     )}
                   >
@@ -202,8 +184,6 @@ const OrdersPage = () => {
                         'bg-warning': order.status.toLowerCase() === 'pending',
                         'bg-success':
                           order.status.toLowerCase() === 'delivered',
-                        'bg-darkblue':
-                          order.status.toLowerCase() === 'cancelled',
                       })}
                     />
                     {order.status}
@@ -220,48 +200,19 @@ const OrdersPage = () => {
             ))}
           </div>
         )}
-        {/* Desktop Table */}
+
         {hasMounted && !isMobile && (
           <>
-            <div className="lg:flex justify-between items-center gap-4 mt-6 hidden">
-              <div className="relative w-fit max-w-sm">
-                <Search
-                  className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
-                  size={14}
-                />
-                <Input
-                  placeholder="Search orders..."
-                  className="pl-10 border border-lightblue"
-                  value={search}
-                  onChange={(e) => setSearch(e.target.value)}
-                />
-              </div>
-
-              <div className="flex gap-2">
-                <Select
-                  value={filter}
-                  onValueChange={(val) => setFilter(val as typeof filter)}
-                >
-                  <SelectTrigger className="w-[160px] border border-lightblue">
-                    <SelectValue placeholder="Filter by status" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">All Orders</SelectItem>
-                    <SelectItem value="pending">Pending</SelectItem>
-                    <SelectItem value="completed">Delivered</SelectItem>
-                    <SelectItem value="cancelled">Cancelled</SelectItem>
-                  </SelectContent>
-                </Select>
-
-                <Link href="/orders/add-new-order">
-                  <Button className="bg-darkblue text-white hover:bg-lightblue">
-                    Add New Order
-                  </Button>
-                </Link>
-              </div>
+            <div className="hidden lg:flex">
+              <OrderControls
+                search={search}
+                setSearch={setSearch}
+                filter={filter}
+                setFilter={(val) => setFilter(val as typeof filter)}
+              />
             </div>
 
-            {orders?.length === 0 ? (
+            {paginated?.length === 0 ? (
               <p className="min-h-100 flex-center text-muted-foreground">
                 No Orders
               </p>
@@ -277,15 +228,12 @@ const OrdersPage = () => {
                 </div>
 
                 <div className="space-y-2">
-                  {orders.map((order) => (
+                  {paginated.map((order) => (
                     <div
                       key={order.id}
                       className="grid grid-cols-6 items-center text-surface-500 py-2 border-b text-sm"
                     >
-                      <span>
-                        Order Id: {order.id}
-                        {/* {uuidv4()} */}
-                      </span>
+                      <span>Order Id: {order.id}</span>
                       <span className="ml-4">{order.client_name}</span>
                       <span>
                         <AnimatedCountUp amount={order.total_price || 0} />
@@ -301,7 +249,6 @@ const OrdersPage = () => {
                           },
                         )}
                       </span>
-
                       <span
                         className={cn(
                           'capitalize px-2 py-1 text-xs ml-6 rounded-xl w-fit',
@@ -310,8 +257,6 @@ const OrdersPage = () => {
                               order.status.toLowerCase() === 'pending',
                             'text-success bg-success-bg':
                               order.status.toLowerCase() === 'delivered',
-                            'text-darkblue bg-blue-100':
-                              order.status.toLowerCase() === 'cancelled',
                           },
                         )}
                       >
@@ -331,11 +276,11 @@ const OrdersPage = () => {
             )}
           </>
         )}
-        {/* Pagination */}
+
         <div className="flex justify-between items-center pt-6">
           <span className="text-sm text-muted-foreground">
-            Showing {(page - 1) * perPage + 1} - {Math.min(page * perPage, 0)}{' '}
-            of {0}
+            Showing {(page - 1) * perPage + 1} -{' '}
+            {Math.min(page * perPage, filtered.length)} of {filtered.length}
           </span>
           <div className="flex gap-2">
             <Button
@@ -356,7 +301,30 @@ const OrdersPage = () => {
             </Button>
           </div>
         </div>
-        {/* View Order Modal */}
+      </div>
+
+      <div className="fixed bottom-25 right-6 z-50 lg:hidden">
+        <div className="flex items-center gap-2">
+          {fabOpen && (
+            <Button
+              onClick={() => router.push('/orders/add-new-order')}
+              className="bg-darkblue hover:bg-lightblue text-white border border-surface-100 rounded-md px-4 py-3 transition-all duration-300"
+            >
+              <span className="text-sm font-medium">Add New Order</span>
+            </Button>
+          )}
+          <Button
+            onClick={() => setFabOpen(!fabOpen)}
+            aria-label={fabOpen ? 'Close FAB' : 'Open FAB'}
+            className="bg-darkblue hover:bg-lightblue text-white border border-surface-100 rounded-md p-3 transition-all duration-300"
+          >
+            {fabOpen ? (
+              <Minus className="w-5 h-5" />
+            ) : (
+              <Plus className="w-5 h-5" />
+            )}
+          </Button>
+        </div>
         {selectedOrder && (
           <ViewOrderModal
             order={selectedOrder}
