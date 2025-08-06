@@ -33,7 +33,7 @@ const SummaryTable = () => {
         ) : productSales.length > 0 ? (
           <table className="w-full text-left border-collapse">
             <thead className="bg-darkblue">
-              <tr className="text-[11px] text-surface-200">
+              <tr className="text-[10px] text-surface-200">
                 <th className="p-3 font-normal whitespace-nowrap">Productss</th>
                 <th className="p-3 font-normal whitespace-nowrap">Unit Sold</th>
                 <th className="p-3 font-normal whitespace-nowrap">Revenue</th>
@@ -45,7 +45,7 @@ const SummaryTable = () => {
             <tbody className="bg-blue-50 text-left">
               {summary.map(
                 ({ name, quantity_sold, revenue, stock_status }, index) => (
-                  <tr key={index} className="text-[10px] text-surface-600">
+                  <tr key={index} className="text-[9px] text-surface-600">
                     <td className="p-3 font-medium whitespace-nowrap">
                       {name}
                     </td>

@@ -64,7 +64,7 @@ const ReportSums = () => {
   if (loading) return <ReportSumsSkeleton />;
 
   return (
-    <section className="w-full mx-auto px-4 lg:px-8 mt-4">
+    <section className="w-full mx-auto px-4 lg:px-8 mt-1">
       <div className="flex justify-between max-lg:justify-end">
         <h1 className="text-lg font-bold text-darkblue hidden lg:block">
           Report & Analytics
