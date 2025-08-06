@@ -18,7 +18,6 @@ import { toast } from 'sonner';
 
 const SideNavbar = () => {
   const pathname = usePathname();
-  // const route = useRouter();
 
   const isActive = (route: string) =>
     pathname === route || pathname.startsWith(route + '/');
@@ -63,7 +62,7 @@ const SideNavbar = () => {
       </nav>
       <Button
         onClick={handleAllLogout}
-        className="flex items-center w-full gap-10 text-surface-200 font-semibold mt-30 hover:bg-gradient underline"
+        className="flex items-center w-full gap-6 text-surface-300 font-semibold mt-20 hover:bg-gradient underline"
       >
         <LogOut className="w-4 h-4" />
         Logout

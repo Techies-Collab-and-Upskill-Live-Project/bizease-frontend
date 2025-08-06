@@ -14,7 +14,8 @@ import {
 
 import CustomLegend from './CustomLegend';
 import { useReport } from '@/hooks/useReport';
-import { format } from 'date-fns'; // for consistent date labels
+import { format } from 'date-fns';
+import { Skeleton2 } from '../ui/skeleton';
 
 ChartJS.register(
   CategoryScale,
@@ -88,6 +89,8 @@ const Charts = () => {
       tooltip: { enabled: true },
     },
   };
+
+  if (loading) return <Skeleton2 />;
 
   return (
     <div className="w-full max-w-[100vw] px-4 sm:px-6 lg:px-8 mt-6 space-y-4">
