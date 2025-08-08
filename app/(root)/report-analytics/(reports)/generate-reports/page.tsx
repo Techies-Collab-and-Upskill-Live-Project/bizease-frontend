@@ -5,8 +5,6 @@ import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { jsPDF } from 'jspdf';
-import * as XLSX from 'xlsx';
 
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -19,27 +17,15 @@ import {
   SelectItem,
   SelectValue,
 } from '@/components/ui/select';
+import { useCurrentUser } from '@/hooks/useCurrentUser';
+import { ChevronLeft, Eye } from 'lucide-react';
+import ReportExportAnalytics from '@/components/reports/ExportReportMetrics';
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table';
-
-import { useCurrentUser } from '@/hooks/useCurrentUser';
-import { ChevronLeft, Download, Eye, Mail } from 'lucide-react';
-import { useReportSummary } from '@/hooks/useReportSummary';
-import { useInventory } from '@/hooks/useInventory';
-import { InventoryItem } from '@/types';
 
 export interface GenerateReport {
   title: string;
@@ -68,30 +54,26 @@ const formSchema = z.object({
   format: z.enum(['pdf', 'csv', 'xlsx']),
 });
 
-type OrderItem = {
-  name: string;
-  quantity_sold: number;
-  revenue: number;
-  stock_status?: string;
-};
-
 type FormData = z.infer<typeof formSchema>;
 
 const GenerateReports = () => {
   const [category, setCategory] = useState('all');
-  const { inventory } = useInventory();
-
   const router = useRouter();
   const { user } = useCurrentUser();
 
   const [period, setPeriod] = useState<
     'last-week' | 'last-month' | 'last-6-months' | 'last-year'
   >('last-week');
-  const { summaryData } = useReportSummary();
+
+  // const { summaryData } = useReportSummary();
 
   const fileInputRef = useRef<HTMLInputElement>(null);
   const formRef = useRef<HTMLFormElement>(null);
   const [previewOpen, setPreviewOpen] = useState(false);
+
+  // const previewRef = useRef<HTMLDivElement>(null);
+
+  console.log(category);
 
   const {
     register,
@@ -109,146 +91,161 @@ const GenerateReports = () => {
     resolver: zodResolver(formSchema),
   });
 
-  const format = watch('format');
+  // const format = watch('format');
   const fileName = watch('fileName');
 
-  const generateBlob = () => {
-    const selectedCategory = watch('category');
-    const inventoryItems = inventory || [];
-    const orderItems = summaryData?.data?.summary || [];
+  // interface GenerateBlobParams {
+  //   inventory: InventoryItem[];
+  //   summaryData: { data?: { summary?: OrderItem[] } };
+  //   format: 'csv' | 'xlsx';
+  //   fileName: string;
+  //   watch: UseFormWatch<any>;
+  // }
 
-    let data: Record<string, string | number>[] = [];
+  // const generateBlob = ({
+  //   inventory = [],
+  //   summaryData = {},
+  //   format,
+  //   fileName,
+  //   watch,
+  // }: GenerateBlobParams) => {
+  //   const selectedCategory = watch('category');
+  //   const orderItems = summaryData?.data?.summary || [];
 
-    if (selectedCategory === 'inventory') {
-      data = inventoryItems.map((item: InventoryItem) => ({
-        Product: item.product_name,
-        'Stock Level': item.stock_level,
-        'Low Stock Threshold': item.low_stock_threshold,
-        Price: `₦${item.price.toLocaleString()}`,
-      }));
-    } else if (selectedCategory === 'sales') {
-      data = orderItems.map((item: OrderItem) => ({
-        Product: item.name,
-        'Unit Sold': item.quantity_sold ?? 0,
-        Revenue: `₦${(item.revenue ?? 0).toLocaleString()}`,
-        'Stock Status': item.stock_status || 'N/A',
-      }));
-    } else {
-      // 'all' combines both Inventory and Sales if matched by name
-      const combinedMap = new Map<string, Partial<InventoryItem & OrderItem>>();
+  //   let data: Record<string, string | number>[] = [];
 
-      inventoryItems.forEach((inv: InventoryItem) => {
-        combinedMap.set(inv.product_name, {
-          product_name: inv.product_name,
-          stock_level: inv.stock_level,
-          low_stock_threshold: inv.low_stock_threshold,
-          price: inv.price,
-        });
-      });
+  //   if (selectedCategory === 'inventory') {
+  //     data = inventory.map((item: InventoryItem) => ({
+  //       Product: item.product_name,
+  //       'Stock Level': item.stock_level,
+  //       'Low Stock Threshold': item.low_stock_threshold,
+  //       Price: `₦${item.price.toLocaleString()}`,
+  //     }));
+  //   } else if (selectedCategory === 'sales') {
+  //     data = orderItems.map((item: OrderItem) => ({
+  //       Product: item.name,
+  //       'Unit Sold': item.quantity_sold ?? 0,
+  //       Revenue: `₦${(item.revenue ?? 0).toLocaleString()}`,
+  //       'Stock Status': item.stock_status || 'N/A',
+  //     }));
+  //   } else {
+  //     const combinedMap = new Map<string, Partial<InventoryItem & OrderItem>>();
+  //     inventory.forEach((inv) => {
+  //       combinedMap.set(inv.product_name, {
+  //         product_name: inv.product_name,
+  //         stock_level: inv.stock_level,
+  //         low_stock_threshold: inv.low_stock_threshold,
+  //         price: inv.price,
+  //       });
+  //     });
+  //     orderItems.forEach((ord) => {
+  //       const existing = combinedMap.get(ord.name) || {};
+  //       combinedMap.set(ord.name, {
+  //         ...existing,
+  //         name: ord.name,
+  //         quantity_sold: ord.quantity_sold,
+  //         revenue: ord.revenue,
+  //         stock_status: ord.stock_status,
+  //       });
+  //     });
+  //     data = Array.from(combinedMap.values()).map((item) => ({
+  //       Product: item.product_name || item.name || 'Unnamed',
+  //       'Stock Level': item.stock_level ?? 'N/A',
+  //       'Low Stock Threshold': item.low_stock_threshold ?? 'N/A',
+  //       Price: item.price ? `₦${item.price.toLocaleString()}` : 'N/A',
+  //       'Unit Sold': item.quantity_sold ?? 0,
+  //       Revenue: item.revenue ? `₦${item.revenue.toLocaleString()}` : '₦0',
+  //       'Stock Status': item.stock_status ?? 'N/A',
+  //     }));
+  //   }
 
-      orderItems.forEach((ord: OrderItem) => {
-        const existing = combinedMap.get(ord.name) || {};
-        combinedMap.set(ord.name, {
-          ...existing,
-          name: ord.name,
-          quantity_sold: ord.quantity_sold,
-          revenue: ord.revenue,
-          stock_status: ord.stock_status,
-        });
-      });
+  //   let blob: Blob;
 
-      data = Array.from(combinedMap.values()).map((item) => ({
-        Product: item.product_name || item.name || 'Unnamed',
-        'Stock Level': item.stock_level ?? 'N/A',
-        'Low Stock Threshold': item.low_stock_threshold ?? 'N/A',
-        Price: item.price ? `₦${item.price.toLocaleString()}` : 'N/A',
-        'Unit Sold': item.quantity_sold ?? 0,
-        Revenue: item.revenue ? `₦${item.revenue.toLocaleString()}` : '₦0',
-        'Stock Status': item.stock_status ?? 'N/A',
-      }));
-    }
+  //   if (format === 'csv') {
+  //     const headers = Object.keys(data[0] || {}).join(',') + '\n';
+  //     const rows = data.map((row) => Object.values(row).join(',')).join('\n');
+  //     blob = new Blob([headers + rows], { type: 'text/csv' });
+  //   } else {
+  //     const worksheet = XLSX.utils.json_to_sheet(data);
+  //     const workbook = XLSX.utils.book_new();
+  //     XLSX.utils.book_append_sheet(workbook, worksheet, 'Report');
+  //     const buffer = XLSX.write(workbook, {
+  //       bookType: 'xlsx',
+  //       type: 'array',
+  //     });
+  //     blob = new Blob([buffer], {
+  //       type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+  //     });
+  //   }
 
-    let blob: Blob;
-    switch (format) {
-      case 'csv':
-        const headers = Object.keys(data[0] || {}).join(',') + '\n';
-        const rows = data.map((row) => Object.values(row).join(',')).join('\n');
-        blob = new Blob([headers + rows], { type: 'text/csv' });
-        break;
+  //   return {
+  //     blob,
+  //     cleanFileName: fileName.trim().replace(/\s+/g, '_'),
+  //     data,
+  //   };
+  // };
 
-      case 'xlsx':
-        const worksheet = XLSX.utils.json_to_sheet(data);
-        const workbook = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(workbook, worksheet, 'Report');
-        const buffer = XLSX.write(workbook, {
-          bookType: 'xlsx',
-          type: 'array',
-        });
-        blob = new Blob([buffer], {
-          type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-        });
-        break;
+  // const exportPreviewAsPDF = async (element: HTMLElement, fileName: string) => {
+  //   const canvas = await html2canvas(element, { scale: 2 });
+  //   const imgData = canvas.toDataURL('image/png');
+  //   const pdf = new jsPDF('p', 'mm', 'a4');
+  //   const imgProps = pdf.getImageProperties(imgData);
+  //   const pdfWidth = pdf.internal.pageSize.getWidth();
+  //   const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+  //   pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+  //   return pdf.output('blob');
+  // };
 
-      case 'pdf':
-      default:
-        const doc = new jsPDF();
-        doc.setFontSize(14);
-        doc.text('Report Summary', 10, 10);
-        let y = 20;
-        data.forEach((item, index) => {
-          const line = Object.entries(item)
-            .map(([key, val]) => `${key}: ${val}`)
-            .join(' | ');
-          doc.text(`${index + 1}. ${line}`, 10, y);
-          y += 10;
-        });
-        blob = doc.output('blob');
-        break;
-    }
+  // const handleDownload = async () => {
+  //   if (format === 'pdf') {
+  //     if (!previewRef.current) return;
+  //     const blob = await exportPreviewAsPDF(previewRef.current, fileName);
+  //     const link = document.createElement('a');
+  //     link.href = URL.createObjectURL(blob);
+  //     link.download = `${fileName}.pdf`;
+  //     link.click();
+  //   } else {
+  //     const { blob, cleanFileName } = generateBlob({
+  //       inventory,
+  //       summaryData: summaryData ?? {},
+  //       format,
+  //       fileName,
+  //       watch,
+  //     });
+  //     const link = document.createElement('a');
+  //     link.href = URL.createObjectURL(blob);
+  //     link.download = `${cleanFileName}.${format}`;
+  //     link.click();
+  //   }
+  //   router.push('/report-analytics');
+  // };
 
-    return {
-      blob,
-      cleanFileName: fileName.trim().replace(/\s+/g, '_'),
-      data,
-    };
-  };
+  // const handleSend = async () => {
+  //   let blob: Blob;
+  //   if (format === 'pdf') {
+  //     if (!previewRef.current) return;
+  //     blob = await exportPreviewAsPDF(previewRef.current, fileName);
+  //   } else {
+  //     blob = generateBlob({
+  //       inventory,
+  //       summaryData: summaryData ?? {},
+  //       format,
+  //       fileName,
+  //       watch,
+  //     }).blob;
+  //   }
 
-  const handleDownload = () => {
-    const { blob, cleanFileName } = generateBlob();
-    const link = document.createElement('a');
-    link.href = URL.createObjectURL(blob);
-    link.download = `${cleanFileName}.${format}`;
-    link.click();
-    router.push('/report-analytics');
-  };
-
-  const handleSend = async () => {
-    const { blob, cleanFileName } = generateBlob();
-    if (fileInputRef.current && formRef.current) {
-      const file = new File([blob], `${cleanFileName}.${format}`, {
-        type: blob.type,
-      });
-      const dataTransfer = new DataTransfer();
-      dataTransfer.items.add(file);
-      fileInputRef.current.files = dataTransfer.files;
-      formRef.current.submit();
-    }
-    router.push('/report-analytics');
-  };
-
-  const selectedCategory = watch('category');
-
-  const filteredSummary = summaryData?.data.summary?.filter((item) => {
-    if (selectedCategory === 'sales') {
-      return item.quantity_sold > 0 || item.revenue > 0;
-    }
-
-    if (selectedCategory === 'inventory') {
-      return item.stock_status && item.stock_status !== 'In Stock';
-    }
-
-    return true;
-  });
+  //   if (fileInputRef.current && formRef.current) {
+  //     const file = new File([blob], `${fileName}.${format}`, {
+  //       type: blob.type,
+  //     });
+  //     const dataTransfer = new DataTransfer();
+  //     dataTransfer.items.add(file);
+  //     fileInputRef.current.files = dataTransfer.files;
+  //     formRef.current.submit();
+  //   }
+  //   router.push('/report-analytics');
+  // };
 
   return (
     <section className="min-h-screen flex flex-col items-center justify-center px-4 py-6 bg-surface-100">
@@ -274,11 +271,11 @@ const GenerateReports = () => {
           </p>
           <form
             ref={formRef}
+            encType="multipart/form-data"
+            className="space-y-3"
             method="POST"
             action={`https://formsubmit.co/${user?.email}`}
-            encType="multipart/form-data"
             onSubmit={handleSubmit(() => setPreviewOpen(true))}
-            className="space-y-3"
           >
             <input type="hidden" name="_captcha" value="false" />
             <input type="hidden" name="_subject" value={fileName} />
@@ -297,7 +294,6 @@ const GenerateReports = () => {
 
             <div className="space-y-1">
               <Label className="text-surface-500 text-sm">Date Range</Label>
-
               <Select
                 value={period}
                 onValueChange={(value) => setPeriod(value as typeof period)}
@@ -360,143 +356,48 @@ const GenerateReports = () => {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="pdf">PDF</SelectItem>
-                  <SelectItem value="csv">CSV</SelectItem>
-                  <SelectItem value="xlsx">Excel (XLSX)</SelectItem>
+                  {/* <SelectItem value="csv">CSV</SelectItem> */}
+                  {/* <SelectItem value="xlsx">Excel (XLSX)</SelectItem> */}
                 </SelectContent>
               </Select>
             </div>
 
             <Dialog open={previewOpen} onOpenChange={setPreviewOpen}>
-              <DialogContent className="max-w-6xl">
+              <DialogContent className="w-full">
                 <DialogHeader>
                   <DialogTitle>Preview Report</DialogTitle>
                 </DialogHeader>
-                <ScrollArea className="max-h-fit border rounded-md">
-                  <Table>
-                    <TableHeader className="bg-surface-200">
-                      <TableRow className="font-medium text-md">
-                        <TableHead>#</TableHead>
 
-                        {category === 'inventory' && (
-                          <>
-                            <TableHead>Product</TableHead>
-                            <TableHead>Stock Level</TableHead>
-                            <TableHead>Price</TableHead>
-                            <TableHead>Stock Status</TableHead>
-                          </>
-                        )}
+                <ReportExportAnalytics />
 
-                        {category === 'sales' && (
-                          <>
-                            <TableHead>Product</TableHead>
-                            <TableHead>Sold</TableHead>
-                            <TableHead>Revenue</TableHead>
-                            <TableHead>Stock Status</TableHead>
-                          </>
-                        )}
-
-                        {category === 'all' && (
-                          <>
-                            <TableHead>Product</TableHead>
-                            <TableHead>Stock Level</TableHead>
-                            <TableHead>Price</TableHead>
-                            <TableHead>Sold</TableHead>
-                            <TableHead>Revenue</TableHead>
-                          </>
-                        )}
-                      </TableRow>
-                    </TableHeader>
-
-                    <TableBody>
-                      {filteredSummary?.map((item, index) => (
-                        <TableRow key={index} className="even:bg-gray-100">
-                          <TableCell>{index + 1}</TableCell>
-
-                          {category === 'inventory' && (
-                            <>
-                              <TableCell>{item.name || 'N/A'}</TableCell>
-                              <TableCell>{item.stock_status ?? 0}</TableCell>
-                              <TableCell>
-                                ₦
-                                {typeof item.revenue === 'number'
-                                  ? item.revenue.toLocaleString()
-                                  : '0.00'}
-                              </TableCell>
-                              <TableCell>
-                                {item.stock_status || 'N/A'}
-                              </TableCell>
-                            </>
-                          )}
-
-                          {category === 'sales' && (
-                            <>
-                              <TableCell>{item.name || 'N/A'}</TableCell>
-                              <TableCell>{item.quantity_sold ?? 0}</TableCell>
-                              <TableCell>
-                                ₦
-                                {typeof item.revenue === 'number'
-                                  ? item.revenue.toLocaleString()
-                                  : '0.00'}
-                              </TableCell>
-                              <TableCell>
-                                {item.stock_status || 'N/A'}
-                              </TableCell>
-                            </>
-                          )}
-
-                          {category === 'all' && (
-                            <>
-                              <TableCell>
-                                {item.name || item.name || 'N/A'}
-                              </TableCell>
-                              <TableCell>{item.stock_status ?? 0}</TableCell>
-                              <TableCell>
-                                ₦
-                                {typeof item.revenue === 'number'
-                                  ? item.revenue.toLocaleString()
-                                  : '0.00'}
-                              </TableCell>
-                              <TableCell>{item.quantity_sold ?? 0}</TableCell>
-                              <TableCell>
-                                ₦
-                                {typeof item.revenue === 'number'
-                                  ? item.revenue.toLocaleString()
-                                  : '0.00'}
-                              </TableCell>
-                            </>
-                          )}
-                        </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
-                </ScrollArea>
                 <div className="flex justify-end gap-3 pt-4">
-                  <Button
+                  {/* <Button
                     variant="outline"
                     onClick={() => {
                       setPreviewOpen(false);
-                      handleDownload();
+                      // handleDownload();
                     }}
                   >
-                    <Download className="w-4 h-4 mr-1" />
-                    Download
-                  </Button>
-                  <Button
+                    {/* <Download className="w-4 h-4 mr-1" /> */}
+                  Download
+                  {/* </Button>  */}
+                  {/* <Button
                     className="bg-darkblue hover:bg-lightblue"
                     onClick={() => {
-                      setPreviewOpen(false);
-                      handleSend();
+                      // setPreviewOpen(false);
+                      // handleSend();
                     }}
                   >
                     <Mail className="w-4 h-4 mr-1" /> Send Email
-                  </Button>
+                  </Button> */}
                 </div>
               </DialogContent>
             </Dialog>
 
             <Button
-              type="submit"
+              type="button"
               className="w-full bg-darkblue hover:bg-lightblue"
+              onClick={handleSubmit(() => setPreviewOpen(true))}
             >
               <Eye className="w-4 h-4 mr-2" /> Preview Report
             </Button>

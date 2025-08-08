@@ -148,7 +148,7 @@ export interface InventoryStore {
   reduceStock: (id: string, quantity: number) => void;
 }
 
-export type OrderStatus = 'Pending' | 'Fulfilled' | 'Cancelled';
+export type OrderStatus = 'Pending' | 'Delivered' | 'Cancelled';
 
 export interface OrderedProduct {
   name: string;
