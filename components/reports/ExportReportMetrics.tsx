@@ -62,7 +62,7 @@ export default function ReportExportAnalytics() {
       }),
     );
     const sorted = Object.entries(counts).sort((a, b) => b[1] - a[1]);
-    return sorted.length > 0 ? sorted[0][0] : 'N/A';
+    return sorted.length > 0 ? sorted[0][0] : 'Not Available';
   }, [orders]);
 
   const handleDownload = async () => {
