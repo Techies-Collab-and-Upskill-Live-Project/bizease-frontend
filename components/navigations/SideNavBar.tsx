@@ -16,6 +16,8 @@ import { LogOut } from 'lucide-react';
 import { signOut } from 'next-auth/react';
 import { toast } from 'sonner';
 
+import DeleteUserAccount from '../DeleteUserAccount';
+
 const SideNavbar = () => {
   const pathname = usePathname();
 
@@ -67,6 +69,9 @@ const SideNavbar = () => {
         <LogOut className="w-4 h-4" />
         Logout
       </Button>
+      <div className="w-full flex-center">
+        <DeleteUserAccount />
+      </div>
     </section>
   );
 };

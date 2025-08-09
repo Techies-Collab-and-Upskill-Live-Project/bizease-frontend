@@ -82,3 +82,34 @@ export async function PUT(req: NextRequest) {
     );
   }
 }
+
+export async function DELETE(req: NextRequest) {
+  const accessToken = req.cookies.get('access_token')?.value;
+
+  if (!accessToken) {
+    return NextResponse.json(
+      { detail: 'Unauthorized: No access token' },
+      { status: 401 },
+    );
+  }
+
+  try {
+    const { data } = await axios.delete(
+      `${process.env.NEXT_PUBLIC_BASE_URL}accounts/`,
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      },
+    );
+
+    return NextResponse.json(data);
+  } catch (error) {
+    const axiosError = error as AxiosError<UserDataResponse>;
+    const status = axiosError.response?.status || 500;
+    return NextResponse.json(
+      axiosError.response?.data || { detail: 'Failed to delete account' },
+      { status },
+    );
+  }
+}
