@@ -9,12 +9,37 @@ import { navItems } from '@/constants';
 
 import SidebarUser from './SidebarUser';
 import CustomLogo from '../CustomLogo';
+import { Button } from '../ui/button';
+
+import { logout } from '@/lib/services/auth';
+import { LogOut } from 'lucide-react';
+import { signOut } from 'next-auth/react';
+import { toast } from 'sonner';
+
+import DeleteUserAccount from '../DeleteUserAccount';
 
 const SideNavbar = () => {
   const pathname = usePathname();
 
   const isActive = (route: string) =>
     pathname === route || pathname.startsWith(route + '/');
+
+  const handleAllLogout = async (): Promise<void> => {
+    try {
+      await logout();
+
+      const res = await fetch('/api/auth/logout', { method: 'POST' });
+
+      if (!res.ok) {
+        throw new Error('Failed to clear cookies');
+      }
+
+      await signOut({ callbackUrl: '/log-in' });
+    } catch (err) {
+      const errorMsg = err instanceof Error ? err.message : 'Unknown error';
+      toast.error(`Logout failed: ${errorMsg}`);
+    }
+  };
 
   return (
     <section className="sidebar sticky hidden lg:block z-100">
@@ -37,6 +62,16 @@ const SideNavbar = () => {
           </Link>
         ))}
       </nav>
+      <Button
+        onClick={handleAllLogout}
+        className="flex items-center w-full gap-6 text-surface-300 font-semibold mt-20 hover:bg-gradient underline"
+      >
+        <LogOut className="w-4 h-4" />
+        Logout
+      </Button>
+      <div className="w-full flex-center">
+        <DeleteUserAccount />
+      </div>
     </section>
   );
 };

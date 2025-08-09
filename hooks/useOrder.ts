@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react';
 import { getOrders, createOrder } from '@/lib/services/order';
 import { Order, OrderUpdatePayload } from '@/types';
 import { updateOrder, deleteOrder } from '@/lib/services/order';
-import { toast } from 'sonner';
 
 export interface OrderedProduct {
   name: string;

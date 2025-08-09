@@ -1,8 +1,9 @@
 'use client';
 
-import useInventoryStats from '@/hooks/useInventoryStats';
+import useInventoryStats from '@/hooks/useinventoryStats';
 import AnimatedCountUp from '../animations/AnimatedCountUp';
 import { formatCurrency } from '@/lib/utils';
+import InventorySkeleton from './InventorySkeleton';
 
 const TotalInventory = () => {
   const { stats, loading, error } = useInventoryStats();
@@ -20,6 +21,10 @@ const TotalInventory = () => {
     );
   };
 
+  if (loading) {
+    return <InventorySkeleton />;
+  }
+
   return (
     <div className="flex bg-gradient items-center justify-between w-full pl-4 md:pr-30 max-md:pr-8 py-4 mx-auto rounded-sm">
       <div className="flex">
@@ -36,7 +41,7 @@ const TotalInventory = () => {
         <div>
           <p className="text-surface-200 text-[10px]">Total Products</p>
           <p className="font-semibold text-surface-200">
-            {renderValue(stats?.total_products)}
+            {stats?.total_products}
           </p>
         </div>
       </div>
@@ -46,7 +51,7 @@ const TotalInventory = () => {
         <div>
           <p className="text-surface-200 text-[10px]">Low Stock Count</p>
           <p className="font-semibold text-surface-200">
-            {renderValue(stats?.low_stock_count)}
+            {stats?.low_stock_count}
           </p>
         </div>
       </div>

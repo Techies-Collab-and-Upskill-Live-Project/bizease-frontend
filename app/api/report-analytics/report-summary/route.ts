@@ -23,14 +23,10 @@ export async function GET(req: NextRequest) {
         },
       },
     );
-    console.log('Raw reportSummary response:', response.data);
 
-    console.log(response.data);
     return NextResponse.json({ status: 200, data: response.data });
   } catch (error) {
     const axiosError = error as AxiosError<ReportSummaryResponse>;
-
-    console.error('Error fetching user data:', axiosError.message);
 
     return NextResponse.json(
       {

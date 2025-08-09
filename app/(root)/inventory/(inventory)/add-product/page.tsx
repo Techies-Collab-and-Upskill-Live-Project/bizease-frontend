@@ -53,7 +53,6 @@ export default function AddProductPage() {
       if (!productId) throw new Error('No product ID returned from API');
 
       router.push(`/inventory/add-product-success/${productId}`);
-      router.push(`/inventory/add-product-failed/${productId}`);
     } catch (error) {
       console.error('Failed to add item:', error);
     }

@@ -5,7 +5,10 @@ import Link from 'next/link';
 const CustomLogo = ({ type = 'BizEase' }: CustomLogoProp) => {
   return (
     <>
-      <Link href={'/'} className="flex cursor-pointer items-center gap-2">
+      <Link
+        href={'/dashboard'}
+        className="flex cursor-pointer items-center gap-2"
+      >
         <Image
           src={'/icon/logo-2.png'}
           width={30}

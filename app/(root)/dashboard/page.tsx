@@ -12,6 +12,8 @@ import AnimatedCountUp from '@/components/animations/AnimatedCountUp';
 import { useDashboard } from '@/hooks/useDashboard';
 import { useReport } from '@/hooks/useReport';
 import { ReportQuery } from '@/lib/services/report';
+import InventorySkeleton from '@/components/inventory/InventorySkeleton';
+import CustomSkeleton from '@/components/CustomSkeleton';
 
 const DashboardPage = () => {
   const [period] = useState<ReportQuery['period']>('last-week');
@@ -20,18 +22,22 @@ const DashboardPage = () => {
   const { report } = useReport({ period });
 
   const revenue = dashboardStats?.revenue ?? 0;
-  const topProduct = dashboardStats?.top_Selling_product ?? 'Not available';
+
+  const topProduct = report?.top_selling_product ?? 'Not available';
+
   const revenueChangeImage =
     report?.revenue_change !== undefined && report.revenue_change >= 0
       ? '/icon/green.svg'
       : '/icon/red.svg';
+
+  if (loading) return <InventorySkeleton />;
 
   return (
     <section className="relative min-h-screen h-fit w-full bg-gray-100">
       <TopAvatar type="Dashboard" />
 
       {/* Floating Mobile Button */}
-      <div className="fixed bottom-4 right-4 z-50 md:hidden animate-slide-up-fade">
+      <div className="fixed top-1/2 right-4 transform -translate-y-1/2 z-50 md:hidden">
         <MobileButtons />
       </div>
 
@@ -40,7 +46,7 @@ const DashboardPage = () => {
 
         {loading ? (
           <p className="text-muted-foreground text-sm mt-10">
-            Loading dashboard...
+            <CustomSkeleton />
           </p>
         ) : error ? (
           <p className="text-red-500 text-sm mt-10">{error}</p>

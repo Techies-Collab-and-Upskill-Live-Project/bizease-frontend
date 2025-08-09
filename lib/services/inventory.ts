@@ -41,15 +41,12 @@ export const addInventoryItem = async (data: PostInventoryItem) => {
   try {
     const res = await axiosInstance.post('/inventory', data);
 
-    console.log('Response from addInventoryItem:', res.data);
-
     // Check for failure
     if (!res.data.data) {
       console.error('Error adding inventory item:', res.data.message);
       throw new Error(res.data.message || 'Failed to add inventory item');
     }
 
-    console.log('Inventory item posted successfully:', res.data.data);
     return res.data.data;
   } catch (err: unknown) {
     let errorMessage = 'Failed to fetch inventory';
@@ -81,7 +78,6 @@ export const updateInventoryItem = async (
 ) => {
   try {
     const res = await axiosInstance.put(`/inventory/${id}`, data);
-    console.log(res, 'from services');
     return res.data.data;
   } catch (err: unknown) {
     let errorMessage = 'Failed to fetch inventory';

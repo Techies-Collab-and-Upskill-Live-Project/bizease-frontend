@@ -1,35 +1,41 @@
 'use client';
 
-import React, { useState } from 'react';
+import React from 'react';
 import { Button } from '../ui/button';
 import AddButton from '../shared/InventoryAddButton';
-import AddOrderModal from '../modals/AddOrderModal';
 import { useCurrentUser } from '@/hooks/useCurrentUser';
+import { useRouter } from 'next/navigation';
 
 const UsernameAndButtons = () => {
-  const [showModal, setShowModal] = useState(false);
   const { user, loading, error } = useCurrentUser();
+  const router = useRouter();
+
+  const handleAddOrder = () => {
+    router.push('/orders/add-new-order');
+  };
+
+  const userDisplayName = loading
+    ? 'Loading...'
+    : error
+    ? `${error}`
+    : user?.full_name || 'User';
 
   return (
-    <div className="flex text-center justify-between">
+    <div className="flex justify-between items-start">
       <div className="mb-3 text-left">
         <h1 className="text-xl font-bold">Welcome</h1>
-        <div className="text-sm text-left text-surface-500 font-semibold mb-2">
-          {loading ? 'Loading...' : user?.full_name || `${error}`}
-        </div>
+        <p className="text-sm text-surface-500 font-semibold mb-2">
+          {userDisplayName}
+        </p>
       </div>
 
-      <div className="flex items-center gap-2 max-md:hidden">
-        <>
-          <Button
-            onClick={() => setShowModal(true)}
-            className="text-darkblue cursor-pointer border border-lightblue"
-          >
-            Add New Order
-          </Button>
-
-          {showModal && <AddOrderModal onClose={() => setShowModal(false)} />}
-        </>
+      <div className="flex items-center gap-2 max-lg:hidden md:flex">
+        <Button
+          onClick={handleAddOrder}
+          className="text-darkblue border border-lightblue cursor-pointer"
+        >
+          Add New Order
+        </Button>
         <AddButton />
       </div>
     </div>

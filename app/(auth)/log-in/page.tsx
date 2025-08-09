@@ -15,6 +15,7 @@ import useLogin from '@/hooks/useLogin';
 import { Eye, EyeOff, Mail } from 'lucide-react';
 import Image from 'next/image';
 import LoadingButton from '@/components/loading-button';
+import LoginWithGoogle from '@/components/google/GoogleButton';
 
 interface LoginFormData {
   email: string;
@@ -159,29 +160,9 @@ const LogIn = () => {
       {/* Login Alternatives */}
       <div className="absolute top-134 md:top-164 left-1/2 transform -translate-x-1/2 w-10/12 max-w-md z-10 p-6">
         <div className=" justify-center  flex flex-col gap-3 items-center ">
-          <p className="text-gray-500 text-sm tracking-wide">-or login with-</p>
           <div className="flex gap-6 items-center justify-center">
-            <Image
-              width={60}
-              height={58}
-              src={'/google.png'}
-              alt=""
-              className="w-10 h-10 cursor-pointer"
-            />
-            <Image
-              width={60}
-              height={58}
-              src={'/apple.png'}
-              alt=""
-              className="w-10 h-10 cursor-pointer"
-            />
-            <Image
-              width={60}
-              height={58}
-              src={'/microsoft.png'}
-              alt=""
-              className="w-10 h-10 cursor-pointer"
-            />
+            {/* <CredentialsLoginForm /> */}
+            <LoginWithGoogle />
           </div>
           <a href="/sign-up" className=" text-[13px] underline ">
             Do not have account? Sign up

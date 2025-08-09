@@ -3,26 +3,26 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { AlertTriangle } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
 
 import { Button } from '@/components/ui/button';
 import { formatCurrency } from '@/lib/utils';
 import { useInventory } from '@/hooks/useInventory';
+import MobileButtons from './MobileButton';
 
 const LowStockItems = () => {
   const { inventory } = useInventory();
+  // const router = useRouter();
 
   const lowStockItems = inventory.filter(({ stock_level }) => stock_level <= 5);
 
   const [showAll, setShowAll] = useState(false);
-  const [showFloatButtons, setShowFloatButtons] = useState(false);
 
   const visibleItems = showAll ? lowStockItems : lowStockItems.slice(0, 6);
   const lowStockCount = lowStockItems.length;
 
   return (
     <div className="relative space-y-4 mb-24">
-      <h2 className="font-semibold text-lg">Low Stock Items</h2>
+      <h2 className="font-semibold text-gray-600 text-lg">Low Stock Items</h2>
 
       {/* ===== MOBILE VIEW ===== */}
       <div className="hidden max-lg:block space-y-4">
@@ -47,7 +47,7 @@ const LowStockItems = () => {
                 >
                   <div className="flex justify-between items-end">
                     <div className="space-y-2 text-sm">
-                      <div className="font-semibold text-surface-500">
+                      <div className="font-semibold text-surface-400">
                         {product_name}
                       </div>
                       <div className="text-xs font-medium text-surface-400">
@@ -57,7 +57,7 @@ const LowStockItems = () => {
                         <div className="h-1.5 w-1.5 rounded-full bg-red-600" />
                         {stock_level} units - <span>Low Stock</span>
                       </div>
-                      <div className="text-sm text-surface-500 font-medium">
+                      <div className="text-sm text-surface-400 font-medium">
                         {formatCurrency(price)}
                       </div>
                     </div>
@@ -83,9 +83,7 @@ const LowStockItems = () => {
           </>
         ) : (
           <div className="text-center py-10 border rounded-xl text-sm text-gray-500 bg-white shadow-sm">
-            <p className="font-medium text-base text-gray-600">
-              You are all stocked up
-            </p>
+            <p className="font-medium text-base text-gray-600">No Low Stock</p>
             <p className="text-sm mt-1">No low-stock items at the moment.</p>
           </div>
         )}
@@ -102,7 +100,9 @@ const LowStockItems = () => {
                     key={id}
                     className="border rounded-2xl p-4 shadow-sm space-y-2"
                   >
-                    <div className="text-sm font-medium">{product_name}</div>
+                    <div className="text-sm font-semibold text-gray-600">
+                      {product_name}
+                    </div>
                     <div className="text-sm text-gray-500">{category}</div>
                     <div className="flex items-center text-xs font-semibold py-1 bg-warning rounded-3xl px-2 w-fit gap-2">
                       <span className="w-2 h-2 rounded-full bg-red-600" />
@@ -139,65 +139,7 @@ const LowStockItems = () => {
           </div>
         )}
       </div>
-
-      {/* ===== FLOATING BUTTONS (Mobile only) ===== */}
-      <div className="lg:hidden fixed bottom-30 right-4 z-50 pointer-events-none">
-        {/* Backdrop */}
-        <AnimatePresence>
-          {showFloatButtons && (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 0.3 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.2 }}
-              className="fixed inset-0 bg-black pointer-events-auto"
-              onClick={() => setShowFloatButtons(false)}
-            />
-          )}
-        </AnimatePresence>
-
-        {/* Buttons */}
-        <div className="flex flex-col items-end gap-2 pointer-events-auto">
-          <AnimatePresence>
-            {showFloatButtons && (
-              <>
-                <motion.div
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: 10 }}
-                  transition={{ duration: 0.2 }}
-                >
-                  <Link href="/inventory/add-new-product">
-                    <Button className="bg-darkblue text-white hover:bg-lightblue text-sm">
-                      + Add New Product
-                    </Button>
-                  </Link>
-                </motion.div>
-                <motion.div
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: 10 }}
-                  transition={{ duration: 0.2, delay: 0.05 }}
-                >
-                  <Link href="/orders/add-new-order">
-                    <Button className="bg-darkblue text-white hover:bg-lightblue text-sm">
-                      + Add New Order
-                    </Button>
-                  </Link>
-                </motion.div>
-              </>
-            )}
-          </AnimatePresence>
-
-          {/* Toggle */}
-          <Button
-            onClick={() => setShowFloatButtons((prev) => !prev)}
-            className="bg-darkblue text-white hover:bg-lightblue text-sm px-4 py-2"
-          >
-            {showFloatButtons ? '×' : '+'}
-          </Button>
-        </div>
-      </div>
+      <MobileButtons />
     </div>
   );
 };

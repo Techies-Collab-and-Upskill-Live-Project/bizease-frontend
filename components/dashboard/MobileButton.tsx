@@ -2,35 +2,48 @@
 
 import { useState } from 'react';
 import { Button } from '../ui/button';
+import { useRouter } from 'next/navigation';
+import { Plus, Minus } from 'lucide-react';
 
 const MobileButtons = () => {
-  const [showButton, setShowButton] = useState(false);
+  const [showOptions, setShowOptions] = useState(false);
+  const router = useRouter();
+
+  const handleAddOrder = () => router.push('/orders/add-new-order');
+  const handleAddNewProduct = () => router.push('/inventory/add-product');
 
   return (
-    <div className="hidden max-md:flex max-w-fit flex-col items-end gap-3">
-      {showButton && (
-        <span className="flex flex-col gap-2">
+    <div className="fixed lg:hidden top-130 right-4 border-1 border-surface-100 transform -translate-y-1/2 z-50 flex flex-col items-end gap-3">
+      {showOptions && (
+        <div className="flex flex-col gap-2">
           <Button
-            onClick={() => {}}
-            className=" font-normal bg-darkblue hover:bg-lightblue text-surface-200"
+            onClick={handleAddOrder}
+            className="bg-darkblue hover:bg-lightblue text-surface-200 font-normal"
+            aria-label="Add New Order"
           >
             Add New Order
           </Button>
           <Button
-            variant={'ghost'}
-            onClick={() => {}}
-            className=" font-normal bg-darkblue hover:bg-lightblue text-surface-200"
+            onClick={handleAddNewProduct}
+            className="bg-darkblue hover:bg-lightblue text-surface-200 font-normal"
+            variant="ghost"
+            aria-label="Add New Product"
           >
             Add New Product
           </Button>
-        </span>
+        </div>
       )}
 
       <Button
-        onClick={() => setShowButton(!showButton)}
-        className=" w-fit p-4 font-semibold bg-darkblue hover:bg-lightblue text-surface-200"
+        onClick={() => setShowOptions((prev) => !prev)}
+        className="p-4 font-semibold bg-darkblue hover:bg-lightblue text-surface-200"
+        aria-label={showOptions ? 'Hide action buttons' : 'Show action buttons'}
       >
-        x
+        {showOptions ? (
+          <Minus className="w-4 h-4" />
+        ) : (
+          <Plus className="w-4 h-4" />
+        )}
       </Button>
     </div>
   );

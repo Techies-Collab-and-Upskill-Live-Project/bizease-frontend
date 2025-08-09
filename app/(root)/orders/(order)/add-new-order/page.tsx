@@ -124,14 +124,14 @@ export default function AddOrderPage() {
     };
 
     try {
-      const createdOrder = await createNewOrder(orderPayload);
+      const { data } = await createNewOrder(orderPayload);
 
-      if (!createdOrder || !createdOrder.id) {
+      if (!data || !data.id) {
         throw new Error('Invalid response from server');
       }
-
       toast.success('Order added successfully!');
-      router.push(`/orders/add-new-order-success/${createdOrder.id}`);
+
+      router.push(`/orders/add-new-order-success/${data.id}`);
     } catch (err: unknown) {
       const errorMessage =
         err instanceof Error ? err.message : 'Failed to create order';
