@@ -54,6 +54,9 @@ export async function PUT(req: NextRequest) {
   try {
     const data = await req.json();
 
+    delete data.email;
+    delete data.password;
+
     const response = await axios.put(
       `${process.env.NEXT_PUBLIC_BASE_URL}accounts/`,
       data,
