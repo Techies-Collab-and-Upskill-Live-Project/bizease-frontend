@@ -15,8 +15,6 @@ export async function POST(request: NextRequest) {
       },
     );
 
-    console.log('Payload:', result.data);
-
     const { access, refresh } = result.data.data || result.data;
 
     const response = NextResponse.json({ status: 200 });

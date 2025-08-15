@@ -22,8 +22,6 @@ export async function gmailLogin(
       },
     );
 
-    console.log('gmailLogin', response);
-
     return response.data.data;
   } catch (error: unknown) {
     let backendMessage = 'Failed to login with Google credentials';

@@ -1,18 +1,12 @@
-"use client";
+'use client';
 
-import { useEffect, useState } from "react";
-import { Country, fetchCountries, fetchStates } from "@/lib/services/location";
+import { useEffect, useState } from 'react';
+import { Country, fetchCountries, fetchStates } from '@/lib/services/location';
 
-/**
- * Handles:
- *   • countries list (with currencies)
- *   • states for a selected country
- *   • loading flags
- */
 export default function useLocation() {
   const [countries, setCountries] = useState<Country[]>([]);
   const [countriesLoading, setCountriesLoading] = useState(true);
-  const [countryCode, setCountryCode] = useState<string>("");
+  const [countryCode, setCountryCode] = useState<string>('');
   const [states, setStates] = useState<string[]>([]);
   const [statesLoading, setStatesLoading] = useState(false);
 
@@ -22,7 +16,7 @@ export default function useLocation() {
         const list = await fetchCountries();
         setCountries(list);
       } catch (err) {
-        console.error("Could not load countries", err);
+        console.error('Could not load countries', err);
       } finally {
         setCountriesLoading(false);
       }
@@ -43,7 +37,7 @@ export default function useLocation() {
         const list = await fetchStates(countryObj.name);
         setStates(list);
       } catch (err) {
-        console.error("Could not load states", err);
+        console.error('Could not load states', err);
         setStates([]);
       } finally {
         setStatesLoading(false);

@@ -68,7 +68,6 @@ export const useSettings = (type: SettingType) => {
   };
   const onSubmit = async (data: CombinedFormValues) => {
     if (!currentUser) {
-      console.warn('Current user data not loaded yet.');
       return;
     }
 

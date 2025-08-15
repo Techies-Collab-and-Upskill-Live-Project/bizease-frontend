@@ -1,7 +1,7 @@
 'use client';
 
 import { getAuthenticatedUser } from '@/lib/services/user';
-import { useRouter } from 'next/navigation';
+// import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
 interface User {

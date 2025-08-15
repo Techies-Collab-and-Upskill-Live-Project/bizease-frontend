@@ -21,7 +21,6 @@ export function useInventory() {
 
       setInventory(products);
     } catch (err: any) {
-      console.error('Fetch inventory failed:', err);
       setError(err?.message || 'Error fetching inventory');
       setInventory([]);
     } finally {
@@ -32,10 +31,8 @@ export function useInventory() {
   // Add new inventory item
   const createItem = async (item: Omit<PostInventoryItem, 'id'>) => {
     try {
-      console.log('Adding new item:', item);
       const newItem = await addInventoryItem(item);
       setInventory((prev) => [newItem, ...prev]);
-      console.log('New item posted:', newItem);
       return newItem;
     } catch (err: any) {
       console.error('Add item failed:', err);
@@ -43,27 +40,9 @@ export function useInventory() {
     }
   };
 
-  // Update existing inventory item
-  // const updateItem = async (id: string, updates: Partial<InventoryItem>) => {
-  //   try {
-  //     const updatedItem = await updateInventoryItem(id, updates);
-  //     setInventory((prev) =>
-  //       prev.map((item) =>
-  //         String(item.id) === id ? { ...item, ...updatedItem } : item,
-  //       ),
-  //     );
-  //     return updatedItem;
-  //   } catch (err: any) {
-  //     console.error('Update item failed:', err);
-  //     throw new Error(err?.response?.data?.message || 'Error updating item');
-  //   }
-  // };
-
   const updateItem = async (id: string, updates: Partial<InventoryItem>) => {
     try {
-      console.log('Successfully updated'); // add this
-
-      const updatedItem = await updateInventoryItem(id, updates); // calls API route
+      const updatedItem = await updateInventoryItem(id, updates);
       setInventory((prev) =>
         prev.map((item) =>
           String(item.id) === id ? { ...item, ...updatedItem } : item,
@@ -102,6 +81,6 @@ export function useInventory() {
     createItem,
     updateItem,
     deleteItem,
-    setInventory, // for advanced cases
+    setInventory,
   };
 }

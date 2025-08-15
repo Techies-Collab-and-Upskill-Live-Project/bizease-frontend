@@ -25,7 +25,7 @@ export default function useSignUp() {
   });
 
   const onSubmit = async (values: z.infer<typeof userSignUpSchema>) => {
-    await toast.promise(signup(values), {
+    toast.promise(signup(values), {
       loading: 'Signing up...',
       success: () => {
         router.push(`/verify-email?email=${encodeURIComponent(values.email)}`);

@@ -9,10 +9,6 @@ export async function POST(req: Request) {
       body,
     );
 
-    console.log('reset password route payload', body);
-    console.log('reset password route respose', res);
-    console.log('reset password route respose', res.data);
-
     return NextResponse.json(res.data);
   } catch (error) {
     console.error('Reset password error:', error);
