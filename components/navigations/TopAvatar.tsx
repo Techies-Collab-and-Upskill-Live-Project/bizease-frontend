@@ -70,14 +70,14 @@ const TopAvatar = ({ type }: CustomLogoProp) => {
           </Link>
 
           {dropdownOpen && (
-            <div className="absolute -right-2 top-7.5 mt-2 w-45 bg-gray-100 py-8 px-2 shadow-lg rounded-lg max-lg:block hidden">
+            <div className="absolute -right-2 top-7.5 mt-2 w-40 bg-gray-100 py-4 px-2 shadow-lg rounded-lg max-lg:block hidden">
               <button
                 onClick={handleAllLogout}
-                className="block w-full text-center text-darkblue px-4 py-2 rounded-2xl font-semibold bg-darkblue/10  hover:text-gray-100 hover:bg-lightblue "
+                className="block  text-center text-darkblue px-6 py-2 mx-auto rounded-2xl font-semibold bg-darkblue/10  hover:text-gray-100 hover:bg-lightblue "
               >
                 Log Out
               </button>
-              <div className="flex-center p-2 ">
+              <div className="flex-center p-2">
                 <DeleteUserAccount />
               </div>
             </div>
