@@ -33,7 +33,7 @@ const DeleteUserAccount = () => {
     <button
       onClick={handleDelete}
       disabled={loading}
-      className="bg-red-200 text-red-600 mt-6 text-[8px] px-2 py-1 font-medium hover:text-surface-200 hover:bg-red-500 cursor-pointer rounded-md shadow-surface-500"
+      className=" text-red-600 mt-6 text-[12px] px-2 py-1 font-medium hover:text-surface-200 hover:bg-red-500 cursor-pointer rounded-md shadow-surface-500"
     >
       {loading ? 'Deleting...' : 'Delete Account'}
     </button>
