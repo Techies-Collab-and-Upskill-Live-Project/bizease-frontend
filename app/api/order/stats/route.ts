@@ -22,8 +22,6 @@ export async function GET(req: NextRequest) {
       },
     );
 
-    console.log('Fetched Order stats:', response.data);
-
     return NextResponse.json({ status: 200, data: response.data });
   } catch (error) {
     const axiosError = error as AxiosError<DashboardDataResponse>;

@@ -10,7 +10,7 @@ export const getDashboardStats = async () => {
       throw new Error('Invalid response structure from dashboard API');
     }
 
-    return response.data.data; // Contains the business_name, revenue, orders, etc.
+    return response.data.data;
   } catch (error) {
     console.error('[getDashboardStats] Error fetching dashboard stats:', error);
     throw error;

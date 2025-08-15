@@ -14,7 +14,8 @@ import {
 
 import CustomLegend from './CustomLegend';
 import { useReport } from '@/hooks/useReport';
-import { format } from 'date-fns'; // for consistent date labels
+import { format } from 'date-fns';
+import { Skeleton2 } from '../ui/skeleton';
 
 ChartJS.register(
   CategoryScale,
@@ -42,8 +43,8 @@ const Charts = () => {
       {
         label: 'Revenue',
         data: report.date_revenue_chart_data.map((d) => d.revenue),
-        borderColor: 'rgba(34,211,238,1)',
-        backgroundColor: 'rgba(34,211,238,0.2)',
+        borderColor: '#2E9185',
+        backgroundColor: '#2E9185',
         tension: 0.4,
         fill: true,
         pointRadius: 3,
@@ -51,13 +52,7 @@ const Charts = () => {
     ],
   };
 
-  const colors = [
-    'rgba(34,211,238,0.7)',
-    'rgba(34,211,238,0.5)',
-    'rgba(34,211,238,0.3)',
-    'rgba(34,211,238,0.6)',
-    'rgba(34,211,238,0.4)',
-  ];
+  const colors = ['#2E9185', '#2E9185', '#2E9185', '#2E9185', '#2E9185'];
 
   const barChartData = {
     labels: report.product_sales_chart_data.map((p) => p.name),
@@ -95,6 +90,8 @@ const Charts = () => {
     },
   };
 
+  if (loading) return <Skeleton2 />;
+
   return (
     <div className="w-full max-w-[100vw] px-4 sm:px-6 lg:px-8 mt-6 space-y-4">
       {/* Line Chart */}
@@ -108,7 +105,7 @@ const Charts = () => {
               <CustomLegend label="Revenue" />
             </div>
             <Line
-              style={{ width: '98%', maxWidth: '98%' }}
+              style={{ width: '90%', maxWidth: '90%' }}
               data={lineChartData}
               options={chartOptions}
             />
@@ -125,14 +122,14 @@ const Charts = () => {
           Top Products by Quantity Sold
         </h2>
         <div className="bg-surface-100 rounded-xl shadow-sm p-4 overflow-x-hidden">
-          <div className="w-full h-[280px] md:h-[320px] relative">
+          <div className="w-full h-[280px] md:h-[305px] relative">
             {report.product_sales_chart_data.length === 0 ? (
               <p className="text-center text-muted-foreground">
                 No product sales data available.
               </p>
             ) : (
               <Bar
-                style={{ width: '100%', maxWidth: '100%' }}
+                style={{ width: '90%', maxWidth: '90%' }}
                 data={barChartData}
                 options={chartOptions}
               />

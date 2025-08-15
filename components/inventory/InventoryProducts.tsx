@@ -6,23 +6,24 @@ import { Card, CardContent } from '@/components/ui/card';
 import { cn, formatCurrency } from '@/lib/utils';
 import { ChevronLeft, ChevronRight, Trash2, X } from 'lucide-react';
 import Link from 'next/link';
+import InventorySearchFilter from './InnventorySearchAndFilter';
 
-import { SearchProductProps } from '@/types';
 import DeleteConfirmationModal from '../modals/DeleteModal';
 import { useInventory } from '@/hooks/useInventory';
+import { useRouter } from 'next/navigation';
 
-export default function InventoryComponent({
-  setCurrentPage,
-  handleAddProduct,
-  currentPage,
-  filter,
-}: SearchProductProps) {
+export default function InventoryComponent() {
+  const router = useRouter();
+
   const { inventory, deleteItem } = useInventory();
-  const [searchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState('');
+  const [filter, setFilter] = useState('all');
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [selectedProductId, setSelectedProductId] = useState<number | null>(
     null,
   );
+
+  const [currentPage, setCurrentPage] = useState(1);
 
   const [isOpen, setIsOpen] = useState(false);
   const itemsPerPage = 6;
@@ -64,13 +65,17 @@ export default function InventoryComponent({
   const endIndex = startIndex + itemsPerPage;
   const currentProducts = filteredProduct.slice(startIndex, endIndex);
 
+  const handleAddProduct = () => {
+    router.push('/inventory/add-product');
+  };
+
   const EmptyState = () => (
     <div className="min-h-60 text-center flex flex-col items-center justify-center py-10 text-muted-foreground">
       <h3 className="text-lg font-semibold mt-2">No Products Found</h3>
       <p className="text-sm mb-4">Inventory is empty, try adding new product</p>
       <Button
         onClick={handleAddProduct}
-        className="bg-darkblue text-surface-100 hover:bg-lightblue"
+        className="bg-darkblue text-surface-200 hover:bg-lightblue"
       >
         Add New Product
       </Button>
@@ -80,8 +85,16 @@ export default function InventoryComponent({
   return (
     <div className="space-y-4 max-lg:bg-gray-100 max-md:overflow-hidden py-4">
       {/* Desktop View */}
+      <div className="max-lg:absolute z-40 top-20 right-6 left-6">
+        <InventorySearchFilter
+          searchTerm={searchTerm}
+          onSearchChange={setSearchTerm}
+          filter={filter}
+          onFilterChange={setFilter}
+        />
+      </div>
       <div className="max-lg:hidden grid grid-cols-1 gap-4">
-        <div className="px-4 grid grid-cols-7 text-center bg-gray-100 py-3 text-gray-500 font-semibold rounded gap-4 text-sm">
+        <div className="px-4 grid grid-cols-7 text-center bg-gray-200 py-3 text-gray-500 font-semibold rounded gap-4 text-sm">
           <span>Items in Stock</span>
           <span>Category</span>
           <span>Stock</span>
@@ -183,9 +196,27 @@ export default function InventoryComponent({
                       {product_name}
                     </h3>
                     <div className="text-gray-400">{category}</div>
-                    <div className="text-[10px] font-bold py-0.5 px-2 rounded-lg bg-warning text-gray-800">
-                      <div className="flex-center gap-2">
-                        <div className="bg-red-600 h-1.5 w-1.5 rounded-full" />
+                    <div
+                      className={cn(
+                        'text-[10px] font-bold py-0.5 px-3 rounded-lg text-gray-800 w-fit',
+                        stock_level === 0
+                          ? 'bg-red-500/80'
+                          : stock_level <= 5
+                          ? 'bg-warning/80'
+                          : 'bg-success/80',
+                      )}
+                    >
+                      <div className="flex items-center gap-2">
+                        <div
+                          className={cn(
+                            'h-1.5 w-1.5 rounded-full',
+                            stock_level === 0
+                              ? 'bg-red-600'
+                              : stock_level <= 5
+                              ? 'bg-yellow-600'
+                              : 'bg-green-600',
+                          )}
+                        />
                         {stock_level === 0
                           ? 'Zero Stock'
                           : stock_level <= 5
@@ -193,7 +224,8 @@ export default function InventoryComponent({
                           : `${stock_level} - Units`}
                       </div>
                     </div>
-                    <div className="text-gray-700 text-lg font-semibold">
+
+                    <div className="text-gray-500 text-base font-semibold">
                       {formatCurrency(price)}
                     </div>
                   </div>

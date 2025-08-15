@@ -66,26 +66,39 @@ export const useSettings = (type: SettingType) => {
       }
     }
   };
-
   const onSubmit = async (data: CombinedFormValues) => {
-    console.log('submitting data,', data);
     if (!currentUser) {
-      console.warn('Current user data not loaded yet.');
       return;
     }
 
+    // 1 Map form keys to backend keys
+    const keyMap: Record<string, string> = {
+      fullName: 'full_name',
+      password: 'password', // include if backend accepts password update here
+      businessName: 'business_name', // example mapping
+      businessPhone: 'business_phone', // example mapping
+      businessAddress: 'business_address', // example mapping
+    };
+
+    const normalizedData = Object.fromEntries(
+      Object.entries(data).map(([key, value]) => [keyMap[key] || key, value]),
+    );
+
+    // 2 Filter only allowed backend keys
+    const filteredData = Object.fromEntries(
+      Object.entries(normalizedData).filter(([key]) =>
+        validUserDataKeys.includes(key as ValidUserDataKey),
+      ),
+    );
+
+    // 3 Merge old data with new — new values overwrite old ones
     const mergedData: UserData = {
       ...currentUser,
-      ...Object.fromEntries(
-        Object.entries(data).filter(([key]) =>
-          validUserDataKeys.includes(key as ValidUserDataKey),
-        ),
-      ),
+      ...filteredData,
     };
 
     try {
       const response = await updateUserInfo(mergedData);
-      console.log(response);
       toast.info(response.detail);
     } catch (error) {
       console.error('Error updating user info:', error);

@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import { getDashboardStats } from '@/lib/services/dashboard';
 
-// Define the types based on your docs
 interface OrderedProduct {
   name: string;
   order_id: number;

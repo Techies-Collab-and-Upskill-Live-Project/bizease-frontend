@@ -4,10 +4,6 @@ import axios from 'axios';
 export async function POST(request: NextRequest) {
   const body = await request.json();
 
-
-
- 
-
   try {
     const result = await axios.post(
       `${process.env.NEXT_PUBLIC_BASE_URL}accounts/signup/`,
@@ -19,8 +15,6 @@ export async function POST(request: NextRequest) {
       },
     );
 
-    console.log('Payload:', result.data);
-
     const { access, refresh } = result.data.data || result.data;
 
     const response = NextResponse.json({ status: 200 });
@@ -31,8 +25,6 @@ export async function POST(request: NextRequest) {
       maxAge: 60 * 60,
       path: '/',
       sameSite: 'strict',
-  
-
     });
 
     response.cookies.set('refresh_token', refresh, {
@@ -42,8 +34,6 @@ export async function POST(request: NextRequest) {
       path: '/',
       sameSite: 'strict',
     });
-
-    console.log('Signup successful, cookies set');
 
     return response;
   } catch (error: unknown) {

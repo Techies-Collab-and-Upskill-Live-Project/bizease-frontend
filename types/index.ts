@@ -77,8 +77,6 @@ export type Product = {
   description?: string;
 };
 
-// export type ReportPeriod = '7d' | '30d' | 'thisMonth' | 'all';
-
 export interface AddInventoryItem {
   owner: string;
   id?: number;
@@ -148,7 +146,7 @@ export interface InventoryStore {
   reduceStock: (id: string, quantity: number) => void;
 }
 
-export type OrderStatus = 'Pending' | 'Fulfilled' | 'Cancelled';
+export type OrderStatus = 'Pending' | 'Delivered' | 'Cancelled';
 
 export interface OrderedProduct {
   name: string;
@@ -239,8 +237,8 @@ export interface UpdateOrderModalProps {
 }
 
 export type RevenueChartData = {
-  date: string; // e.g., '2025-07-24'
-  revenue: number; // e.g., 250000
+  date: string;
+  revenue: number;
 };
 
 export type ReportData = {
@@ -248,7 +246,7 @@ export type ReportData = {
   total_stock_value: number;
   low_stock_items: number;
   pending_orders: number;
-  period: string; // e.g., 'last-week' or 'this-month'
+  period: string;
   top_selling_product: string;
   date_revenue_chart_data: RevenueChartData[];
 };
@@ -304,7 +302,7 @@ export interface InventorySuccessResponse {
 
 export interface InventoryValidationErrorResponse {
   detail: {
-    [field: string]: string[]; // e.g. "product_name": ["This field is required"]
+    [field: string]: string[];
   };
 }
 
@@ -340,10 +338,9 @@ export type DashboardDataResponse =
   | DashboardUnauthorizedResponse
   | DashboardServerErrorResponse;
 
-// Success response (200)
 export interface GeneralReportSummaryResponse {
   data: {
-    period: string; // e.g., "All time", "Last week", etc.
+    period: string;
     summary: {
       name: string;
       revenue: number;

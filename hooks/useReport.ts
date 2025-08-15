@@ -1,4 +1,3 @@
-// hooks/useReport.ts
 import { useEffect, useState } from 'react';
 import { getReport, ReportQuery } from '@/lib/services/report';
 

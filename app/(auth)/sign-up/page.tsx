@@ -17,6 +17,7 @@ import { Eye, EyeOff, Mail } from 'lucide-react';
 import Image from 'next/image';
 import useLocation from '@/hooks/useLocation';
 import LoadingButton from '@/components/loading-button';
+import LoginWithGoogle from '@/components/google/GoogleButton';
 
 type SignUpFormData = {
   business_name: string;
@@ -45,8 +46,6 @@ const SignUp = () => {
   } = useLocation();
 
   const submit = async (data: SignUpFormData) => {
-    console.log('SIGNUP PAYLOAD >>>', data);
-
     if (loading) return;
     setLoading(true);
     try {
@@ -363,31 +362,8 @@ const SignUp = () => {
       {/* Login Alternatives */}
       <div className="absolute top-240 md:top-284 left-1/2 transform -translate-x-1/2 w-10/12 max-w-md z-10 p-6">
         <div className=" justify-center  flex flex-col gap-3 items-center ">
-          <p className="text-gray-500 text-sm tracking-wide">
-            -or Signup with-
-          </p>
           <div className="flex gap-6 items-center justify-center">
-            <Image
-              width={60}
-              height={58}
-              src={'/google.png'}
-              alt="google-icon"
-              className="w-10 h-10 cursor-pointer"
-            />
-            <Image
-              width={60}
-              height={58}
-              src={'/apple.png'}
-              alt="apple-icon"
-              className="w-10 h-10 cursor-pointer"
-            />
-            <Image
-              width={60}
-              height={58}
-              src={'/microsoft.png'}
-              alt="microsoft-icon"
-              className="w-10 h-10 cursor-pointer"
-            />
+            <LoginWithGoogle />
           </div>
           <a href="/log-in" className=" text-[13px] underline ">
             Have an account? Sign in
