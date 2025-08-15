@@ -21,8 +21,6 @@ export default function useInventoryStats() {
       const response = await getInventoryStats();
 
       setStats(response.data);
-
-      toast.success('Inventory stats loaded successfully');
     } catch (err: any) {
       setError(err.message || 'Failed to load inventory stats');
 
