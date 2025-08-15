@@ -18,7 +18,23 @@ export const getAuthenticatedUser = async () => {
 
 export const updateUserInfo = async (update: UpdateUser) => {
   try {
+    // Normalize currency to uppercase if provided
+    if (update.currency && typeof update.currency === 'string') {
+      update.currency = update.currency.toUpperCase().trim();
+    }
+
     const response = await axiosInstance.put('/user', update);
+
+    // Normalize in response for consistency
+    if (
+      response.data?.data?.currency &&
+      typeof response.data.data.currency === 'string'
+    ) {
+      response.data.data.currency = response.data.data.currency
+        .toUpperCase()
+        .trim();
+    }
+
     return response.data.data;
   } catch (error: unknown) {
     if (error instanceof AxiosError) {

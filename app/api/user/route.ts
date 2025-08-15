@@ -41,6 +41,88 @@ export async function GET(req: NextRequest) {
   }
 }
 
+// export async function PUT(req: NextRequest) {
+//   const accessToken = req.cookies.get('access_token')?.value;
+
+//   if (!accessToken) {
+//     return NextResponse.json(
+//       { message: 'Unauthorized: No access token' },
+//       { status: 401 },
+//     );
+//   }
+
+//   try {
+//     const data = await req.json();
+
+//     delete data.email;
+//     delete data.password;
+
+//     const response = await axios.put(
+//       `${process.env.NEXT_PUBLIC_BASE_URL}accounts/`,
+//       data,
+//       {
+//         headers: {
+//           Authorization: `Bearer ${accessToken}`,
+//           'Content-Type': 'application/json',
+//         },
+//       },
+//     );
+
+//     return NextResponse.json({ status: 200, data: response.data });
+//   } catch (error) {
+//     const axiosError = error as AxiosError<UserDataResponse>;
+
+//     return NextResponse.json(
+//       {
+//         message: axiosError.response?.data?.detail,
+//       },
+//       {
+//         status: axiosError.response?.status,
+//       },
+//     );
+//   }
+// }
+
+// export async function PUT(req: NextRequest) {
+//   const accessToken = req.cookies.get('access_token')?.value;
+
+//   if (!accessToken) {
+//     return NextResponse.json(
+//       { message: 'Unauthorized: No access token' },
+//       { status: 401 },
+//     );
+//   }
+
+//   try {
+//     const data = await req.json();
+
+//     const response = await axios.put(
+//       `${process.env.NEXT_PUBLIC_BASE_URL}accounts/`,
+//       data,
+//       {
+//         headers: {
+//           Authorization: `Bearer ${accessToken}`,
+//           'Content-Type': 'application/json',
+//         },
+//       },
+//     );
+//     console.log('User data updated successfully:', response.data);
+
+//     return NextResponse.json({ status: 200, data: response.data });
+//   } catch (error) {
+//     const axiosError = error as AxiosError<UserDataResponse>;
+
+//     return NextResponse.json(
+//       {
+//         message: axiosError.response?.data?.detail,
+//       },
+//       {
+//         status: axiosError.response?.status,
+//       },
+//     );
+//   }
+// }
+
 export async function PUT(req: NextRequest) {
   const accessToken = req.cookies.get('access_token')?.value;
 
@@ -54,12 +136,42 @@ export async function PUT(req: NextRequest) {
   try {
     const data = await req.json();
 
-    delete data.email;
-    delete data.password;
+    console.log(`Received data for user update: ${JSON.stringify(data)}`);
+
+    //  Allowed keys the backend
+    const allowedKeys = [
+      'full_name',
+      'currency',
+      'country',
+      'state',
+      'city',
+      'postal_code',
+      'address',
+      'company_name',
+      'industry',
+
+      'avatar',
+      'phone',
+    ];
+
+    // Filter out unexpected fields
+    const filteredData = Object.fromEntries(
+      Object.entries(data)
+        .filter(([key]) => allowedKeys.includes(key))
+        .map(([key, value]) => {
+          // Ensure currency is always uppercase
+          if (key === 'currency' && typeof value === 'string') {
+            return [key, value.toUpperCase()];
+          }
+          return [key, value];
+        }),
+    );
+
+    console.log(`Filtered data for update: ${JSON.stringify(filteredData)}`);
 
     const response = await axios.put(
       `${process.env.NEXT_PUBLIC_BASE_URL}accounts/`,
-      data,
+      filteredData,
       {
         headers: {
           Authorization: `Bearer ${accessToken}`,
@@ -67,6 +179,8 @@ export async function PUT(req: NextRequest) {
         },
       },
     );
+
+    console.log('User data updated successfully:', response.data);
 
     return NextResponse.json({ status: 200, data: response.data });
   } catch (error) {
